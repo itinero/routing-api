@@ -60,8 +60,10 @@ namespace OsmSharp.Service.Routing.Console
                 return new System.DateTime(year, month, day);
             };
             var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
-            var multiModalRouter = MultiModalRouter.CreateFrom(
-                new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\kempen-big.osm.pbf").OpenRead()), new OsmRoutingInterpreter());
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\temp\belgium-latest.simple.flat.routing").OpenRead(),
+                new OsmRoutingInterpreter());
+            //var multiModalRouter = MultiModalRouter.CreateFrom(
+            //    new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\belgium-latest.osm.pbf").OpenRead()), new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(feed);
 
             OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"), multiModalRouter);

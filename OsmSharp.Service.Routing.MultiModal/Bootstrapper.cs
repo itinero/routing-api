@@ -44,7 +44,7 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// <summary>
         /// Returns the transit service instance.
         /// </summary>
-        public static MultiModalRouterWrapperBase TransitServiceInstance
+        public static MultiModalRouterWrapperBase MultiModalServiceInstance
         {
             get
             {
