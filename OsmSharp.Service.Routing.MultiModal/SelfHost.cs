@@ -1,6 +1,7 @@
 ﻿using Nancy.Hosting.Self;
 using OsmSharp.Routing.Transit.MultiModal;
 using System;
+using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing.MultiModal
 {
@@ -17,7 +18,7 @@ namespace OsmSharp.Service.Routing.MultiModal
         public static void Start(Uri uri, MultiModalRouter transitRouter)
         {
             // initialize all APIs, a multi modal router should be able to support all of them.
-            OsmSharp.Service.Routing.Bootstrapper.Initialize(new Wrappers.RoutingServiceWrapper(transitRouter));
+            OsmSharp.Service.Routing.Bootstrapper.Initialize(transitRouter);
             OsmSharp.Service.Routing.Transit.Bootstrapper.Initialize(new Wrappers.TransitServiceWrapper(transitRouter));
             OsmSharp.Service.Routing.MultiModal.Bootstrapper.Initialize(new Wrappers.MultiModalWrapper(transitRouter));
 
@@ -25,6 +26,7 @@ namespace OsmSharp.Service.Routing.MultiModal
             using (var host = new NancyHost(uri))
             {
                 host.Start();
+                Console.WriteLine("Service started.");
                 Console.ReadLine();
             }
         }

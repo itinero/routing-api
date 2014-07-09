@@ -4,6 +4,7 @@ using OsmSharp.Osm.PBF.Streams;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Routing.Transit.GTFS;
+using OsmSharp.Routing.Transit.MultiModal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,8 +47,24 @@ namespace OsmSharp.Service.Routing.Console
             //    System.Console.ReadLine();
             //}
 
-            SelfHost.Start(new Uri("http://localhost:1234/"), Router.CreateLiveFrom(
-                new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\kempen-big.osm.pbf").OpenRead()), new OsmRoutingInterpreter()));
+            //SelfHost.Start(new Uri("http://localhost:1234/"), Router.CreateLiveFrom(
+            //    new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\kempen-big.osm.pbf").OpenRead()), new OsmRoutingInterpreter()));
+
+            // read the sample feed.
+            var reader = new GTFSReader<GTFSFeed>(false);
+            reader.DateTimeReader = (dateString) =>
+            {
+                var year = int.Parse(dateString.Substring(0, 4));
+                var month = int.Parse(dateString.Substring(4, 2));
+                var day = int.Parse(dateString.Substring(6, 2));
+                return new System.DateTime(year, month, day);
+            };
+            var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
+            var multiModalRouter = MultiModalRouter.CreateFrom(
+                new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\kempen-big.osm.pbf").OpenRead()), new OsmRoutingInterpreter());
+            multiModalRouter.AddGTFSFeed(feed);
+
+            OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"), multiModalRouter);
         }
     }
 }

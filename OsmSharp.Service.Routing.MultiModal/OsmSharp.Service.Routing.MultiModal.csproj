@@ -54,27 +54,48 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp">
-      <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.dll</HintPath>
+    <Reference Include="OsmSharp, Version=4.2.0.758, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Osm">
-      <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.Osm.dll</HintPath>
+    <Reference Include="OsmSharp.Data.Oracle">
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Data.Oracle.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing">
-      <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.Routing.dll</HintPath>
+    <Reference Include="OsmSharp.Data.PostgreSQL">
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Data.PostgreSQL.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Data.Redis">
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Data.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Data.SQLite">
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Data.SQLServer">
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Data.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Osm, Version=4.2.0.758, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Osm.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Routing, Version=4.2.0.758, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
     <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.2\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+      <HintPath>..\..\OsmSharp.Transit\Output\OsmSharp.Routing.Transit.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit.MultiModal">
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.2\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\OsmSharp.Transit\Output\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.UI">
-      <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.UI.dll</HintPath>
+    <Reference Include="OsmSharp.UI, Version=4.2.0.758, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.UI.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.WinForms.UI">
-      <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
+    <Reference Include="OsmSharp.WinForms.UI, Version=4.2.0.758, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.4.2.0.758\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections">
       <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net403-client\PowerCollections.dll</HintPath>
@@ -99,7 +120,6 @@
     <Compile Include="MultiModalRouterWrapperBase.cs" />
     <Compile Include="SelfHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wrappers\RoutingServiceWrapper.cs" />
     <Compile Include="Wrappers\TransitServiceWrapper.cs" />
     <Compile Include="Wrappers\MultiModalWrapper.cs" />
   </ItemGroup>
