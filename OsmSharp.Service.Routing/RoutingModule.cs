@@ -97,7 +97,7 @@ namespace OsmSharp.Service.Routing
 
                         if (fullFormat)
                         {
-                            return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(new CompleteRoute()
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
                                 {
                                     Route = route,
                                     Instructions = instruction
@@ -109,7 +109,7 @@ namespace OsmSharp.Service.Routing
                             var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                             var geoJson = geoJsonWriter.Write(featureCollection);
 
-                            return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(new SimpleRoute()
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new SimpleRoute()
                             {
                                 Route = geoJson,
                                 Instructions = instruction
@@ -119,7 +119,7 @@ namespace OsmSharp.Service.Routing
 
                     if (fullFormat)
                     { // return a complete route but no instructions.
-                        return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(route);
+                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
                     }
                     else
                     { // return a GeoJSON object.

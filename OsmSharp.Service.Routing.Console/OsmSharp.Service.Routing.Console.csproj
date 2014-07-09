@@ -57,8 +57,12 @@
     <Reference Include="OsmSharp.Routing">
       <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit">
-      <HintPath>D:\Dropbox\Dropbox\temp\OsmSharp.Transit\Output\OsmSharp.Routing.Transit.dll</HintPath>
+    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.2\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal">
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.2\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
     <Reference Include="OsmSharp.UI">
       <HintPath>..\packages\OsmSharp.4.2.0.723\lib\net45\OsmSharp.UI.dll</HintPath>
