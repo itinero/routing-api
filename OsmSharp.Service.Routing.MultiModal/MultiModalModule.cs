@@ -1,5 +1,7 @@
 ﻿using Nancy;
+using Nancy.Json;
 using Nancy.ModelBinding;
+using Newtonsoft.Json;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Service.Routing.MultiModal.Domain;
@@ -7,6 +9,7 @@ using OsmSharp.Service.Routing.MultiModal.Domain.Queries;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace OsmSharp.Service.Routing.MultiModal
 {
@@ -148,10 +151,8 @@ namespace OsmSharp.Service.Routing.MultiModal
                     else
                     { // return a GeoJSON object.
                         var featureCollection = Bootstrapper.MultiModalServiceInstance.GetFeatures(route);
-                        var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                        var geoJson = geoJsonWriter.Write(featureCollection);
 
-                        return geoJson;
+                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
                 }
                 catch (Exception)

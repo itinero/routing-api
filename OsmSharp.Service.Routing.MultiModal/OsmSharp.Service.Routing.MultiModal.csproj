@@ -116,6 +116,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="GeoJsonResponse.cs" />
+    <Compile Include="GeoJsonResponseProcessor.cs" />
     <Compile Include="Domain\CompleteRoute.cs" />
     <Compile Include="Domain\Queries\RoutingQuery.cs" />
     <Compile Include="Domain\SimpleRoute.cs" />
