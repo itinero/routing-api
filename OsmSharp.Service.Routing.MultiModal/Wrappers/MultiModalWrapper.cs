@@ -62,14 +62,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
         /// <returns></returns>
         public override FeatureCollection GetFeatures(Route route)
         {
-            var coordinates = route.GetPoints();
-            var ntsCoordinates = coordinates.Select(x => { return new Coordinate(x.Longitude, x.Latitude); });
-            var geometryFactory = new GeometryFactory();
-            var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
-            var featureCollection = new FeatureCollection();
-            var feature = new Feature(lineString, new AttributesTable());
-            featureCollection.Add(feature);
-            return featureCollection;
+            return _multiModalRouter.GetFeatures(route, true);
         }
 
         /// <summary>
