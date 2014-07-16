@@ -1,0 +1,7 @@
+Initial alpha release version:
+
+- Basic API implementation.
+
+Know issues:
+
+- Not all API specs implemented.

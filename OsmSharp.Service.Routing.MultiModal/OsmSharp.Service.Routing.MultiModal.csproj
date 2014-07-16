@@ -124,6 +124,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyVersion.cs">
+      <Link>Properties\SharedAssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="GeoJsonResponse.cs" />
     <Compile Include="GeoJsonResponseProcessor.cs" />
