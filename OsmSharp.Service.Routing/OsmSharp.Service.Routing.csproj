@@ -33,11 +33,13 @@
     <Reference Include="GeoAPI">
       <HintPath>..\packages\GeoAPI.1.7.2\lib\net403-client\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS">
-      <HintPath>..\packages\GTFS.0.0.3.38\lib\GTFS.dll</HintPath>
+    <Reference Include="GTFS, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO">
-      <HintPath>..\packages\GTFS.0.0.3.38\lib\GTFS.IO.dll</HintPath>
+    <Reference Include="GTFS.IO, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.IO.dll</HintPath>
     </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>

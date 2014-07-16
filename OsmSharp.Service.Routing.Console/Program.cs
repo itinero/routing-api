@@ -59,8 +59,8 @@ namespace OsmSharp.Service.Routing.Console
                 var day = int.Parse(dateString.Substring(6, 2));
                 return new System.DateTime(year, month, day);
             };
-            var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\temp\belgium-latest.simple.flat.routing").OpenRead(),
+            var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(@"c:\work\osmsharp_data\nmbs\"));
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\temp\belgium-latest.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             //var multiModalRouter = MultiModalRouter.CreateFrom(
             //    new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\belgium-latest.osm.pbf").OpenRead()), new OsmRoutingInterpreter());
