@@ -19,6 +19,7 @@ namespace OsmSharp.Service.Routing.MultiModal
         {
             Get["/multimodal"] = _ =>
             {
+                OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal request.");
                 try
                 {
                     // bind the query if any.
@@ -111,9 +112,11 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
+                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
                     var route = Bootstrapper.MultiModalServiceInstance.GetRoute(dt, vehicles, coordinates, complete);
+                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
                     if (route == null)
                     { // route could not be calculated.
                         return null;

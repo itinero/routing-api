@@ -28,16 +28,16 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             var interModal = vehicles[0];
             var fromLastStop = vehicles[0];
 
-            if(vehicles.Count == 1)
+            if (vehicles.Count == 1)
             { // the intermode is always pedestrian when only one profile given.
                 interModal = Vehicle.GetByUniqueName("Pedestrian");
             }
-            else if(vehicles.Count == 2)
+            else if (vehicles.Count == 2)
             { // the intermode is always pedestrian when only two profiles given.
                 interModal = Vehicle.GetByUniqueName("Pedestrian");
                 fromLastStop = vehicles[1];
             }
-            else if(vehicles.Count >= 3)
+            else if (vehicles.Count >= 3)
             { // ignore vehicle 4 etc...
                 interModal = vehicles[1];
                 fromLastStop = vehicles[2];
