@@ -44,8 +44,12 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             }
 
             // resolve points with the correct profiles.
-            var from = _multiModalRouter.Resolve(toFirstStop, coordinates[0]);
-            var to = _multiModalRouter.Resolve(fromLastStop, coordinates[1]);
+            RouterPoint from, to;
+            lock (_multiModalRouter)
+            {
+                from = _multiModalRouter.Resolve(toFirstStop, coordinates[0]);
+                to = _multiModalRouter.Resolve(fromLastStop, coordinates[1]);
+            }
 
             return _multiModalRouter.CalculateTransit(departureTime, toFirstStop, interModal, fromLastStop, from, to);
         }
