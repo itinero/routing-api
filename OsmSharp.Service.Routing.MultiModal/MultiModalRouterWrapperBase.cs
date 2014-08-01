@@ -27,6 +27,16 @@ namespace OsmSharp.Service.Routing.MultiModal
         public abstract Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, bool complete);
 
         /// <summary>
+        /// Calculates the weight to all the points within the given range.
+        /// </summary>
+        /// <param name="departureTime"></param>
+        /// <param name="vehicles"></param>
+        /// <param name="location"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public abstract Dictionary<GeoCoordinate, double> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max);
+
+        /// <summary>
         /// Calculates instructions for the given route and vehicle.
         /// </summary>
         /// <param name="vehicles"></param>

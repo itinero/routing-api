@@ -54,6 +54,37 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             return _multiModalRouter.CalculateTransit(departureTime, toFirstStop, interModal, fromLastStop, from, to);
         }
 
+        public override Dictionary<GeoCoordinate, double> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max)
+        {
+            var toFirstStop = vehicles[0];
+            var interModal = vehicles[0];
+            var fromLastStop = vehicles[0];
+
+            if (vehicles.Count == 1)
+            { // the intermode is always pedestrian when only one profile given.
+                interModal = Vehicle.GetByUniqueName("Pedestrian");
+            }
+            else if (vehicles.Count == 2)
+            { // the intermode is always pedestrian when only two profiles given.
+                interModal = Vehicle.GetByUniqueName("Pedestrian");
+                fromLastStop = vehicles[1];
+            }
+            else if (vehicles.Count >= 3)
+            { // ignore vehicle 4 etc...
+                interModal = vehicles[1];
+                fromLastStop = vehicles[2];
+            }
+
+            // resolve points with the correct profiles.
+            RouterPoint from;
+            lock (_multiModalRouter)
+            {
+                from = _multiModalRouter.Resolve(toFirstStop, location);
+            }
+
+            return _multiModalRouter.CalculateTransitWithin(departureTime, toFirstStop, interModal, fromLastStop, from, max);
+        }
+
         public override List<Instruction> GetInstructions(List<Vehicle> vehicles, Route route)
         {
             return new List<Instruction>();
@@ -76,8 +107,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
         /// <returns></returns>
         public override FeatureCollection GetNeworkFeatures(GeoCoordinateBox box)
         {
-            // TODO: find a way to get nework features.
-            return new FeatureCollection();
+            return _multiModalRouter.GetNeworkFeatures(box);
         }
     }
 }

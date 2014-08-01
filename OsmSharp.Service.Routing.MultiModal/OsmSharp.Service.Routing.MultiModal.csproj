@@ -35,13 +35,13 @@
     <Reference Include="GeoAPI">
       <HintPath>..\packages\GeoAPI.1.7.2\lib\net403-client\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS, Version=0.0.3.51, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.51\lib\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS.IO, Version=0.0.3.51, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.IO.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.51\lib\GTFS.IO.dll</HintPath>
     </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
@@ -118,6 +118,9 @@
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Domain\Queries\BoxQuery.cs" />
+    <Compile Include="Domain\Queries\Range.cs" />
+    <Compile Include="Domain\Queries\VertexAndTime.cs" />
     <Compile Include="GeoJsonResponse.cs" />
     <Compile Include="GeoJsonResponseProcessor.cs" />
     <Compile Include="Domain\CompleteRoute.cs" />

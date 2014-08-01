@@ -34,13 +34,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GTFS, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS, Version=0.0.3.51, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.51\lib\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO, Version=0.0.3.49, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS.IO, Version=0.0.3.51, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.49\lib\GTFS.IO.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.51\lib\GTFS.IO.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=0.23.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
