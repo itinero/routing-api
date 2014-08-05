@@ -17,8 +17,12 @@ namespace OsmSharp.Service.Routing.MultiModal
     {
         public MultiModalModule()
         {
+            JsonSettings.MaxJsonLength = Int32.MaxValue;
+
             Get["/multimodal"] = _ =>
             {
+                this.EnableCors();
+
                 OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal request.");
                 try
                 {
@@ -163,13 +167,21 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
+            Options["/multimodal/range"] = _ =>
+            {
+                this.EnableCors();
+                return Negotiate.WithStatusCode(HttpStatusCode.OK);
+            };
             Get["/multimodal/range"] = _ =>
             {
+                this.EnableCors();
+
                 OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal range request.");
                 try
                 {
+
                     // bind the query if any.
-                    var query = this.Bind<RoutingQuery>();
+                    var query = this.Bind<RangeQuery>();
 
                     // parse location.
                     if (string.IsNullOrWhiteSpace(query.loc))
@@ -231,7 +243,12 @@ namespace OsmSharp.Service.Routing.MultiModal
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
-                    double max = 300;
+                    int max;
+                    if(!int.TryParse(query.max, out max))
+                    {// could not parse date.
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
+                            string.Format("No valid max time parameter found, could not parse: {0}.", query.max));
+                    }
                     var range = Bootstrapper.MultiModalServiceInstance.GetWithinRange(dt, vehicles, coordinates[0], max);
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
 

@@ -82,17 +82,17 @@ namespace OsmSharp.Service.Routing.Console
                 trip.RouteId = "nmbs_" + trip.RouteId;
             }
 
-            //var feedDeLijn = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\delijn\"));
+            var feedDeLijn = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\delijn\"));
 
-            //// prefix all ids in the feeds.
-            //foreach (var stop in feedDeLijn.Stops)
-            //{
-            //    stop.Tag = "De Lijn";
-            //}
+            // prefix all ids in the feeds.
+            foreach (var stop in feedDeLijn.Stops)
+            {
+                stop.Tag = "De Lijn";
+            }
             var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\temp\belgium-latest.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(nmbs);
-            //multiModalRouter.AddGTFSFeed(feedDeLijn);
+            multiModalRouter.AddGTFSFeed(feedDeLijn);
 
             OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"), multiModalRouter);
         }

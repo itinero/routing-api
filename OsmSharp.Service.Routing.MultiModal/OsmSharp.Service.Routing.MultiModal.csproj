@@ -120,6 +120,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Domain\Queries\BoxQuery.cs" />
     <Compile Include="Domain\Queries\Range.cs" />
+    <Compile Include="Domain\Queries\RangeQuery.cs" />
     <Compile Include="Domain\Queries\VertexAndTime.cs" />
     <Compile Include="GeoJsonResponse.cs" />
     <Compile Include="GeoJsonResponseProcessor.cs" />
