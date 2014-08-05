@@ -259,7 +259,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         double time = max - rangeEntry.Value;
                         if (time > 0)
                         {
-                            time = (int)((time / max) * 100);
+                            time = (int)((time / max) * 100) + 25;
                             vertexAndTimes.Add(new VertexAndTime()
                                 {
                                     lat = rangeEntry.Key.Latitude,
@@ -270,7 +270,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new OsmSharp.Service.Routing.MultiModal.Domain.Queries.Range()
                         {
-                            max = 100,
+                            max = 125,
                             data = vertexAndTimes.ToArray()
                         });
                 }
