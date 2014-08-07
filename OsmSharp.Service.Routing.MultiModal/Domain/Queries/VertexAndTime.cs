@@ -13,5 +13,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Domain.Queries
         public double lon { get; set; }
 
         public double value { get; set; }
+
+        public ulong id { get; set; }
     }
 }

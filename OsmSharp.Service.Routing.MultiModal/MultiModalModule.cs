@@ -19,9 +19,16 @@ namespace OsmSharp.Service.Routing.MultiModal
         {
             JsonSettings.MaxJsonLength = Int32.MaxValue;
 
-            Get["/multimodal"] = _ =>
+            Get["{instance}/multimodal"] = _ =>
             {
                 this.EnableCors();
+
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
 
                 OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal request.");
                 try
@@ -119,7 +126,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
-                    var route = Bootstrapper.MultiModalServiceInstance.GetRoute(dt, vehicles, coordinates, complete);
+                    var route = Bootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, complete);
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
                     if (route == null)
                     { // route could not be calculated.
@@ -127,7 +134,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = Bootstrapper.MultiModalServiceInstance.GetInstructions(vehicles, route);
+                        var instruction = Bootstrapper.Get(instance).GetInstructions(vehicles, route);
 
                         if (fullFormat)
                         {
@@ -139,7 +146,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         }
                         else
                         {
-                            var featureCollection = Bootstrapper.MultiModalServiceInstance.GetFeatures(route);
+                            var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
                             var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                             var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -157,7 +164,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     else
                     { // return a GeoJSON object.
-                        var featureCollection = Bootstrapper.MultiModalServiceInstance.GetFeatures(route);
+                        var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
 
                         return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
@@ -167,16 +174,32 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
-            Options["/multimodal/range"] = _ =>
-            {
-                this.EnableCors();
-                return Negotiate.WithStatusCode(HttpStatusCode.OK);
-            };
-            Get["/multimodal/range"] = _ =>
+            Options["{instance}/multimodal/range"] = _ =>
             {
                 this.EnableCors();
 
-                OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal range request.");
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
+                return Negotiate.WithStatusCode(HttpStatusCode.OK);
+            };
+            Get["{instance}/multimodal/range"] = _ =>
+            {
+                this.EnableCors();
+
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
+
+                OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "New multimodal range request.");
                 try
                 {
 
@@ -240,7 +263,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
                     int max;
@@ -249,22 +272,28 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid max time parameter found, could not parse: {0}.", query.max));
                     }
-                    var range = Bootstrapper.MultiModalServiceInstance.GetWithinRange(dt, vehicles, coordinates[0], max);
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
+                    int zoom;
+                    if (!int.TryParse(query.zoom, out zoom))
+                    {// could not parse date.
+                        zoom = 16;
+                    }
+                    var range = Bootstrapper.Get(instance).GetWithinRange(dt, vehicles, coordinates[0], max, zoom);
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "Request finished.");
 
                     // output all vertex and times.
-                    var vertexAndTimes = new List<VertexAndTime>(range.Count);
+                    var vertexAndTimes = new List<VertexAndTime>();
                     foreach (var rangeEntry in range)
                     {
-                        double time = max - rangeEntry.Value;
+                        double time = max - rangeEntry.Item3;
                         if (time > 0)
                         {
                             time = (int)((time / max) * 100) + 25;
                             vertexAndTimes.Add(new VertexAndTime()
                                 {
-                                    lat = rangeEntry.Key.Latitude,
-                                    lon = rangeEntry.Key.Longitude,
-                                    value = time
+                                    lat = rangeEntry.Item1.Latitude,
+                                    lon = rangeEntry.Item1.Longitude,
+                                    value = time,
+                                    id = rangeEntry.Item2
                                 });
                         }
                     }
@@ -279,24 +308,34 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
-            Get["/multimodal/status"] = _ =>
+            Get["{instance}/multimodal/status"] = _ =>
+            {
+                // get instance and check if active.
+                string instance = _.instance;
+
+                if (Bootstrapper.IsActive(instance))
                 {
-                    if(Bootstrapper.IsInitialized())
-                    {
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
-                        {
-                            Available = true,
-                            Info = "Initialized."
-                        });
-                    }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
                     {
-                        Available = false,
-                        Info = "Not initialized."
+                        Available = true,
+                        Info = "Initialized."
                     });
-                };
-            Get["/multimodal/network"] = _ =>
+                }
+                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
+                {
+                    Available = false,
+                    Info = "Not initialized."
+                });
+            };
+            Get["{instance}/multimodal/network"] = _ =>
             {
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
                 try
                 {
                     this.EnableCors();
@@ -326,7 +365,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("box coordinates are invalid.");
                     }
 
-                    var features = Bootstrapper.MultiModalServiceInstance.GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
+                    var features = Bootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
                     var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                     return geoJsonWriter.Write(features);
                 }

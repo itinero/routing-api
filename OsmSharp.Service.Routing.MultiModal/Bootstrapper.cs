@@ -19,6 +19,7 @@
 using OsmSharp.Routing.Transit.MultiModal;
 using OsmSharp.Service.Routing.MultiModal.Wrappers;
 using System;
+using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing.MultiModal
 {
@@ -28,50 +29,48 @@ namespace OsmSharp.Service.Routing.MultiModal
     public static class Bootstrapper
     {
         /// <summary>
-        /// Holds the multi modal router service instance.
+        /// Holds the multi modal router service instances.
         /// </summary>
-        private static MultiModalRouterWrapperBase _multiModalWrapperInstance;
+        private static Dictionary<string, MultiModalRouterWrapperBase> _multiModalWrapperInstances = new Dictionary<string,MultiModalRouterWrapperBase>();
 
         /// <summary>
         /// Returns true if a multi modal router has been initialized.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <returns></returns>
-        public static bool IsInitialized()
+        public static bool IsActive(string instance)
         {
-            return _multiModalWrapperInstance != null;
+            return _multiModalWrapperInstances != null &&
+                _multiModalWrapperInstances.ContainsKey(instance);
         }
 
         /// <summary>
         /// Returns the transit service instance.
         /// </summary>
-        public static MultiModalRouterWrapperBase MultiModalServiceInstance
+        /// <param name="instance">The instance name.</param>
+        public static MultiModalRouterWrapperBase Get(string instance)
         {
-            get
-            {
-                if(_multiModalWrapperInstance == null)
-                {
-                    throw new InvalidOperationException("Bootstrapper was not initialized!");
-                }
-                return _multiModalWrapperInstance;
-            }
+            return _multiModalWrapperInstances[instance];
         }
 
         /// <summary>
         /// Initializes the multi modal router service.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="multiModalWrapperInstance"></param>
-        public static void Initialize(MultiModalRouterWrapperBase multiModalWrapperInstance)
+        public static void Add(string instance, MultiModalRouterWrapperBase multiModalWrapperInstance)
         {
-            _multiModalWrapperInstance = multiModalWrapperInstance;
+            _multiModalWrapperInstances.Add(instance, multiModalWrapperInstance);
         }
 
         /// <summary>
         /// Initializes this multi modal API with an existing multi modal router.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="transitRouter"></param>
-        public static void Initialize(MultiModalRouter multiModalRouter)
+        public static void Initialize(string instance, MultiModalRouter multiModalRouter)
         {
-            _multiModalWrapperInstance = new MultiModalWrapper(multiModalRouter);
+            Bootstrapper.Add(instance, new MultiModalWrapper(multiModalRouter));
         }
     }
 }

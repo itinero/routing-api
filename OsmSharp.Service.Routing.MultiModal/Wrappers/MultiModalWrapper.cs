@@ -54,7 +54,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             return _multiModalRouter.CalculateTransit(departureTime, toFirstStop, interModal, fromLastStop, from, to);
         }
 
-        public override Dictionary<GeoCoordinate, double> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max)
+        public override IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max, int sampleZoom)
         {
             var toFirstStop = vehicles[0];
             var interModal = vehicles[0];
@@ -82,7 +82,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
                 from = _multiModalRouter.Resolve(toFirstStop, location);
             }
 
-            return _multiModalRouter.CalculateTransitWithin(departureTime, toFirstStop, interModal, fromLastStop, from, max);
+            return _multiModalRouter.CalculateTransitWithin(departureTime, toFirstStop, interModal, fromLastStop, from, max, sampleZoom);
         }
 
         public override List<Instruction> GetInstructions(List<Vehicle> vehicles, Route route)

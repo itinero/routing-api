@@ -32,11 +32,12 @@ namespace OsmSharp.Service.Routing.Transit
         /// Starts a self-hosted instance of the transit API.
         /// </summary>
         /// <param name="uri"></param>
+        /// <param name="instance">The instance name.</param>
         /// <param name="transitServiceWrapper"></param>
-        public static void Start(Uri uri, TransitServiceWrapperBase transitServiceWrapper)
+        public static void Start(Uri uri, string instance, TransitServiceWrapperBase transitServiceWrapper)
         {
             // initialize API.
-            Bootstrapper.Initialize(transitServiceWrapper);
+            Bootstrapper.Add(instance, transitServiceWrapper);
 
             // start host.
             using (var host = new NancyHost(uri))
@@ -51,10 +52,10 @@ namespace OsmSharp.Service.Routing.Transit
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="transitRouter"></param>
-        public static void Start(Uri uri, TransitRouter transitRouter)
+        public static void Start(Uri uri, string instance, TransitRouter transitRouter)
         {
             // initialize API.
-            Bootstrapper.Initialize(transitRouter);
+            Bootstrapper.Add(instance, transitRouter);
 
             // start host.
             using (var host = new NancyHost(uri))
@@ -69,12 +70,12 @@ namespace OsmSharp.Service.Routing.Transit
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="feed"></param>
-        public static void Start(Uri uri, GTFS.GTFSFeed feed)
+        public static void Start(Uri uri, string instance, GTFS.GTFSFeed feed)
         {
             // create the transit router.
             var transitRouter = GTFSGraphReader.CreateRouter(feed);
 
-            SelfHost.Start(uri, transitRouter);
+            SelfHost.Start(uri, instance, transitRouter);
         }
     }
 }

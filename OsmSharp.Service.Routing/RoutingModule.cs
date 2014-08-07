@@ -17,10 +17,17 @@ namespace OsmSharp.Service.Routing
     {
         public RoutingModule()
         {
-            Get["/routing"] = _ =>
+            Get["{instance}/routing"] = _ =>
             {
                 try
                 {
+                    // get instance and check if active.
+                    string instance = _.instance;
+                    if(!Bootstrapper.IsActive(instance))
+                    { // oeps, instance not active!
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                    }
+
                     // bind the query if any.
                     var query = this.Bind<RoutingQuery>();
 
@@ -86,14 +93,14 @@ namespace OsmSharp.Service.Routing
                     }
 
                     // calculate route.
-                    var route = Bootstrapper.RoutingServiceInstance.GetRoute(vehicle, coordinates, complete);
+                    var route = Bootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete);
                     if (route == null)
                     { // route could not be calculated.
                         return null;
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = Bootstrapper.RoutingServiceInstance.GetInstructions(vehicle, route);
+                        var instruction = Bootstrapper.Get(instance).GetInstructions(vehicle, route);
 
                         if (fullFormat)
                         {
@@ -105,7 +112,7 @@ namespace OsmSharp.Service.Routing
                         }
                         else
                         {
-                            var featureCollection = Bootstrapper.RoutingServiceInstance.GetFeatures(route);
+                            var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
                             var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                             var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -123,7 +130,7 @@ namespace OsmSharp.Service.Routing
                     }
                     else
                     { // return a GeoJSON object.
-                        var featureCollection = Bootstrapper.RoutingServiceInstance.GetFeatures(route);
+                        var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
                         var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                         var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -135,10 +142,17 @@ namespace OsmSharp.Service.Routing
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
-            Get["/routing/network"] = _ =>
+            Get["{instance}/routing/network"] = _ =>
             {
                 try
                 {
+                    // get instance and check if active.
+                    string instance = _.instance;
+                    if (!Bootstrapper.IsActive(instance))
+                    { // oeps, instance not active!
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                    }
+
                     // bind the query if any.
                     var query = this.Bind<BoxQuery>();
 
@@ -164,7 +178,7 @@ namespace OsmSharp.Service.Routing
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("box coordinates are invalid.");
                     }
 
-                    var features = Bootstrapper.RoutingServiceInstance.GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
+                    var features = Bootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
                     var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                     return geoJsonWriter.Write(features);
                 }

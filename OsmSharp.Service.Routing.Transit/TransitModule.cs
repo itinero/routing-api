@@ -29,50 +29,55 @@ namespace OsmSharp.Service.Routing
     {
         public TransitModule()
         {
-            Get["/transit/status"] = _ =>
+            Get["{instance}/transit/status"] = _ =>
+            {
+                // get instance and check if active.
+                string instance = _.instance;
+
+                if (Bootstrapper.IsActive(instance))
                 {
-                    if(Bootstrapper.IsInitialized())
-                    {
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
-                        {
-                            Available = true,
-                            Info = "Initialized."
-                        });
-                    }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
                     {
-                        Available = false,
-                        Info = "Not initialized."
+                        Available = true,
+                        Info = "Initialized."
                     });
-                };
-            Get["/transit/operators"] = _ =>
+                }
+                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
                 {
-                    // check if initialized.
-                    if(!Bootstrapper.IsInitialized())
-                    {
-                        return Negotiate.WithStatusCode(HttpStatusCode.ServiceUnavailable);
-                    }
-
-                    // bind the query if any.
-                    var query = this.Bind<SearchQuery>();
-
-                    var operators = new Operator[0];
-                    if (!string.IsNullOrWhiteSpace(query.q))
-                    { // there is a 'q' property, this is a search request.
-                        operators = Bootstrapper.TransitServiceInstance.GetOperators(query.q).ToArray();
-                    }
-                    else
-                    { // get all operators.
-                        operators = Bootstrapper.TransitServiceInstance.GetOperators().ToArray();
-                    }
-                    return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(operators);
-                };
-            Get["/transit/operators/{id}"] = _ =>
+                    Available = false,
+                    Info = "Not initialized."
+                });
+            };
+            Get["{instance}/transit/operators"] = _ =>
             {
-                // check if initialized.
-                if (!Bootstrapper.IsInitialized())
-                {
-                    return Negotiate.WithStatusCode(HttpStatusCode.ServiceUnavailable);
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
+                // bind the query if any.
+                var query = this.Bind<SearchQuery>();
+
+                var operators = new Operator[0];
+                if (!string.IsNullOrWhiteSpace(query.q))
+                { // there is a 'q' property, this is a search request.
+                    operators = Bootstrapper.Get(instance).GetOperators(query.q).ToArray();
+                }
+                else
+                { // get all operators.
+                    operators = Bootstrapper.Get(instance).GetOperators().ToArray();
+                }
+                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(operators);
+            };
+            Get["{instance}/transit/operators/{id}"] = _ =>
+            {
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
                 // bind the id query if any.
@@ -81,16 +86,17 @@ namespace OsmSharp.Service.Routing
                 if (query != null && !string.IsNullOrWhiteSpace(query.id))
                 {
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(
-                        Bootstrapper.TransitServiceInstance.GetOperator(query.id));
+                        Bootstrapper.Get(instance).GetOperator(query.id));
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             };
-            Get["/transit/stops"] = _ =>
+            Get["{instance}/transit/stops"] = _ =>
             {
-                // check if initialized.
-                if (!Bootstrapper.IsInitialized())
-                {
-                    return Negotiate.WithStatusCode(HttpStatusCode.ServiceUnavailable);
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
                 // bind the query if any.
@@ -99,20 +105,21 @@ namespace OsmSharp.Service.Routing
                 var stops = new Stop[0];
                 if (!string.IsNullOrWhiteSpace(query.q))
                 { // there is a 'q' property, this is a search request.
-                    stops = Bootstrapper.TransitServiceInstance.GetStops(query.q).ToArray();
+                    stops = Bootstrapper.Get(instance).GetStops(query.q).ToArray();
                 }
                 else
                 { // get all operators.
-                    stops = Bootstrapper.TransitServiceInstance.GetStops().ToArray();
+                    stops = Bootstrapper.Get(instance).GetStops().ToArray();
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
             };
-            Get["/transit/stops/{operatorid}"] = _ =>
+            Get["{instance}/transit/stops/{operatorid}"] = _ =>
             {
-                // check if initialized.
-                if (!Bootstrapper.IsInitialized())
-                {
-                    return Negotiate.WithStatusCode(HttpStatusCode.ServiceUnavailable);
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!Bootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
                 // bind the id query if any.
@@ -123,11 +130,11 @@ namespace OsmSharp.Service.Routing
                 { // there is a query.
                     if(!string.IsNullOrWhiteSpace(query.q))
                     { // there is a search.
-                        stops = Bootstrapper.TransitServiceInstance.GetStopsForOperator(query.id, query.q).ToArray();
+                        stops = Bootstrapper.Get(instance).GetStopsForOperator(query.id, query.q).ToArray();
                     }
                     else
                     {
-                        stops = Bootstrapper.TransitServiceInstance.GetStopsForOperator(query.id).ToArray();
+                        stops = Bootstrapper.Get(instance).GetStopsForOperator(query.id).ToArray();
                     }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
                 }

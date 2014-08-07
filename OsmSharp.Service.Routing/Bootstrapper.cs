@@ -19,6 +19,7 @@
 using OsmSharp.Routing;
 using OsmSharp.Service.Routing.Wrappers;
 using System;
+using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing
 {
@@ -28,53 +29,50 @@ namespace OsmSharp.Service.Routing
     public static class Bootstrapper
     {
         /// <summary>
-        /// Holds the routing service instance.
+        /// Holds the routing service instances.
         /// </summary>
-        private static RoutingServiceWrapperBase _routingServiceInstance;
+        private static Dictionary<string, RoutingServiceWrapperBase> _routingServiceInstances = new Dictionary<string,RoutingServiceWrapperBase>();
 
         /// <summary>
         /// Returns true if a routing service has been initialized.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <returns></returns>
-        public static bool IsInitialized()
+        public static bool IsActive(string instance)
         {
-            return _routingServiceInstance != null;
+            return _routingServiceInstances != null &&
+                _routingServiceInstances.ContainsKey(instance);
         }
 
         /// <summary>
         /// Returns the routing service instance.
         /// </summary>
-        public static RoutingServiceWrapperBase RoutingServiceInstance
+        public static RoutingServiceWrapperBase Get(string instance)
         {
-            get
-            {
-                if (_routingServiceInstance == null)
-                {
-                    throw new InvalidOperationException("Bootstrapper was not initialized!");
-                }
-                return _routingServiceInstance;
-            }
+            return _routingServiceInstances[instance];
         }
 
         /// <summary>
         /// Initializes the routing service.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="routingServiceInstance"></param>
-        public static void Initialize(RoutingServiceWrapperBase routingServiceInstance)
+        public static void Add(string instance, RoutingServiceWrapperBase routingServiceInstance)
         {
-            _routingServiceInstance = routingServiceInstance;
+            _routingServiceInstances.Add(instance, routingServiceInstance);
         }
 
         /// <summary>
         /// Initializes this router API with an existing router.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="router"></param>
-        public static void Initialize(Router router)
+        public static void Add(string instance, Router router)
         {
             // make sure vehicle are registered.
             Vehicle.RegisterVehicles();
 
-            _routingServiceInstance = new RouterWrapper(router);
+            Bootstrapper.Add(instance, new RouterWrapper(router));
         }
     }
 }

@@ -15,5 +15,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Domain.Queries
         public string time { get; set; }
 
         public string max { get; set; }
+
+        public string zoom { get; set; }
     }
 }

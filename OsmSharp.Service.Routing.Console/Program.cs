@@ -27,38 +27,9 @@ namespace OsmSharp.Service.Routing.Console
             OsmSharp.Logging.Log.RegisterListener(
                 new OsmSharp.WinForms.UI.Logging.ConsoleTraceListener());
 
-            //// read the sample feed.
-            //var reader = new GTFSReader<GTFSFeed>(false);
-            //reader.DateTimeReader = (dateString) =>
-            //{
-            //    var year = int.Parse(dateString.Substring(0, 4));
-            //    var month = int.Parse(dateString.Substring(4, 2));
-            //    var day = int.Parse(dateString.Substring(6, 2));
-            //    return new System.DateTime(year, month, day);
-            //};
-            //var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
-
-            //SelfHost.Start(new Uri("http://localhost:1234/"), feed);
-
-            //// start host.
-            //using (var host = new NancyHost(new Uri("http://localhost:1234")))
-            //{
-            //    host.Start();
-            //    System.Console.ReadLine();
-            //}
-
-            //SelfHost.Start(new Uri("http://localhost:1234/"), Router.CreateLiveFrom(
-            //    new PBFOsmStreamSource(new FileInfo(@"D:\OSM\bin\kempen-big.osm.pbf").OpenRead()), new OsmRoutingInterpreter()));
-
-            // read the sample feed.
+            // read the nmbs feed.
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS Feed...");
             var reader = new GTFSReader<GTFSFeed>(false);
-            reader.DateTimeReader = (dateString) =>
-            {
-                var year = int.Parse(dateString.Substring(0, 4));
-                var month = int.Parse(dateString.Substring(4, 2));
-                var day = int.Parse(dateString.Substring(6, 2));
-                return new System.DateTime(year, month, day);
-            };
             var nmbs = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
 
             // prefix all ids in the feeds.
@@ -82,6 +53,7 @@ namespace OsmSharp.Service.Routing.Console
                 trip.RouteId = "nmbs_" + trip.RouteId;
             }
 
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
             var feedDeLijn = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\delijn\"));
 
             // prefix all ids in the feeds.
@@ -89,12 +61,21 @@ namespace OsmSharp.Service.Routing.Console
             {
                 stop.Tag = "De Lijn";
             }
+
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
             var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\temp\belgium-latest.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(nmbs);
-            multiModalRouter.AddGTFSFeed(feedDeLijn);
 
-            OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"), multiModalRouter);
+            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
+
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
+            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\temp\belgium-latest.simple.flat.routing").OpenRead(),
+                new OsmRoutingInterpreter());
+            multiModalRouter.AddGTFSFeed(nmbs);
+            multiModalRouter.AddGTFSFeed(feedDeLijn);
+            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trainandbus", multiModalRouter);
+            OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"));
         }
     }
 }

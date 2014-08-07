@@ -14,14 +14,8 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// Starts a self-hosted instance of the transit API.
         /// </summary>
         /// <param name="uri"></param>
-        /// <param name="transitRouter"></param>
-        public static void Start(Uri uri, MultiModalRouter transitRouter)
+        public static void Start(Uri uri)
         {
-            // initialize all APIs, a multi modal router should be able to support all of them.
-            OsmSharp.Service.Routing.Bootstrapper.Initialize(transitRouter);
-            OsmSharp.Service.Routing.Transit.Bootstrapper.Initialize(new Wrappers.TransitServiceWrapper(transitRouter));
-            OsmSharp.Service.Routing.MultiModal.Bootstrapper.Initialize(new Wrappers.MultiModalWrapper(transitRouter));
-
             // start host.
             using (var host = new NancyHost(uri))
             {
@@ -29,6 +23,19 @@ namespace OsmSharp.Service.Routing.MultiModal
                 Console.WriteLine("Service started.");
                 Console.ReadLine();
             }
+        }
+
+        /// <summary>
+        /// Starts a self-hosted instance of the transit API.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="transitRouter"></param>
+        public static void Add(string instance, MultiModalRouter transitRouter)
+        {
+            // initialize all APIs, a multi modal router should be able to support all of them.
+            OsmSharp.Service.Routing.Bootstrapper.Add(instance, transitRouter);
+            OsmSharp.Service.Routing.Transit.Bootstrapper.Add(instance, new Wrappers.TransitServiceWrapper(transitRouter));
+            OsmSharp.Service.Routing.MultiModal.Bootstrapper.Add(instance, new Wrappers.MultiModalWrapper(transitRouter));
         }
     }
 }

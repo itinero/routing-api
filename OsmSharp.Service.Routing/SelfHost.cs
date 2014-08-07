@@ -31,11 +31,12 @@ namespace OsmSharp.Service.Routing
         /// Starts a self-hosted instance of the routing API.
         /// </summary>
         /// <param name="uri"></param>
+        /// <param name="instance">The instance name.</param>
         /// <param name="transitServiceWrapper"></param>
-        public static void Start(Uri uri, RoutingServiceWrapperBase routingServiceWrapper)
+        public static void Start(Uri uri, string instance, RoutingServiceWrapperBase routingServiceWrapper)
         {
             // initialize API.
-            Bootstrapper.Initialize(routingServiceWrapper);
+            Bootstrapper.Add(instance, routingServiceWrapper);
 
             // start host.
             using (var host = new NancyHost(uri))
@@ -50,10 +51,10 @@ namespace OsmSharp.Service.Routing
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="router"></param>
-        public static void Start(Uri uri, Router router)
+        public static void Start(Uri uri, string instance, Router router)
         {
             // initialize API.
-            Bootstrapper.Initialize(router);
+            Bootstrapper.Add(instance, router);
 
             // start host.
             using (var host = new NancyHost(uri))
@@ -62,6 +63,28 @@ namespace OsmSharp.Service.Routing
                 Console.WriteLine("Routing service listening at: {0}", uri.ToInvariantString());
                 Console.ReadLine();
             }
+        }
+
+        /// <summary>
+        /// Adds a new routing instances to the current hosting.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="routingServiceWrapper"></param>
+        public static void Add(string instance, RoutingServiceWrapperBase routingServiceWrapper)
+        {
+            // initialize API.
+            Bootstrapper.Add(instance, routingServiceWrapper);
+        }
+
+        /// <summary>
+        /// Adds a new routing instances to the current hosting.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="router"></param>
+        public static void Add(string instance, Router router)
+        {
+            // initialize API.
+            Bootstrapper.Add(instance, router);
         }
     }
 }

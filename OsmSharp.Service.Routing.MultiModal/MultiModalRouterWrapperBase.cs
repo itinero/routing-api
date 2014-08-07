@@ -33,8 +33,9 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// <param name="vehicles"></param>
         /// <param name="location"></param>
         /// <param name="max"></param>
+        /// <param name="sampleZoom"></param>
         /// <returns></returns>
-        public abstract Dictionary<GeoCoordinate, double> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max);
+        public abstract IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max, int sampleZoom);
 
         /// <summary>
         /// Calculates instructions for the given route and vehicle.

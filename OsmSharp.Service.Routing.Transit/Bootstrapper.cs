@@ -19,6 +19,7 @@
 using OsmSharp.Routing.Transit;
 using OsmSharp.Service.Routing.Transit.Wrappers;
 using System;
+using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing.Transit
 {
@@ -28,50 +29,48 @@ namespace OsmSharp.Service.Routing.Transit
     public static class Bootstrapper
     {
         /// <summary>
-        /// Holds the transit service instance.
+        /// Holds the transit service instances.
         /// </summary>
-        private static TransitServiceWrapperBase _transitServiceInstance;
+        private static Dictionary<string, TransitServiceWrapperBase> _transitServiceInstances = new Dictionary<string,TransitServiceWrapperBase>();
 
         /// <summary>
         /// Returns true if a transit service has been initialized.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <returns></returns>
-        public static bool IsInitialized()
+        public static bool IsActive(string instance)
         {
-            return _transitServiceInstance != null;
+            return _transitServiceInstances != null &&
+                _transitServiceInstances.ContainsKey(instance);
         }
 
         /// <summary>
         /// Returns the transit service instance.
         /// </summary>
-        public static TransitServiceWrapperBase TransitServiceInstance
+        /// <param name="instance">The instance name.</param>
+        public static TransitServiceWrapperBase Get(string instance)
         {
-            get
-            {
-                if(_transitServiceInstance == null)
-                {
-                    throw new InvalidOperationException("Bootstrapper was not initialized!");
-                }
-                return _transitServiceInstance;
-            }
+            return _transitServiceInstances[instance];
         }
 
         /// <summary>
         /// Initializes the transit service.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="transitServiceInstance"></param>
-        public static void Initialize(TransitServiceWrapperBase transitServiceInstance)
+        public static void Add(string instance, TransitServiceWrapperBase transitServiceInstance)
         {
-            _transitServiceInstance = transitServiceInstance;
+            _transitServiceInstances.Add(instance, transitServiceInstance);
         }
 
         /// <summary>
         /// Initializes this transit API with an existing transit router.
         /// </summary>
+        /// <param name="instance">The instance name.</param>
         /// <param name="transitRouter"></param>
-        public static void Initialize(TransitRouter transitRouter)
+        public static void Add(string instance, TransitRouter transitRouter)
         {
-            _transitServiceInstance = new TransitRouterWrapper(transitRouter);
+            Bootstrapper.Add(instance, new TransitRouterWrapper(transitRouter));
         }
     }
 }
