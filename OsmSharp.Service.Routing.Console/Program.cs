@@ -28,7 +28,7 @@ namespace OsmSharp.Service.Routing.Console
                 new OsmSharp.WinForms.UI.Logging.ConsoleTraceListener());
 
             // read the nmbs feed.
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS Feed...");
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS/SNCB Feed...");
             var reader = new GTFSReader<GTFSFeed>(false);
             var nmbs = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\nmbs\"));
 
@@ -59,7 +59,46 @@ namespace OsmSharp.Service.Routing.Console
             // prefix all ids in the feeds.
             foreach (var stop in feedDeLijn.Stops)
             {
+                stop.Id = "delijn_" + stop.Id;
                 stop.Tag = "De Lijn";
+            }
+            foreach (var item in feedDeLijn.Routes)
+            {
+                item.Id = "delijn_" + item.Id;
+            }
+            foreach (var stopTime in feedDeLijn.StopTimes)
+            {
+                stopTime.StopId = "delijn_" + stopTime.StopId;
+                stopTime.TripId = "delijn_" + stopTime.TripId;
+            }
+            foreach (var trip in feedDeLijn.Trips)
+            {
+                trip.Id = "delijn_" + trip.Id;
+                trip.RouteId = "delijn_" + trip.RouteId;
+            }
+
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading MIVB/STIB Feed...");
+            var feedMivb = reader.Read(new GTFS.IO.GTFSDirectorySource(@"d:\work\osmsharp_data\stib\"));
+
+            // prefix all ids in the feeds.
+            foreach (var stop in feedMivb.Stops)
+            {
+                stop.Id = "mivb_" + stop.Id;
+                stop.Tag = "MIVB";
+            }
+            foreach (var item in feedMivb.Routes)
+            {
+                item.Id = "mivb_" + item.Id;
+            }
+            foreach (var stopTime in feedMivb.StopTimes)
+            {
+                stopTime.StopId = "mivb_" + stopTime.StopId;
+                stopTime.TripId = "mivb_" + stopTime.TripId;
+            }
+            foreach (var trip in feedMivb.Trips)
+            {
+                trip.Id = "mivb_" + trip.Id;
+                trip.RouteId = "mivb_" + trip.RouteId;
             }
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
@@ -74,6 +113,7 @@ namespace OsmSharp.Service.Routing.Console
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(nmbs);
             multiModalRouter.AddGTFSFeed(feedDeLijn);
+            multiModalRouter.AddGTFSFeed(feedMivb);
             OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trainandbus", multiModalRouter);
             OsmSharp.Service.Routing.MultiModal.SelfHost.Start(new Uri("http://localhost:1234/"));
         }
