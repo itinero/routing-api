@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace OsmSharp.Service.Routing
 {
+    /// <summary>
+    /// Contains extensions for nancy.
+    /// </summary>
     public static class NancyExtensions
     {
+        /// <summary>
+        /// Adds cors headers to reposonse.
+        /// </summary>
+        /// <param name="module"></param>
         public static void EnableCors(this NancyModule module)
         {
             module.After.AddItemToEndOfPipeline(x =>

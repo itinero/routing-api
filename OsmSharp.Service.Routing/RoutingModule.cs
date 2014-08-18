@@ -13,8 +13,14 @@ using System.Threading.Tasks;
 
 namespace OsmSharp.Service.Routing
 {
+    /// <summary>
+    /// The routing module.
+    /// </summary>
     public class RoutingModule : NancyModule
     {
+        /// <summary>
+        /// Creates a new routing module.
+        /// </summary>
         public RoutingModule()
         {
             Get["{instance}/routing"] = _ =>

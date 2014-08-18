@@ -32,7 +32,7 @@ namespace OsmSharp.Service.Routing
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="instance">The instance name.</param>
-        /// <param name="transitServiceWrapper"></param>
+        /// <param name="routingServiceWrapper"></param>
         public static void Start(Uri uri, string instance, RoutingServiceWrapperBase routingServiceWrapper)
         {
             // initialize API.
@@ -50,12 +50,8 @@ namespace OsmSharp.Service.Routing
         /// Starts a self-hosted instance of the transit API.
         /// </summary>
         /// <param name="uri"></param>
-        /// <param name="router"></param>
-        public static void Start(Uri uri, string instance, Router router)
+        public static void Start(Uri uri)
         {
-            // initialize API.
-            Bootstrapper.Add(instance, router);
-
             // start host.
             using (var host = new NancyHost(uri))
             {
