@@ -26,101 +26,83 @@ namespace OsmSharp.Service.Routing.Console
             OsmSharp.Logging.Log.RegisterListener(
                 new OsmSharp.WinForms.UI.Logging.ConsoleTraceListener());
 
+            // create the reader.
+            var reader = new GTFSReader<GTFSFeed>(false);
+
+            // read nl.
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NL Feed...");
+            var feedNl = BuildFeed(reader, @"d:\work\osmsharp_data\nl\", "nl_", "NL");
+
+            // read tec.
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading TEC Feed...");
+            var feedTec = BuildFeed(reader, @"d:\work\osmsharp_data\tec\", "tec_", "TEC");
+
             // read the nmbs feed.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS/SNCB Feed...");
-            var reader = new GTFSReader<GTFSFeed>(false);
-            var nmbs = reader.Read(new GTFS.IO.GTFSDirectorySource(@"c:\work\osmsharp_data\nmbs\"));
+            var feedNmbs = BuildFeed(reader, @"d:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
 
-            // prefix all ids in the feeds.
-            foreach (var stop in nmbs.Stops)
-            {
-                stop.Id = "nmbs_" + stop.Id;
-                stop.Tag = "NMBS";
-            }
-            foreach (var item in nmbs.Routes)
-            {
-                item.Id = "nmbs_" + item.Id;
-            }
-            foreach (var stopTime in nmbs.StopTimes)
-            {
-                stopTime.StopId = "nmbs_" + stopTime.StopId;
-                stopTime.TripId = "nmbs_" + stopTime.TripId;
-            }
-            foreach (var trip in nmbs.Trips)
-            {
-                trip.Id = "nmbs_" + trip.Id;
-                trip.RouteId = "nmbs_" + trip.RouteId;
-            }
-
+            // read delijn feed.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
-            var feedDeLijn = reader.Read(new GTFS.IO.GTFSDirectorySource(@"c:\work\osmsharp_data\delijn\"));
-
-            // prefix all ids in the feeds.
-            foreach (var stop in feedDeLijn.Stops)
-            {
-                stop.Id = "delijn_" + stop.Id;
-                stop.Tag = "De Lijn";
-            }
-            foreach (var item in feedDeLijn.Routes)
-            {
-                item.Id = "delijn_" + item.Id;
-            }
-            foreach (var stopTime in feedDeLijn.StopTimes)
-            {
-                stopTime.StopId = "delijn_" + stopTime.StopId;
-                stopTime.TripId = "delijn_" + stopTime.TripId;
-            }
-            foreach (var trip in feedDeLijn.Trips)
-            {
-                trip.Id = "delijn_" + trip.Id;
-                trip.RouteId = "delijn_" + trip.RouteId;
-            }
-
+            var feedDeLijn = BuildFeed(reader, @"d:\work\osmsharp_data\delijn\", "delijn_", "De Lijn");
+            
+            // read mivb.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading MIVB/STIB Feed...");
-            var feedMivb = reader.Read(new GTFS.IO.GTFSDirectorySource(@"c:\work\osmsharp_data\stib\"));
+            var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
 
-            // prefix all ids in the feeds.
-            foreach (var stop in feedMivb.Stops)
-            {
-                stop.Id = "mivb_" + stop.Id;
-                stop.Tag = "MIVB";
-            }
-            foreach (var item in feedMivb.Routes)
-            {
-                item.Id = "mivb_" + item.Id;
-            }
-            foreach (var stopTime in feedMivb.StopTimes)
-            {
-                stopTime.StopId = "mivb_" + stopTime.StopId;
-                stopTime.TripId = "mivb_" + stopTime.TripId;
-            }
-            foreach (var trip in feedMivb.Trips)
-            {
-                trip.Id = "mivb_" + trip.Id;
-                trip.RouteId = "mivb_" + trip.RouteId;
-            }
-
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\temp\belgium-latest.osm.pbf.routing").OpenRead(),
-                new OsmRoutingInterpreter());
-            //var multiModalRouter = MultiModalRouter.CreateFrom(new PBFOsmStreamSource(new FileInfo(@"c:\OSM\bin\belgium-latest.osm.pbf").OpenRead()),
+            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
+            //var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\benelux-latest.osm.pbf.simple.flat.routing").OpenRead(),
             //    new OsmRoutingInterpreter());
 
-            multiModalRouter.AddGTFSFeed(nmbs);
+            //multiModalRouter.AddGTFSFeed(nmbs);
 
-            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
+            //OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
-            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\temp\belgium-latest.osm.pbf.routing").OpenRead(),
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\benelux-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
-            //multiModalRouter = MultiModalRouter.CreateFrom(new PBFOsmStreamSource(new FileInfo(@"c:\OSM\bin\waarschoot.osm.pbf").OpenRead()),
-            //    new OsmRoutingInterpreter());
-            multiModalRouter.AddGTFSFeed(nmbs);
+            multiModalRouter.AddGTFSFeed(feedNl);
+            multiModalRouter.AddGTFSFeed(feedTec);
+            multiModalRouter.AddGTFSFeed(feedNmbs);
             multiModalRouter.AddGTFSFeed(feedDeLijn);
             multiModalRouter.AddGTFSFeed(feedMivb);
 
             OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trainandbus", multiModalRouter);
             SelfHost.Start(new Uri("http://localhost:1234/"));
+        }
+
+        /// <summary>
+        /// Builds a GTFS feed from the given path and prefixes with the given prefix.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="path"></param>
+        /// <param name="prefix"></param>
+        /// <param name="stopTag"></param>
+        /// <returns></returns>
+        private static GTFSFeed BuildFeed(GTFSReader<GTFSFeed> reader, string path, string prefix, string stopTag)
+        {
+            var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(path));
+
+            // prefix all ids in the feeds.
+            foreach (var stop in feed.Stops)
+            {
+                stop.Id = prefix + stop.Id;
+                stop.Tag = stopTag;
+            }
+            foreach (var item in feed.Routes)
+            {
+                item.Id = prefix + item.Id;
+            }
+            foreach (var stopTime in feed.StopTimes)
+            {
+                stopTime.StopId = prefix + stopTime.StopId;
+                stopTime.TripId = prefix + stopTime.TripId;
+            }
+            foreach (var trip in feed.Trips)
+            {
+                trip.Id = prefix + trip.Id;
+                trip.RouteId = prefix + trip.RouteId;
+            }
+            return feed;
         }
     }
 }
