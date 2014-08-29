@@ -29,42 +29,38 @@ namespace OsmSharp.Service.Routing.Console
             // create the reader.
             var reader = new GTFSReader<GTFSFeed>(false);
 
-            // read nl.
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NL Feed...");
-            var feedNl = BuildFeed(reader, @"d:\work\osmsharp_data\nl\", "nl_", "NL");
+            //// read nl.
+            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NL Feed...");
+            //var feedNl = BuildFeed(reader, @"d:\work\osmsharp_data\nl\", "nl_", "NL");
 
-            // read tec.
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading TEC Feed...");
-            var feedTec = BuildFeed(reader, @"d:\work\osmsharp_data\tec\", "tec_", "TEC");
+            //// read tec.
+            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading TEC Feed...");
+            //var feedTec = BuildFeed(reader, @"d:\work\osmsharp_data\tec\", "tec_", "TEC");
 
             // read the nmbs feed.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS/SNCB Feed...");
             var feedNmbs = BuildFeed(reader, @"d:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
 
-            // read delijn feed.
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
-            var feedDeLijn = BuildFeed(reader, @"d:\work\osmsharp_data\delijn\", "delijn_", "De Lijn");
+            //// read delijn feed.
+            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
+            //var feedDeLijn = BuildFeed(reader, @"d:\work\osmsharp_data\delijn\", "delijn_", "De Lijn");
             
-            // read mivb.
-            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading MIVB/STIB Feed...");
-            var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
+            //// read mivb.
+            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading MIVB/STIB Feed...");
+            //var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
 
-            //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
-            //var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\benelux-latest.osm.pbf.simple.flat.routing").OpenRead(),
-            //    new OsmRoutingInterpreter());
+            OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+                new OsmRoutingInterpreter());
 
-            //multiModalRouter.AddGTFSFeed(nmbs);
+            multiModalRouter.AddGTFSFeed(feedNmbs);
 
-            //OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
+            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\benelux-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
-            multiModalRouter.AddGTFSFeed(feedNl);
-            multiModalRouter.AddGTFSFeed(feedTec);
             multiModalRouter.AddGTFSFeed(feedNmbs);
-            multiModalRouter.AddGTFSFeed(feedDeLijn);
-            multiModalRouter.AddGTFSFeed(feedMivb);
 
             OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trainandbus", multiModalRouter);
             SelfHost.Start(new Uri("http://localhost:1234/"));

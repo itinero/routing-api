@@ -198,7 +198,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
-
+                long requestStart = DateTime.Now.Ticks;
                 OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "New multimodal range request.");
                 try
                 {
@@ -263,7 +263,6 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
-                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
                     int max;
@@ -278,7 +277,9 @@ namespace OsmSharp.Service.Routing.MultiModal
                         zoom = 16;
                     }
                     var range = Bootstrapper.Get(instance).GetWithinRange(dt, vehicles, coordinates[0], max, zoom);
-                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "Request finished.");
+                    long afterRequest = DateTime.Now.Ticks;
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
+                        string.Format("Request finished after {0}ms.", (new TimeSpan(afterRequest - requestStart)).TotalMilliseconds));
 
                     // output all vertex and times.
                     var vertexAndTimes = new List<VertexAndTime>();
