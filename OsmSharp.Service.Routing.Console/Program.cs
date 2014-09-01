@@ -39,7 +39,7 @@ namespace OsmSharp.Service.Routing.Console
 
             // read the nmbs feed.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS/SNCB Feed...");
-            var feedNmbs = BuildFeed(reader, @"d:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
+            var feedNmbs = BuildFeed(reader, @"c:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
 
             //// read delijn feed.
             //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
@@ -50,7 +50,7 @@ namespace OsmSharp.Service.Routing.Console
             //var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
 
             multiModalRouter.AddGTFSFeed(feedNmbs);
@@ -58,7 +58,7 @@ namespace OsmSharp.Service.Routing.Console
             OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
-            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(feedNmbs);
 
@@ -79,21 +79,21 @@ namespace OsmSharp.Service.Routing.Console
             var feed = reader.Read(new GTFS.IO.GTFSDirectorySource(path));
 
             // prefix all ids in the feeds.
-            foreach (var stop in feed.Stops)
+            foreach (var stop in feed.GetStops())
             {
                 stop.Id = prefix + stop.Id;
                 stop.Tag = stopTag;
             }
-            foreach (var item in feed.Routes)
+            foreach (var item in feed.GetRoutes())
             {
                 item.Id = prefix + item.Id;
             }
-            foreach (var stopTime in feed.StopTimes)
+            foreach (var stopTime in feed.GetStopTimes())
             {
                 stopTime.StopId = prefix + stopTime.StopId;
                 stopTime.TripId = prefix + stopTime.TripId;
             }
-            foreach (var trip in feed.Trips)
+            foreach (var trip in feed.GetTrips())
             {
                 trip.Id = prefix + trip.Id;
                 trip.RouteId = prefix + trip.RouteId;
