@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>OsmSharp.Service.Routing.ASP</title>
+    <title>OsmSharp Routing API</title>
 
 	<style type="text/css">
 
@@ -14,7 +14,8 @@
 
 </head>
 <body>
-	<img src="@Path['~/Content/nancy-logo.png']" alt="Nancy logo" /><br />
-	This view was rendered using the SuperSimpleViewEngine
+	<img src="@Path['~/Content/osmsharp_logo2000.png']" alt="OsmSharp logo" height="450" width="450"/><br />
+
+	OsmSharp Routing API
 </body>
 </html>
