@@ -1,26 +1,16 @@
-﻿using GTFS;
-using Nancy.Hosting.Self;
-using OsmSharp.Osm.PBF.Streams;
-using OsmSharp.Routing;
-using OsmSharp.Routing.Osm.Interpreter;
-using OsmSharp.Routing.Transit.MultiModal;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OsmSharp.Service.Routing.Console
+﻿namespace OsmSharp.Service.Routing.Selfhost
 {
-    internal class Program
+    using System;
+    using Nancy.Hosting.Self;
+    using GTFS;
+    using OsmSharp.Routing.Transit.MultiModal;
+    using System.IO;
+    using OsmSharp.Routing.Osm.Interpreter;
+
+    class Program
     {
-        /// <summary>
-        /// The main entry point of the application.
-        /// </summary>
-        /// <param name="args"></param>
-        private static void Main(string[] args)
-        {
+        static void Main(string[] args)
+        { 
             // enable logging and use the console as output.
             OsmSharp.Logging.Log.Enable();
             OsmSharp.Logging.Log.RegisterListener(
@@ -39,31 +29,41 @@ namespace OsmSharp.Service.Routing.Console
 
             // read the nmbs feed.
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading NMBS/SNCB Feed...");
-            var feedNmbs = BuildFeed(reader, @"c:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
+            var feedNmbs = BuildFeed(reader, @"d:\work\osmsharp_data\nmbs\", "nmbs_", "NMBS");
 
             //// read delijn feed.
             //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading De Lijn Feed...");
             //var feedDeLijn = BuildFeed(reader, @"d:\work\osmsharp_data\delijn\", "delijn_", "De Lijn");
-            
+
             //// read mivb.
             //OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Reading MIVB/STIB Feed...");
             //var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
 
             multiModalRouter.AddGTFSFeed(feedNmbs);
 
-            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trains", multiModalRouter);
+            OsmSharp.Service.Routing.MultiModal.ApiBootstrapper.Add("trains", multiModalRouter);
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
-            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"c:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(feedNmbs);
 
-            OsmSharp.Service.Routing.MultiModal.SelfHost.Add("trainandbus", multiModalRouter);
-            SelfHost.Start(new Uri("http://localhost:1234/"));
+            OsmSharp.Service.Routing.MultiModal.ApiBootstrapper.Add("trainandbus", multiModalRouter);
+
+            var uri = new Uri("http://localhost:1234");
+
+            using (var host = new NancyHost(uri))
+            {
+                host.Start();
+
+                Console.WriteLine("Your application is running on " + uri);
+                Console.WriteLine("Press any [Enter] to close the host.");
+                Console.ReadLine();
+            }
         }
 
         /// <summary>

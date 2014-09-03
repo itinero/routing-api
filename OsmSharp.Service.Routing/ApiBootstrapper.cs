@@ -16,61 +16,63 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using OsmSharp.Routing.Transit;
-using OsmSharp.Service.Routing.Transit.Wrappers;
+using OsmSharp.Routing;
+using OsmSharp.Service.Routing.Wrappers;
 using System;
 using System.Collections.Generic;
 
-namespace OsmSharp.Service.Routing.Transit
+namespace OsmSharp.Service.Routing
 {
     /// <summary>
-    /// A boot strapper to bootstrap the transit API module.
+    /// A boot strapper to bootstrap the routing API module.
     /// </summary>
-    public static class Bootstrapper
+    public static class ApiBootstrapper
     {
         /// <summary>
-        /// Holds the transit service instances.
+        /// Holds the routing service instances.
         /// </summary>
-        private static Dictionary<string, TransitServiceWrapperBase> _transitServiceInstances = new Dictionary<string,TransitServiceWrapperBase>();
+        private static Dictionary<string, RoutingServiceWrapperBase> _routingServiceInstances = new Dictionary<string,RoutingServiceWrapperBase>();
 
         /// <summary>
-        /// Returns true if a transit service has been initialized.
+        /// Returns true if a routing service has been initialized.
         /// </summary>
         /// <param name="instance">The instance name.</param>
         /// <returns></returns>
         public static bool IsActive(string instance)
         {
-            return _transitServiceInstances != null &&
-                _transitServiceInstances.ContainsKey(instance);
+            return _routingServiceInstances != null &&
+                _routingServiceInstances.ContainsKey(instance);
         }
 
         /// <summary>
-        /// Returns the transit service instance.
+        /// Returns the routing service instance.
         /// </summary>
-        /// <param name="instance">The instance name.</param>
-        public static TransitServiceWrapperBase Get(string instance)
+        public static RoutingServiceWrapperBase Get(string instance)
         {
-            return _transitServiceInstances[instance];
+            return _routingServiceInstances[instance];
         }
 
         /// <summary>
-        /// Initializes the transit service.
+        /// Initializes the routing service.
         /// </summary>
         /// <param name="instance">The instance name.</param>
-        /// <param name="transitServiceInstance"></param>
-        public static void Add(string instance, TransitServiceWrapperBase transitServiceInstance)
+        /// <param name="routingServiceInstance"></param>
+        public static void Add(string instance, RoutingServiceWrapperBase routingServiceInstance)
         {
-            _transitServiceInstances.Add(instance, transitServiceInstance);
+            _routingServiceInstances.Add(instance, routingServiceInstance);
         }
 
         /// <summary>
-        /// Initializes this transit API with an existing transit router.
+        /// Initializes this router API with an existing router.
         /// </summary>
         /// <param name="instance">The instance name.</param>
-        /// <param name="transitRouter"></param>
-        public static void Add(string instance, TransitRouter transitRouter)
+        /// <param name="router"></param>
+        public static void Add(string instance, Router router)
         {
-            Bootstrapper.Add(instance, new TransitRouterWrapper(transitRouter));
+            // make sure vehicle are registered.
+            Vehicle.RegisterVehicles();
+
+            ApiBootstrapper.Add(instance, new RouterWrapper(router));
         }
     }
 }

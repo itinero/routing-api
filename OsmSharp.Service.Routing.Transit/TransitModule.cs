@@ -34,7 +34,7 @@ namespace OsmSharp.Service.Routing
                 // get instance and check if active.
                 string instance = _.instance;
 
-                if (Bootstrapper.IsActive(instance))
+                if (ApiBootstrapper.IsActive(instance))
                 {
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
                     {
@@ -52,7 +52,7 @@ namespace OsmSharp.Service.Routing
             {
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -63,11 +63,11 @@ namespace OsmSharp.Service.Routing
                 var operators = new Operator[0];
                 if (!string.IsNullOrWhiteSpace(query.q))
                 { // there is a 'q' property, this is a search request.
-                    operators = Bootstrapper.Get(instance).GetOperators(query.q).ToArray();
+                    operators = ApiBootstrapper.Get(instance).GetOperators(query.q).ToArray();
                 }
                 else
                 { // get all operators.
-                    operators = Bootstrapper.Get(instance).GetOperators().ToArray();
+                    operators = ApiBootstrapper.Get(instance).GetOperators().ToArray();
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(operators);
             };
@@ -75,7 +75,7 @@ namespace OsmSharp.Service.Routing
             {
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -86,7 +86,7 @@ namespace OsmSharp.Service.Routing
                 if (query != null && !string.IsNullOrWhiteSpace(query.id))
                 {
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(
-                        Bootstrapper.Get(instance).GetOperator(query.id));
+                        ApiBootstrapper.Get(instance).GetOperator(query.id));
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             };
@@ -94,7 +94,7 @@ namespace OsmSharp.Service.Routing
             {
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -105,11 +105,11 @@ namespace OsmSharp.Service.Routing
                 var stops = new Stop[0];
                 if (!string.IsNullOrWhiteSpace(query.q))
                 { // there is a 'q' property, this is a search request.
-                    stops = Bootstrapper.Get(instance).GetStops(query.q).ToArray();
+                    stops = ApiBootstrapper.Get(instance).GetStops(query.q).ToArray();
                 }
                 else
                 { // get all operators.
-                    stops = Bootstrapper.Get(instance).GetStops().ToArray();
+                    stops = ApiBootstrapper.Get(instance).GetStops().ToArray();
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
             };
@@ -117,7 +117,7 @@ namespace OsmSharp.Service.Routing
             {
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -130,11 +130,11 @@ namespace OsmSharp.Service.Routing
                 { // there is a query.
                     if(!string.IsNullOrWhiteSpace(query.q))
                     { // there is a search.
-                        stops = Bootstrapper.Get(instance).GetStopsForOperator(query.id, query.q).ToArray();
+                        stops = ApiBootstrapper.Get(instance).GetStopsForOperator(query.id, query.q).ToArray();
                     }
                     else
                     {
-                        stops = Bootstrapper.Get(instance).GetStopsForOperator(query.id).ToArray();
+                        stops = ApiBootstrapper.Get(instance).GetStopsForOperator(query.id).ToArray();
                     }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
                 }

@@ -46,9 +46,6 @@
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\packages\Nancy.Hosting.Self.0.23.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
     <Reference Include="NetTopologySuite">
       <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net403-client\NetTopologySuite.dll</HintPath>
     </Reference>
@@ -90,13 +87,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OsmSharp.4.3.0.835-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.32, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.33, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.33-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.33, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.33-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.UI, Version=4.2.0.814, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OsmSharp.Transit.0.1.0.32\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
-    </Reference>
-    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.32, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.32\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
     <Reference Include="OsmSharp.UI, Version=4.3.0.835, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -127,7 +128,7 @@
     <Compile Include="..\SharedAssemblyVersion.cs">
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="Domain\CompleteRoute.cs" />
     <Compile Include="Domain\Queries\BoxQuery.cs" />
     <Compile Include="Domain\Queries\RoutingQuery.cs" />
@@ -136,7 +137,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoutingModule.cs" />
     <Compile Include="RoutingServiceWrapperBase.cs" />
-    <Compile Include="SelfHost.cs" />
     <Compile Include="Wrappers\RouterWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
