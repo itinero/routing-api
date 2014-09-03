@@ -25,7 +25,7 @@ namespace OsmSharp.Service.Routing.MultiModal
 
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -126,7 +126,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
 
                     // calculate route.
-                    var route = Bootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, complete);
+                    var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, complete);
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
                     if (route == null)
                     { // route could not be calculated.
@@ -134,7 +134,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = Bootstrapper.Get(instance).GetInstructions(vehicles, route);
+                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicles, route);
 
                         if (fullFormat)
                         {
@@ -146,7 +146,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         }
                         else
                         {
-                            var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
                             var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                             var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -164,7 +164,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     else
                     { // return a GeoJSON object.
-                        var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
+                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
 
                         return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
@@ -180,7 +180,7 @@ namespace OsmSharp.Service.Routing.MultiModal
 
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -193,7 +193,7 @@ namespace OsmSharp.Service.Routing.MultiModal
 
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -276,7 +276,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     {// could not parse date.
                         zoom = 16;
                     }
-                    var range = Bootstrapper.Get(instance).GetWithinRange(dt, vehicles, coordinates[0], max, zoom);
+                    var range = ApiBootstrapper.Get(instance).GetWithinRange(dt, vehicles, coordinates[0], max, zoom);
                     long afterRequest = DateTime.Now.Ticks;
                     OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
                         string.Format("Request finished after {0}ms.", (new TimeSpan(afterRequest - requestStart)).TotalMilliseconds));
@@ -314,7 +314,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                 // get instance and check if active.
                 string instance = _.instance;
 
-                if (Bootstrapper.IsActive(instance))
+                if (ApiBootstrapper.IsActive(instance))
                 {
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new Status()
                     {
@@ -332,7 +332,7 @@ namespace OsmSharp.Service.Routing.MultiModal
             {
                 // get instance and check if active.
                 string instance = _.instance;
-                if (!Bootstrapper.IsActive(instance))
+                if (!ApiBootstrapper.IsActive(instance))
                 { // oeps, instance not active!
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
@@ -366,7 +366,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("box coordinates are invalid.");
                     }
 
-                    var features = Bootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
+                    var features = ApiBootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
                     var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                     return geoJsonWriter.Write(features);
                 }

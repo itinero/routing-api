@@ -29,7 +29,7 @@ namespace OsmSharp.Service.Routing
                 {
                     // get instance and check if active.
                     string instance = _.instance;
-                    if(!Bootstrapper.IsActive(instance))
+                    if(!ApiBootstrapper.IsActive(instance))
                     { // oeps, instance not active!
                         return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                     }
@@ -99,14 +99,14 @@ namespace OsmSharp.Service.Routing
                     }
 
                     // calculate route.
-                    var route = Bootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete);
+                    var route = ApiBootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete);
                     if (route == null)
                     { // route could not be calculated.
                         return null;
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = Bootstrapper.Get(instance).GetInstructions(vehicle, route);
+                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicle, route);
 
                         if (fullFormat)
                         {
@@ -118,7 +118,7 @@ namespace OsmSharp.Service.Routing
                         }
                         else
                         {
-                            var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
                             var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                             var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -136,7 +136,7 @@ namespace OsmSharp.Service.Routing
                     }
                     else
                     { // return a GeoJSON object.
-                        var featureCollection = Bootstrapper.Get(instance).GetFeatures(route);
+                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
                         var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                         var geoJson = geoJsonWriter.Write(featureCollection);
 
@@ -154,7 +154,7 @@ namespace OsmSharp.Service.Routing
                 {
                     // get instance and check if active.
                     string instance = _.instance;
-                    if (!Bootstrapper.IsActive(instance))
+                    if (!ApiBootstrapper.IsActive(instance))
                     { // oeps, instance not active!
                         return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                     }
@@ -184,7 +184,7 @@ namespace OsmSharp.Service.Routing
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("box coordinates are invalid.");
                     }
 
-                    var features = Bootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
+                    var features = ApiBootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
                     var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
                     return geoJsonWriter.Write(features);
                 }
