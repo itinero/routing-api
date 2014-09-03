@@ -22,7 +22,6 @@
       <dependency id="NetTopologySuite.IO.GeoJSON" version="1.13.2" />
       <dependency id="Newtonsoft.Json" version="4.5.1" />
       <dependency id="OsmSharp" version="4.3.0.835-beta" />
-      <dependency id="Newtonsoft.Json" version="4.5.1" />
       <dependency id="OsmSharp.Transit" version="0.1.0.33-beta" />
     </dependencies>
     <tags>osm, openstreetmap, routing, GFTS, transit, nancyfx</tags>
