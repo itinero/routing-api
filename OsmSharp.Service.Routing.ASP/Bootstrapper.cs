@@ -45,7 +45,7 @@
             //var feedMivb = BuildFeed(reader, @"d:\work\osmsharp_data\stib\", "mivb_", "MIVB");
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trains instance...");
-            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            var multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.routing").OpenRead(),
                 new OsmRoutingInterpreter());
 
             multiModalRouter.AddGTFSFeed(feedNmbs);
@@ -53,7 +53,7 @@
             OsmSharp.Service.Routing.MultiModal.ApiBootstrapper.Add("trains", multiModalRouter);
 
             OsmSharp.Logging.Log.TraceEvent("Main", Logging.TraceEventType.Information, "Creating trainandbus instance...");
-            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.simple.flat.routing").OpenRead(),
+            multiModalRouter = MultiModalRouter.CreateFrom(new FileInfo(@"d:\OSM\bin\belgium-latest.osm.pbf.routing").OpenRead(),
                 new OsmRoutingInterpreter());
             multiModalRouter.AddGTFSFeed(feedNmbs);
 
