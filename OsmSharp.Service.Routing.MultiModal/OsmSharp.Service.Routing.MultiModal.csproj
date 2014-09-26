@@ -35,13 +35,13 @@
     <Reference Include="GeoAPI">
       <HintPath>..\packages\GeoAPI.1.7.2\lib\net403-client\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS, Version=0.0.3.59, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS, Version=0.0.3.61, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.59-beta\lib\GTFS.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.61-beta\lib\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO, Version=0.0.3.59, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GTFS.IO, Version=0.0.3.61, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.59-beta\lib\GTFS.IO.dll</HintPath>
+      <HintPath>..\packages\GTFS.0.0.3.61-beta\lib\GTFS.IO.dll</HintPath>
     </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
@@ -87,13 +87,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OsmSharp.4.3.0.835-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.35, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.36, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.35-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.36-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.35, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.36, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.35-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.36-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
     <Reference Include="OsmSharp.UI, Version=4.3.0.835, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
