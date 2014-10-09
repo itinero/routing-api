@@ -51,53 +51,53 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net403-client\NetTopologySuite.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Data.Oracle, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Data.Oracle, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Data.Oracle.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Data.Oracle.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Data.PostgreSQL, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Data.PostgreSQL, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Data.PostgreSQL.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Data.PostgreSQL.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Data.Redis, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Data.Redis, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Data.Redis.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Data.Redis.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Data.SQLite, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Data.SQLite, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Data.SQLServer, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Data.SQLServer, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Data.SQLServer.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Data.SQLServer.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Osm, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Osm, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.40, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.42, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.40-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.42-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.40, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.42, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.40-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.42-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.UI, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.UI, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.UI.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.WinForms.UI, Version=4.3.0.864, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.WinForms.UI, Version=4.3.0.874, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.864-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.3.0.874-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
