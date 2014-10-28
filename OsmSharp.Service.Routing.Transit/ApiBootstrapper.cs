@@ -65,6 +65,16 @@ namespace OsmSharp.Service.Routing.Transit
         }
 
         /// <summary>
+        /// Initializes or updates the transit service.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="transitServiceInstance"></param>
+        public static void AddOrUpdate(string instance, TransitServiceWrapperBase transitServiceInstance)
+        {
+            _transitServiceInstances[instance] = transitServiceInstance;
+        }
+
+        /// <summary>
         /// Initializes this transit API with an existing transit router.
         /// </summary>
         /// <param name="instance">The instance name.</param>
@@ -75,6 +85,16 @@ namespace OsmSharp.Service.Routing.Transit
         }
 
         /// <summary>
+        /// Initializes or updates this transit API with an existing transit router.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="transitRouter"></param>
+        public static void AddOrUpdate(string instance, TransitRouter transitRouter)
+        {
+            ApiBootstrapper.AddOrUpdate(instance, new TransitRouterWrapper(transitRouter));
+        }
+
+        /// <summary>
         /// Initializes the transit API with a transit route based on the given GTFS feed.
         /// </summary>
         /// <param name="instance"></param>
@@ -82,6 +102,16 @@ namespace OsmSharp.Service.Routing.Transit
         public static void Add(string instance, GTFS.GTFSFeed feed)
         {
             ApiBootstrapper.Add(instance, GTFSGraphReader.CreateRouter(feed));
+        }
+
+        /// <summary>
+        /// Initializes or updates the transit API with a transit route based on the given GTFS feed.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="feed"></param>
+        public static void AddOrUpdate(string instance, GTFS.GTFSFeed feed)
+        {
+            ApiBootstrapper.AddOrUpdate(instance, GTFSGraphReader.CreateRouter(feed));
         }
     }
 }

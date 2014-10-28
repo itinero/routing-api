@@ -63,6 +63,16 @@ namespace OsmSharp.Service.Routing
         }
 
         /// <summary>
+        /// Initializes or updates the routing service.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="routingServiceInstance"></param>
+        public static void AddOrUpdate(string instance, RoutingServiceWrapperBase routingServiceInstance)
+        {
+            _routingServiceInstances[instance] = routingServiceInstance;
+        }
+
+        /// <summary>
         /// Initializes this router API with an existing router.
         /// </summary>
         /// <param name="instance">The instance name.</param>
@@ -73,6 +83,19 @@ namespace OsmSharp.Service.Routing
             Vehicle.RegisterVehicles();
 
             ApiBootstrapper.Add(instance, new RouterWrapper(router));
+        }
+
+        /// <summary>
+        /// Initializes or updates this router API with an existing router.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="router"></param>
+        public static void AddOrUpdate(string instance, Router router)
+        {
+            // make sure vehicle are registered.
+            Vehicle.RegisterVehicles();
+
+            ApiBootstrapper.AddOrUpdate(instance, new RouterWrapper(router));
         }
     }
 }

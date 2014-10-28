@@ -65,6 +65,17 @@ namespace OsmSharp.Service.Routing.MultiModal
         }
 
         /// <summary>
+        /// Initializes or updates the multi modal router service.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="multiModalWrapperInstance"></param>
+        /// <remarks>Only initializes the multimodal API.</remarks>
+        public static void AddOrUpdate(string instance, MultiModalRouterWrapperBase multiModalWrapperInstance)
+        {
+            _multiModalWrapperInstances[instance] = multiModalWrapperInstance;
+        }
+
+        /// <summary>
         /// Initializes the multi modal router service.
         /// </summary>
         /// <param name="instance">The instance name.</param>
@@ -76,6 +87,20 @@ namespace OsmSharp.Service.Routing.MultiModal
             OsmSharp.Service.Routing.ApiBootstrapper.Add(instance, transitRouter);
             OsmSharp.Service.Routing.Transit.ApiBootstrapper.Add(instance, new Wrappers.TransitServiceWrapper(transitRouter));
             ApiBootstrapper.Add(instance, new MultiModalWrapper(transitRouter));
+        }
+
+        /// <summary>
+        /// Initializes or updates the multi modal router service.
+        /// </summary>
+        /// <param name="instance">The instance name.</param>
+        /// <param name="transitRouter">The transit router.</param>
+        /// <remarks>Also initializes the routing and transit API's.</remarks>
+        public static void AddOrUpdate(string instance, MultiModalRouter transitRouter)
+        {
+            // initialize all APIs, a multi modal router should be able to support all of them.
+            OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instance, transitRouter);
+            OsmSharp.Service.Routing.Transit.ApiBootstrapper.AddOrUpdate(instance, new Wrappers.TransitServiceWrapper(transitRouter));
+            ApiBootstrapper.AddOrUpdate(instance, new MultiModalWrapper(transitRouter));
         }
     }
 }
