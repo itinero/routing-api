@@ -39,7 +39,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
-                OsmSharp.Logging.Log.TraceEvent("MultiModalModal", Logging.TraceEventType.Information,
+                OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
                     string.Format("Multimodal request #{1} from {0}.", this.Request.UserHostAddress, requestId));
                 try
                 {
@@ -181,7 +181,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                 }
                 catch (Exception)
                 { // an unhandled exception!
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModal", Logging.TraceEventType.Information,
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
                         string.Format("Multimodal request #{1} from {0} failed.", this.Request.UserHostAddress, requestId));
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
@@ -203,6 +203,9 @@ namespace OsmSharp.Service.Routing.MultiModal
             {
                 this.EnableCors();
 
+                // get request id.
+                ulong requestId = MultiModalModule.GetRequestId();
+
                 // get instance and check if active.
                 string instance = _.instance;
                 if (!ApiBootstrapper.IsActive(instance))
@@ -211,7 +214,9 @@ namespace OsmSharp.Service.Routing.MultiModal
                 }
 
                 long requestStart = DateTime.Now.Ticks;
-                OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information, "New multimodal range request.");
+
+                OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
+                    string.Format("Multimodal range request #{1} from {0}.", this.Request.UserHostAddress, requestId));
                 try
                 {
 
@@ -291,7 +296,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     var range = ApiBootstrapper.Get(instance).GetWithinRange(dt, vehicles, coordinates[0], max, zoom);
                     long afterRequest = DateTime.Now.Ticks;
                     OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
-                        string.Format("Request finished after {0}ms.", (new TimeSpan(afterRequest - requestStart)).TotalMilliseconds));
+                        string.Format("Multimodal range request #{1} from {0} finished after {2}ms.", this.Request.UserHostAddress, requestId, (new TimeSpan(afterRequest - requestStart)).TotalMilliseconds));
 
                     // output all vertex and times.
                     var vertexAndTimes = new List<VertexAndTime>();
@@ -318,6 +323,8 @@ namespace OsmSharp.Service.Routing.MultiModal
                 }
                 catch (Exception)
                 { // an unhandled exception!
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), Logging.TraceEventType.Information,
+                        string.Format("Multimodal range request #{1} from {0} failed.", this.Request.UserHostAddress, requestId));
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
@@ -352,6 +359,9 @@ namespace OsmSharp.Service.Routing.MultiModal
                 try
                 {
                     this.EnableCors();
+
+                    // get request id.
+                    ulong requestId = MultiModalModule.GetRequestId();
 
                     // bind the query if any.
                     var query = this.Bind<BoxQuery>();
