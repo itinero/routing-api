@@ -13,8 +13,14 @@ using System.Text;
 
 namespace OsmSharp.Service.Routing.MultiModal
 {
+    /// <summary>
+    /// The multi modal nancy module.
+    /// </summary>
     public class MultiModalModule : NancyModule
     {
+        /// <summary>
+        /// Creates the multi modal nancy module.
+        /// </summary>
         public MultiModalModule()
         {
             JsonSettings.MaxJsonLength = Int32.MaxValue;
@@ -23,6 +29,9 @@ namespace OsmSharp.Service.Routing.MultiModal
             {
                 this.EnableCors();
 
+                // get request id.
+                ulong requestId = MultiModalModule.GetRequestId();
+
                 // get instance and check if active.
                 string instance = _.instance;
                 if (!ApiBootstrapper.IsActive(instance))
@@ -30,7 +39,8 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
-                OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "New multimodal request.");
+                OsmSharp.Logging.Log.TraceEvent("MultiModalModal", Logging.TraceEventType.Information,
+                    string.Format("Multimodal request #{1} from {0}.", this.Request.UserHostAddress, requestId));
                 try
                 {
                     // bind the query if any.
@@ -123,11 +133,11 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request accepted.");
-
                     // calculate route.
                     var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, complete);
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModul", Logging.TraceEventType.Information, "Request finished.");
+                    OsmSharp.Logging.Log.TraceEvent("MultiModalModal", Logging.TraceEventType.Information,
+                        string.Format("Multimodal request #{1} from {0} finished.", this.Request.UserHostAddress, requestId));
+
                     if (route == null)
                     { // route could not be calculated.
                         return null;
@@ -171,6 +181,8 @@ namespace OsmSharp.Service.Routing.MultiModal
                 }
                 catch (Exception)
                 { // an unhandled exception!
+                    OsmSharp.Logging.Log.TraceEvent("MultiModalModal", Logging.TraceEventType.Information,
+                        string.Format("Multimodal request #{1} from {0} failed.", this.Request.UserHostAddress, requestId));
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
@@ -375,6 +387,30 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
+        }
+
+        /// <summary>
+        /// Holds the request count.
+        /// </summary>
+
+        private static ulong _requestCount = 0;
+
+        /// <summary>
+        /// Holds the object to sync the counter.
+        /// </summary>
+        private static object _requestCountSync = new object();
+
+        /// <summary>
+        /// Returns an id for the current request.
+        /// </summary>
+        /// <returns></returns>
+        private static ulong GetRequestId()
+        {
+            lock (_requestCountSync)
+            {
+                _requestCount++;
+                return _requestCount;
+            }
         }
     }
 }
