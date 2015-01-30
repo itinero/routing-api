@@ -27,7 +27,7 @@ namespace OsmSharp.Service.Routing.Sample.SelfHost
                 var pbfSource = new PBFOsmStreamSource(source);
                 var progress = new OsmStreamFilterProgress();
                 progress.RegisterSource(pbfSource);
-                var router = Router.CreateCHFrom(progress, new OsmRoutingInterpreter(), Vehicle.Car);
+                var router = Router.CreateLiveFrom(progress, new OsmRoutingInterpreter());
 
                 OsmSharp.Service.Routing.ApiBootstrapper.Add("default", router);
             }
@@ -39,6 +39,9 @@ namespace OsmSharp.Service.Routing.Sample.SelfHost
 
                 Console.WriteLine("Your application is running on " + uri);
                 Console.WriteLine("Press any [Enter] to close the host.");
+
+                System.Diagnostics.Process.Start("http://localhost:1234/default/routing?vehicle=car&loc=51.2610,4.780511856079102&loc=51.26795006429507,4.801969528198242");
+
                 Console.ReadLine();
             }
         }
