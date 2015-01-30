@@ -3,15 +3,6 @@ OsmSharp.Service.Routing
 
 A routing webservice API built around OsmSharp. Serves routing requests over HTTP.
 
-API
----
-
-{instance}/routing: A routing query endpoint accepting the following parameters:
-* vehicle=car|bicycle|pedestrian
-* loc=lat,lon
-
-Default responses are always in GeoJSON.
-
 Use as a standalone service
 ---------------------------
 
@@ -31,6 +22,15 @@ This project can be used as a library in an existing webservice or can be used s
   </ApiConfiguration>
 </configuration>
 ```
+
+API
+---
+
+{instance}/routing: A routing query endpoint accepting the following parameters:
+* vehicle=car|bicycle|pedestrian
+* loc=lat,lon
+
+Default responses are always in GeoJSON.
 
 ##### A routing-query would look like this:
 
