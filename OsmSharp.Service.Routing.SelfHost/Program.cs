@@ -16,15 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using OsmSharp.Routing.Instructions;
+using Nancy.Hosting.Self;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace OsmSharp.Service.Routing.Domain
+namespace OsmSharp.Service.Routing.SelfHost
 {
-    class SimpleRoute
+    class Program
     {
-        public string Route { get; set; }
+        static void Main(string[] args)
+        {
+            // bool from configuration files.
+            OsmSharp.Service.Routing.ApiBootstrapper.BootFromConfiguration();
 
-        public List<Instruction> Instructions { get; set; }
+            // start listening.
+            var uri = new Uri("http://localhost:1234");
+            using (var host = new NancyHost(uri))
+            {
+                host.Start();
+
+                Console.WriteLine("The OsmSharp routing service is running at " + uri);
+                Console.WriteLine("Press [Enter] to close the host.");
+                Console.ReadLine();
+            }
+        }
     }
 }

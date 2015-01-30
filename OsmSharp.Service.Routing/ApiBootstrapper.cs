@@ -1,5 +1,5 @@
 ﻿// OsmSharp - OpenStreetMap (OSM) SDK
-// Copyright (C) 2013 Abelshausen Ben
+// Copyright (C) 2015 Abelshausen Ben
 // 
 // This file is part of OsmSharp.
 // 
@@ -16,10 +16,22 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
+using OsmSharp.Osm.PBF.Streams;
+using OsmSharp.Osm.Xml.Streams;
 using OsmSharp.Routing;
+using OsmSharp.Routing.CH;
+using OsmSharp.Routing.CH.Serialization;
+using OsmSharp.Routing.CH.Serialization.Sorted;
+using OsmSharp.Routing.Graph.Router.Dykstra;
+using OsmSharp.Routing.Osm.Graphs.Serialization;
+using OsmSharp.Routing.Osm.Interpreter;
+using OsmSharp.Service.Routing.Configurations;
+using OsmSharp.Service.Routing.Monitoring;
 using OsmSharp.Service.Routing.Wrappers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 
 namespace OsmSharp.Service.Routing
 {
@@ -96,6 +108,181 @@ namespace OsmSharp.Service.Routing
             Vehicle.RegisterVehicles();
 
             ApiBootstrapper.AddOrUpdate(instance, new RouterWrapper(router));
+        }
+
+        /// <summary>
+        /// Holds all instance monitors.
+        /// </summary>
+        private static List<InstanceMonitor> _instanceMonitors = new List<InstanceMonitor>();
+
+        /// <summary>
+        /// A delegate to load a new instance configuration.
+        /// </summary>
+        /// <param name="apiConfiguration"></param>
+        /// <param name="instanceConfiguration"></param>
+        /// <returns></returns>
+        internal delegate bool InstanceLoaderDelegate(ApiConfiguration apiConfiguration, InstanceConfiguration instanceConfiguration);
+
+        /// <summary>
+        /// Initializes all routing instance from the configuration in the configuration file.
+        /// </summary>
+        public static void BootFromConfiguration()
+        {
+            // register vehicle profiles.
+            OsmSharp.Routing.Vehicle.RegisterVehicles();
+
+            // enable logging and use the console as output.
+            OsmSharp.Logging.Log.Enable();
+            OsmSharp.Logging.Log.RegisterListener(
+                new OsmSharp.WinForms.UI.Logging.ConsoleTraceListener());
+#if DEBUG
+            OsmSharp.Logging.Log.RegisterListener(
+                new Logging.DebugTraceListener());
+#endif
+
+            // get the api configuration.
+            var apiConfiguration = (ApiConfiguration)ConfigurationManager.GetSection("ApiConfiguration");
+
+            // load all relevant routers.
+            foreach (InstanceConfiguration instanceConfiguration in apiConfiguration.Instances)
+            {
+                var thread = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
+                {
+                    // load instance.
+                    if (LoadInstance(apiConfiguration, instanceConfiguration))
+                    { // instance loaded correctly.
+                        // start monitoring files...
+                        if (instanceConfiguration.Monitor)
+                        { // ...but only when configured as such.
+                            var monitor = new InstanceMonitor(apiConfiguration, instanceConfiguration, LoadInstance);
+                            _instanceMonitors.Add(monitor);
+
+                            // get graph configuration.
+                            var graph = instanceConfiguration.Graph;
+                            monitor.AddFile(graph);
+                            monitor.Start();
+                        }
+                    }
+                }));
+                thread.Start();
+            }
+        }
+
+        /// <summary>
+        /// Holds a sync object.
+        /// </summary>
+        private static object _sync = new object();
+
+        /// <summary>
+        /// Loads a new instance.
+        /// </summary>
+        /// <param name="apiConfiguration"></param>
+        /// <param name="instanceConfiguration"></param>
+        /// <returns></returns>
+        private static bool LoadInstance(ApiConfiguration apiConfiguration, InstanceConfiguration instanceConfiguration)
+        {
+            try
+            {
+                // get graph configuration.
+                var graph = instanceConfiguration.Graph;
+                var type = instanceConfiguration.Type;
+                var format = instanceConfiguration.Format;
+
+                try
+                {
+
+                    // create routing instance.
+                    OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
+                        string.Format("Creating {0} instance...", instanceConfiguration.Name));
+                    Router router = null;
+
+                    var graphFile = new FileInfo(graph);
+                    switch (type)
+                    {
+                        case "raw":
+                            switch (format)
+                            {
+                                case "osm-xml":
+                                    using(var graphStream = graphFile.OpenRead())
+                                    {
+                                        var graphSource = new XmlOsmStreamSource(graphStream);
+                                        router = Router.CreateLiveFrom(graphSource, new OsmRoutingInterpreter());
+                                    }
+                                    break;
+                                case "osm-pbf":
+                                    using (var graphStream = graphFile.OpenRead())
+                                    {
+                                        var graphSource = new PBFOsmStreamSource(graphStream);
+                                        router = Router.CreateLiveFrom(graphSource, new OsmRoutingInterpreter());
+                                    }
+                                    break;
+                                default:
+                                    throw new Exception(string.Format("Invalid format {0} for type {1}.",
+                                        format, type));
+                            }
+                            break;
+                        case "contracted":
+                            switch(format)
+                            {
+                                case "flat":
+                                    using (var graphStream = graphFile.OpenRead())
+                                    {
+                                        var routingSerializer = new CHEdgeFlatfileSerializer();
+                                        var graphInstance = routingSerializer.Deserialize(graphStream);
+                                        router = Router.CreateCHFrom(graphInstance, new CHRouter(), new OsmRoutingInterpreter());
+                                    }
+                                    break;
+                                case "mobile":
+                                    var mobileRoutingSerializer = new CHEdgeDataDataSourceSerializer();
+                                    // keep this stream open, it is used while routing!
+                                    var mobileGraphInstance = mobileRoutingSerializer.Deserialize(graphFile.OpenRead());
+                                    router = Router.CreateCHFrom(mobileGraphInstance, new CHRouter(), new OsmRoutingInterpreter());
+                                    break;
+                                default:
+                                    throw new Exception(string.Format("Invalid format {0} for type {1}.",
+                                        format, type));
+                            }
+
+                            break;
+                        case "simple":
+                            switch (format)
+                            {
+                                case "flat":
+                                    using (var graphStream = graphFile.OpenRead())
+                                    {
+                                        var routingSerializer = new LiveEdgeFlatfileSerializer();
+                                        var graphInstance = routingSerializer.Deserialize(graphStream);
+                                        router = Router.CreateLiveFrom(graphInstance, new DykstraRoutingLive(), new OsmRoutingInterpreter());
+                                    }
+                                    break;
+                                default:
+                                    throw new Exception(string.Format("Invalid format {0} for type {1}.",
+                                        format, type));
+                            }
+                            break;
+                    }
+
+                    lock (_sync)
+                    {
+                        OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instanceConfiguration.Name, router);
+                    }
+
+                    OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
+                        string.Format("Instance {0} created successfully!", instanceConfiguration.Name));
+                }
+                catch(Exception ex)
+                {
+                    OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Error,
+                        string.Format("Exception occured while creating instance {0}:{1}", 
+                        instanceConfiguration.Name, ex.ToInvariantString()));
+                    throw;
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

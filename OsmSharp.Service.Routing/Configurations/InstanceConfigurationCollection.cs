@@ -16,27 +16,36 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using Nancy;
+using System.Configuration;
 
-namespace OsmSharp.Service.Routing
+namespace OsmSharp.Service.Routing.Configurations
 {
     /// <summary>
-    /// Contains extensions for nancy.
+    /// Represents a collection of instance configurations.
     /// </summary>
-    public static class NancyExtensions
+    public class InstanceConfigurationCollection : ConfigurationElementCollection  
     {
-        /// <summary>
-        /// Adds cors headers to reposonse.
-        /// </summary>
-        /// <param name="module"></param>
-        public static void EnableCors(this NancyModule module)
+        public InstanceConfiguration this[int index]
         {
-            module.After.AddItemToEndOfPipeline(x =>
+            get { return BaseGet(index) as InstanceConfiguration; }
+            set
             {
-                x.Response.WithHeader("Access-Control-Allow-Origin", "*")
-                            .WithHeader("Access-Control-Allow-Methods", "POST,GET")
-                            .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
-            });
+                if (BaseGet(index) != null)
+                {
+                    BaseRemoveAt(index);
+                }
+                BaseAdd(index, value);
+            }
         }
+
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new InstanceConfiguration();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((InstanceConfiguration)element).Name;
+        }  
     }
 }

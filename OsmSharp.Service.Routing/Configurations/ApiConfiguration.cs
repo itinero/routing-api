@@ -16,15 +16,22 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using OsmSharp.Routing.Instructions;
-using System.Collections.Generic;
+using System.Configuration;
 
-namespace OsmSharp.Service.Routing.Domain
+namespace OsmSharp.Service.Routing.Configurations
 {
-    class SimpleRoute
-    {
-        public string Route { get; set; }
-
-        public List<Instruction> Instructions { get; set; }
+    /// <summary>
+    /// Represents a configuration for one API-instance.
+    /// </summary>
+    public class ApiConfiguration : ConfigurationSection
+    {        
+        /// <summary>
+        /// Returns the collection of instance configurations.
+        /// </summary>
+        [ConfigurationProperty("instances", IsRequired = false)]
+        public InstanceConfigurationCollection Instances
+        {
+            get { return this["instances"] as InstanceConfigurationCollection; }
+        }
     }
 }

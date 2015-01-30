@@ -63,11 +63,11 @@ namespace OsmSharp.Service.Routing
                 var operators = new Operator[0];
                 if (!string.IsNullOrWhiteSpace(query.q))
                 { // there is a 'q' property, this is a search request.
-                    operators = ApiBootstrapper.Get(instance).GetOperators(query.q).ToArray();
+                    operators = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetOperators(query.q).ToArray();
                 }
                 else
                 { // get all operators.
-                    operators = ApiBootstrapper.Get(instance).GetOperators().ToArray();
+                    operators = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetOperators().ToArray();
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(operators);
             };
@@ -86,7 +86,7 @@ namespace OsmSharp.Service.Routing
                 if (query != null && !string.IsNullOrWhiteSpace(query.id))
                 {
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(
-                        ApiBootstrapper.Get(instance).GetOperator(query.id));
+                        OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetOperator(query.id));
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             };
@@ -105,11 +105,11 @@ namespace OsmSharp.Service.Routing
                 var stops = new Stop[0];
                 if (!string.IsNullOrWhiteSpace(query.q))
                 { // there is a 'q' property, this is a search request.
-                    stops = ApiBootstrapper.Get(instance).GetStops(query.q).ToArray();
+                    stops = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetStops(query.q).ToArray();
                 }
                 else
                 { // get all operators.
-                    stops = ApiBootstrapper.Get(instance).GetStops().ToArray();
+                    stops = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetStops().ToArray();
                 }
                 return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
             };
@@ -130,11 +130,11 @@ namespace OsmSharp.Service.Routing
                 { // there is a query.
                     if(!string.IsNullOrWhiteSpace(query.q))
                     { // there is a search.
-                        stops = ApiBootstrapper.Get(instance).GetStopsForOperator(query.id, query.q).ToArray();
+                        stops = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetStopsForOperator(query.id, query.q).ToArray();
                     }
                     else
                     {
-                        stops = ApiBootstrapper.Get(instance).GetStopsForOperator(query.id).ToArray();
+                        stops = OsmSharp.Service.Routing.Transit.ApiBootstrapper.Get(instance).GetStopsForOperator(query.id).ToArray();
                     }
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(stops);
                 }
