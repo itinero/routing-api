@@ -8,10 +8,10 @@
     <owners>Ben Abelshausen</owners>
     <licenseUrl>http://raw.github.com/xivk/OsmSharp.Transit/master/license.txt</licenseUrl>
     <projectUrl>http://www.osmsharp.com/</projectUrl>
-        <iconUrl>http://www.osmsharp.com/sites/default/files/osmsharp_logo64.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/OsmSharp/OsmSharp.Service.Routing/master/packages_nuspec/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Package to host OsmSharp routing services in a NancyFX application.</description>
-    <summary>Package to host OsmSharp routing services in a NancyFX application.</summary>
+    <summary>Package to host OsmSharp multimodal routing services in a NancyFX application.</summary>
     <copyright>Ben Abelshausen</copyright>
     <dependencies>
       <dependency id="GeoAPI" version="1.7.2" />
@@ -21,10 +21,13 @@
       <dependency id="NetTopologySuite.IO.GeoJSON" version="1.13.2" />
       <dependency id="Newtonsoft.Json" version="4.5.1" />
       <dependency id="OsmSharp" version="4.3.0.835-beta" />
+      <dependency id="OsmSharp.Transit" version="0.1.0.33-beta" />
     </dependencies>
-    <tags>osm, openstreetmap, routing, nancyfx</tags>
+    <tags>osm, openstreetmap, routing, GFTS, transit, nancyfx</tags>
   </metadata>
   <files>
     <file src="Output\OsmSharp.Service.Routing.dll" target="lib\net45\OsmSharp.Service.Routing.dll" />
+    <file src="Output\OsmSharp.Service.Routing.MultiModal.dll" target="lib\net45\OsmSharp.Service.Routing.MultiModal.dll" />
+    <file src="Output\OsmSharp.Service.Routing.Transit.dll" target="lib\net45\OsmSharp.Service.Routing.Transit.dll" />
   </files>
 </package>
