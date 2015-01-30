@@ -30,11 +30,11 @@ This project can be used as a library in an existing webservice or can be used s
 </configuration>
 ```
 
-A routing-query would look like this:
+##### A routing-query would look like this:
 
 http://{hostingurl}/{instance}/routing?vehicle={vehicle}&loc={lat,lon}&loc={lat,lon}
 
-An example with the default GeoJSON response and the default settings:
+##### An example with the default GeoJSON response and the default settings:
 
 http://localhost:1234/kempen-big/routing?vehicle=car&loc=51.261028637438386,4.780511856079102&loc=51.26795006429507,4.801969528198242
 
