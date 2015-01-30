@@ -15,7 +15,6 @@
     <copyright>Ben Abelshausen</copyright>
     <dependencies>
       <dependency id="GeoAPI" version="1.7.2" />
-      <dependency id="GTFS" version="0.0.3.58-beta" />
       <dependency id="Nancy" version="0.23.0" />
       <dependency id="NetTopologySuite" version="1.13.2" />
       <dependency id="NetTopologySuite.IO.GeoJSON" version="1.13.2" />
