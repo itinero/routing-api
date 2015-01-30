@@ -6,9 +6,11 @@ A routing webservice API built around OsmSharp. Serves routing requests over HTT
 API
 ---
 
-{instance}/routing: A routing query endpoint.
+{instance}/routing: A routing query endpoint accepting the following parameters:
+* vehicle=car|bicycle|pedestrian
+* loc=lat,lon
 
-{instance}/routing/network: A network query endpoint.
+Default responses are always in GeoJSON.
 
 Use as a standalone service
 ---------------------------
@@ -36,6 +38,6 @@ http://{hostingurl}/{instance}/routing?vehicle={vehicle}&loc={lat,lon}&loc={lat,
 
 ##### An example with the default GeoJSON response and the default settings:
 
-http://localhost:1234/kempen-big/routing?vehicle=car&loc=51.261028637438386,4.780511856079102&loc=51.26795006429507,4.801969528198242
+[http://localhost:1234/kempen-big/routing?vehicle=car&loc=51.261028637438386,4.780511856079102&loc=51.26795006429507,4.801969528198242](http://localhost:1234/kempen-big/routing?vehicle=car&loc=51.261028637438386,4.780511856079102&loc=51.26795006429507,4.801969528198242)
 
-http://geojson.io/#id=gist:anonymous/77311b1ddc209b41bd90&map=15/51.2653/4.7906
+[http://geojson.io/#id=gist:anonymous/77311b1ddc209b41bd90&map=15/51.2653/4.7906](http://geojson.io/#id=gist:anonymous/77311b1ddc209b41bd90&map=15/51.2653/4.7906)
