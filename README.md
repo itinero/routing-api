@@ -10,12 +10,12 @@ API
 
 {instance}/routing/network: A network query endpoint.
 
-Use a standalone service
-------------------------
+Use as a standalone service
+---------------------------
 
 This project can be used as a library in an existing webservice or can be used standalone using the [Selfhost-project](https://github.com/OsmSharp/OsmSharp.Service.Routing/tree/master/OsmSharp.Service.Routing.SelfHost). The project uses a simple configuration file:
 
-´´´
+Â´Â´Â´
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <configSections>
@@ -28,7 +28,7 @@ This project can be used as a library in an existing webservice or can be used s
     </instances>
   </ApiConfiguration>
 </configuration>
-´´´
+Â´Â´Â´
 
 A routing-query would look like this:
 
