@@ -1,7 +1,7 @@
 OsmSharp.Service.Routing
 ========================
 
-A routing webservice API built around OsmSharp. Serves routing requests over HTTP.
+A routing webservice API built around OsmSharp. Accepts and handles routing requests over HTTP.
 
 Use as a standalone service
 ---------------------------
