@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing.Mu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing", "OsmSharp.Service.Routing\OsmSharp.Service.Routing.csproj", "{A2C54724-3BE5-4004-904F-B784AA103008}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing.Sample.SelfHost", "samples\OsmSharp.Service.Routing.Sample.SelfHost\OsmSharp.Service.Routing.Sample.SelfHost.csproj", "{5F8BC685-682E-400D-90D6-793B618CED27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{0BF6E2F2-A59C-45CF-9AA8-F42B9A5038C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,15 @@ Global
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F8BC685-682E-400D-90D6-793B618CED27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F8BC685-682E-400D-90D6-793B618CED27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F8BC685-682E-400D-90D6-793B618CED27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F8BC685-682E-400D-90D6-793B618CED27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F8BC685-682E-400D-90D6-793B618CED27} = {0BF6E2F2-A59C-45CF-9AA8-F42B9A5038C3}
 	EndGlobalSection
 EndGlobal
