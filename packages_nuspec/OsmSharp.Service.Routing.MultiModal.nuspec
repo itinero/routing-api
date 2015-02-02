@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>OsmSharp.Service.Routing</id>
+    <id>OsmSharp.Service.Routing.MultiModal.nuspec</id>
     <version>$version$</version>
-    <title>OsmSharp.Service.Routing - A quick and easy way to setup a routing service for OsmSharp.</title>
+    <title>OsmSharp.Service.Routing.MultiModal.nuspec - A quick and easy way to setup a multimodal routing service for OsmSharp.</title>
     <authors>Ben Abelshausen</authors>
     <owners>Ben Abelshausen</owners>
     <licenseUrl>http://raw.github.com/xivk/OsmSharp.Transit/master/license.txt</licenseUrl>
