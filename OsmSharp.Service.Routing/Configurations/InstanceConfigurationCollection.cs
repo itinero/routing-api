@@ -25,6 +25,11 @@ namespace OsmSharp.Service.Routing.Configurations
     /// </summary>
     public class InstanceConfigurationCollection : ConfigurationElementCollection  
     {
+        /// <summary>
+        /// Returns the configuration instance at the given index.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public InstanceConfiguration this[int index]
         {
             get { return BaseGet(index) as InstanceConfiguration; }
@@ -38,11 +43,20 @@ namespace OsmSharp.Service.Routing.Configurations
             }
         }
 
+        /// <summary>
+        /// Creates a new element of the correct type.
+        /// </summary>
+        /// <returns></returns>
         protected override ConfigurationElement CreateNewElement()
         {
             return new InstanceConfiguration();
         }
 
+        /// <summary>
+        /// Returns the key of the given element.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((InstanceConfiguration)element).Name;
