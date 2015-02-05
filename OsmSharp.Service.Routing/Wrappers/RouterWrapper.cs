@@ -42,7 +42,7 @@ namespace OsmSharp.Service.Routing.Wrappers
         public override Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete)
         {
             // resolve all points.
-            var resolved = _router.Resolve(vehicle, coordinates);
+            var resolved = _router.Resolve(vehicle, 0.0075f, coordinates);
             
             // TODO: implement complete boolean.
             // TODO: implement a route with via points.
