@@ -17,6 +17,7 @@
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
 using Nancy;
+using Nancy.Json;
 using Nancy.ModelBinding;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
@@ -36,10 +37,14 @@ namespace OsmSharp.Service.Routing
         /// </summary>
         public RoutingModule()
         {
+            JsonSettings.MaxJsonLength = Int32.MaxValue;
+
             Get["{instance}/routing"] = _ =>
             {
                 try
                 {
+                    this.EnableCors();
+
                     // get instance and check if active.
                     string instance = _.instance;
                     if(!ApiBootstrapper.IsActive(instance))
@@ -150,10 +155,8 @@ namespace OsmSharp.Service.Routing
                     else
                     { // return a GeoJSON object.
                         var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
-                        var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                        var geoJson = geoJsonWriter.Write(featureCollection);
 
-                        return geoJson;
+                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
                 }
                 catch (Exception)

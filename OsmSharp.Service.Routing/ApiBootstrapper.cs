@@ -190,7 +190,6 @@ namespace OsmSharp.Service.Routing
 
                 try
                 {
-
                     // create routing instance.
                     OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
                         string.Format("Creating {0} instance...", instanceConfiguration.Name));
