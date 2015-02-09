@@ -57,7 +57,7 @@ namespace OsmSharp.Service.Routing.Configurations
         ///          - osm-pbf: Raw osm-data in the form of OSM-PBF.
         ///          - flat: Serialized routing graph.
         ///          - mobile: Serialized routing graph optimized for mobile routing.
-        /// /remarks>
+        /// </remarks>
         [ConfigurationProperty("format", IsRequired = true)]
         public string Format
         {
