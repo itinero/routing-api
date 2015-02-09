@@ -468,7 +468,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     else
                     { // return a GeoJSON object.
-                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route, false);
+                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route, true);
 
                         return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
