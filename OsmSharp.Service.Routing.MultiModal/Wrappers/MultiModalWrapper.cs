@@ -22,6 +22,27 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             _multiModalRouter = multiModalRouter;
         }
 
+        public override Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates)
+        {
+            var source = _multiModalRouter.Resolve(vehicles[0], coordinates[0]);
+            var target = _multiModalRouter.Resolve(vehicles[1], coordinates[coordinates.Length - 1]);
+
+            var alongs = new List<RouterPoint>();
+            for(int idx = 1; idx < coordinates.Length - 1; idx++)
+            {
+                var along = _multiModalRouter.Resolve(vehicles[0], coordinates[idx]);
+                if(along != null)
+                {
+                    alongs.Add(along);
+                }
+            }
+            if(alongs.Count > 0)
+            {
+                return _multiModalRouter.CalculateAlongOne(vehicles[0], source, vehicles[1], target, alongs.ToArray());
+            }
+            return null;
+        }
+
         public override Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, bool complete)
         {
             var toFirstStop = vehicles[0];
@@ -94,10 +115,11 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
         /// Converts the given route to a line string.
         /// </summary>
         /// <param name="route"></param>
+        /// <param name="aggregated"></param>
         /// <returns></returns>
-        public override FeatureCollection GetFeatures(Route route)
+        public override FeatureCollection GetFeatures(Route route, bool aggregated = true)
         {
-            return _multiModalRouter.GetFeatures(route, true);
+            return _multiModalRouter.GetFeatures(route, aggregated);
         }
 
         /// <summary>

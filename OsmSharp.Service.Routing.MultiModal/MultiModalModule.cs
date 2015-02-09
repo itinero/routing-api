@@ -328,6 +328,158 @@ namespace OsmSharp.Service.Routing.MultiModal
                     return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
                 }
             };
+            Get["{instance}/alongjustone"] = _ =>
+            {
+                this.EnableCors();
+
+                // get request id.
+                var requestId = MultiModalModule.GetRequestId();
+
+                // get instance and check if active.
+                string instance = _.instance;
+                if (!ApiBootstrapper.IsActive(instance))
+                { // oeps, instance not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
+                OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), OsmSharp.Logging.TraceEventType.Information,
+                    string.Format("Along just one request #{1} from {0}.", this.Request.UserHostAddress, requestId));
+                try
+                {
+                    // bind the query if any.
+                    var query = this.Bind<RoutingQuery>();
+
+                    // parse location.
+                    if (string.IsNullOrWhiteSpace(query.loc))
+                    { // no loc parameters.
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("loc parameter not found or request invalid.");
+                    }
+                    var locs = query.loc.Split(',');
+                    if (locs.Length < 6)
+                    { // less than two loc parameters.
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("only two loc parameter found or request invalid.");
+                    }
+                    var coordinates = new GeoCoordinate[locs.Length / 2];
+                    for (int idx = 0; idx < coordinates.Length; idx++)
+                    {
+                        double lat, lon;
+                        if (double.TryParse(locs[idx * 2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out lat) &&
+                            double.TryParse(locs[idx * 2 + 1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out lon))
+                        { // parsing was successful.
+                            coordinates[idx] = new GeoCoordinate(lat, lon);
+                        }
+                        else
+                        { // invalid formatting.
+                            return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("location coordinates are invalid.");
+                        }
+                    }
+
+                    // get vehicle.
+                    string vehicleName = "car"; // assume car is the default.
+                    if (!string.IsNullOrWhiteSpace(query.vehicle))
+                    { // a vehicle was defined.
+                        vehicleName = query.vehicle;
+                    }
+                    var vehicles = new List<Vehicle>();
+                    var vehicleNames = vehicleName.Split('|');
+                    for (int idx = 0; idx < vehicleNames.Length; idx++)
+                    {
+                        var vehicle = Vehicle.GetByUniqueName(vehicleNames[idx]);
+                        if (vehicle == null)
+                        { // vehicle not found or not registered.
+                            return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(string.Format("vehicle with name '{0}' not found.", vehicleName));
+                        }
+                        vehicles.Add(vehicle);
+                    }
+
+                    if(vehicles.Count > 2)
+                    {
+                        return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("More than two vehicle profiles found.");
+                    }
+
+                    bool instructions = false;
+                    if (!string.IsNullOrWhiteSpace(query.instructions))
+                    { // there is an instruction flag.
+                        instructions = query.instructions == "true";
+                    }
+
+                    bool complete = false;
+                    if (!string.IsNullOrWhiteSpace(query.complete))
+                    { // there is a complete flag.
+                        complete = query.complete == "true";
+                    }
+
+                    bool fullFormat = false;
+                    if (!string.IsNullOrWhiteSpace(query.format))
+                    { // there is a format field.
+                        fullFormat = query.format == "osmsharp";
+                    }
+
+                    bool departure = false;
+                    if (!string.IsNullOrWhiteSpace(query.departure))
+                    { // there is a format field.
+                        departure = query.departure == "true";
+                    }
+
+                    // check conflicting parameters.
+                    if (!complete && instructions)
+                    { // user wants an incomplete route but instructions, this is impossible. 
+                        complete = true;
+                    }
+
+                    // calculate route.
+                    var route = ApiBootstrapper.Get(instance).GetRouteAlongOne(vehicles, coordinates);
+                    OsmSharp.Logging.Log.TraceEvent("MultiModalModal", OsmSharp.Logging.TraceEventType.Information,
+                        string.Format("Along one request #{1} from {0} finished.", this.Request.UserHostAddress, requestId));
+
+                    if (route == null)
+                    { // route could not be calculated.
+                        return null;
+                    }
+                    if (route != null && instructions)
+                    { // also calculate instructions.
+                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicles, route);
+
+                        if (fullFormat)
+                        {
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
+                            {
+                                Route = route,
+                                Instructions = instruction
+                            });
+                        }
+                        else
+                        {
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
+                            var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
+                            var geoJson = geoJsonWriter.Write(featureCollection);
+
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new SimpleRoute()
+                            {
+                                Route = geoJson,
+                                Instructions = instruction
+                            });
+                        }
+                    }
+
+                    if (fullFormat)
+                    { // return a complete route but no instructions.
+                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
+                    }
+                    else
+                    { // return a GeoJSON object.
+                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route, false);
+
+                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                    }
+                }
+                catch (Exception)
+                { // an unhandled exception!
+                    OsmSharp.Logging.Log.TraceEvent(string.Format("MultiModalModal.{0}", instance), OsmSharp.Logging.TraceEventType.Information,
+                        string.Format("Multimodal request #{1} from {0} failed.", this.Request.UserHostAddress, requestId));
+                    return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
+                }
+            };
             Get["{instance}/multimodal/status"] = _ =>
             {
                 // get instance and check if active.

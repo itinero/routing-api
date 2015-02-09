@@ -17,6 +17,14 @@ namespace OsmSharp.Service.Routing.MultiModal
     public abstract class MultiModalRouterWrapperBase
     {
         /// <summary>
+        /// Calculates a route from/to passing by at least one of the intermediates using two different modi.
+        /// </summary>
+        /// <param name="vehicles"></param>
+        /// <param name="coordinates"></param>
+        /// <returns></returns>
+        public abstract Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates);
+
+        /// <summary>
         /// Calculates a route along the given points.
         /// </summary>
         /// <param name="departureTime">The departure time at the first location.</param>
@@ -49,7 +57,8 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// Converts the given route to a feature collection.
         /// </summary>
         /// <param name="route"></param>
-        public abstract FeatureCollection GetFeatures(Route route);
+        /// <param name="aggregated"></param>
+        public abstract FeatureCollection GetFeatures(Route route, bool aggregated = true);
 
         /// <summary>
         /// Returns all networkfeatures in the given box.
