@@ -30,9 +30,10 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// <param name="departureTime">The departure time at the first location.</param>
         /// <param name="vehicles">The vehicle profiles to use.</param>
         /// <param name="coordinates">The coordinates of the points to route along.</param>
+        /// <param name="operators">The operators to allow. All operators are allowed when null, none when empty.</param>
         /// <param name="complete">Only output the route geometry if false.</param>
         /// <returns></returns>
-        public abstract Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, bool complete);
+        public abstract Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
 
         /// <summary>
         /// Calculates the weight to all the points within the given range.

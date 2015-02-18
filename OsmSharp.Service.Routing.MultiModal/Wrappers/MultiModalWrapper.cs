@@ -43,7 +43,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             return null;
         }
 
-        public override Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, bool complete)
+        public override Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
         {
             var toFirstStop = vehicles[0];
             var interModal = vehicles[0];
@@ -72,7 +72,17 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
                 to = _multiModalRouter.Resolve(fromLastStop, coordinates[1]);
             }
 
-            return _multiModalRouter.CalculateTransit(departureTime, toFirstStop, interModal, fromLastStop, from, to);
+            HashSet<string> operatorSet = null; ;
+            if(operators !=null)
+            {
+                operatorSet = new HashSet<string>();
+                foreach(var op in operators)
+                {
+                    operatorSet.Add(op);
+                }
+            }
+
+            return _multiModalRouter.CalculateTransit(departureTime, toFirstStop, interModal, fromLastStop, from, to, operatorSet);
         }
 
         public override IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate location, double max, int sampleZoom)

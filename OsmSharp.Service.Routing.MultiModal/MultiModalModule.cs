@@ -89,6 +89,18 @@ namespace OsmSharp.Service.Routing.MultiModal
                         vehicles.Add(vehicle);
                     }
 
+                    // get operators.
+                    HashSet<string> operators = null;
+                    if (query.operators != null)
+                    { // a vehicle was defined.
+                        operators = new HashSet<string>();
+                        var operatorNames = query.operators.Split('|');
+                        for (int idx = 0; idx < operatorNames.Length; idx++)
+                        {
+                            operators.Add(operatorNames[idx]);
+                        }
+                    }
+
                     bool instructions = false;
                     if (!string.IsNullOrWhiteSpace(query.instructions))
                     { // there is an instruction flag.
@@ -134,7 +146,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
                     // calculate route.
-                    var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, complete);
+                    var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, operators, complete);
                     OsmSharp.Logging.Log.TraceEvent("MultiModalModal", OsmSharp.Logging.TraceEventType.Information,
                         string.Format("Multimodal request #{1} from {0} finished.", this.Request.UserHostAddress, requestId));
 
