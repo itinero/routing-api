@@ -22,7 +22,7 @@ using OsmSharp.Routing;
 using OsmSharp.Routing.CH;
 using OsmSharp.Routing.CH.Serialization;
 using OsmSharp.Routing.CH.Serialization.Sorted;
-using OsmSharp.Routing.Graph.Router.Dykstra;
+using OsmSharp.Routing.Graph.Routing;
 using OsmSharp.Routing.Osm.Graphs.Serialization;
 using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Service.Routing.Configurations;
@@ -251,7 +251,7 @@ namespace OsmSharp.Service.Routing
                                     {
                                         var routingSerializer = new LiveEdgeFlatfileSerializer();
                                         var graphInstance = routingSerializer.Deserialize(graphStream);
-                                        router = Router.CreateLiveFrom(graphInstance, new DykstraRoutingLive(), new OsmRoutingInterpreter());
+                                        router = Router.CreateLiveFrom(graphInstance, new Dykstra(), new OsmRoutingInterpreter());
                                     }
                                     break;
                                 default:
