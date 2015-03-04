@@ -49,10 +49,9 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// <summary>
         /// Calculates instructions for the given route and vehicle.
         /// </summary>
-        /// <param name="vehicles"></param>
         /// <param name="route"></param>
         /// <returns></returns>
-        public abstract List<Instruction> GetInstructions(List<Vehicle> vehicles, Route route);
+        public abstract List<Instruction> GetInstructions(Route route);
 
         /// <summary>
         /// Converts the given route to a feature collection.
@@ -60,6 +59,13 @@ namespace OsmSharp.Service.Routing.MultiModal
         /// <param name="route"></param>
         /// <param name="aggregated"></param>
         public abstract FeatureCollection GetFeatures(Route route, bool aggregated = true);
+
+        /// <summary>
+        /// Converts the given route to a feature collection augmented with instructions.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public abstract FeatureCollection GetFeaturesWithInstructions(Route route);
 
         /// <summary>
         /// Returns all networkfeatures in the given box.

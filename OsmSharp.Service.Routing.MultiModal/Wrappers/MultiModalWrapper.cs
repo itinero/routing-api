@@ -4,7 +4,12 @@ using NetTopologySuite.Geometries;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;
+using OsmSharp.Routing.Instructions.LanguageGeneration.Defaults;
+using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Routing.Transit.MultiModal;
+using OsmSharp.Routing.Transit.MultiModal.Instructions.LanguageGeneration;
+using OsmSharp.Routing.Transit.MultiModal.Instructions.MicroPlanning;
+using OsmSharp.Routing.Transit.MultiModal.Routers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,9 +121,14 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             return _multiModalRouter.CalculateTransitWithin(departureTime, toFirstStop, interModal, fromLastStop, from, max, sampleZoom);
         }
 
-        public override List<Instruction> GetInstructions(List<Vehicle> vehicles, Route route)
+        /// <summary>
+        /// Returns instructions for the given route.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public override List<Instruction> GetInstructions(Route route)
         {
-            return new List<Instruction>();
+            return _multiModalRouter.GetInstructions(route);
         }
 
         /// <summary>
@@ -130,6 +140,16 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
         public override FeatureCollection GetFeatures(Route route, bool aggregated = true)
         {
             return _multiModalRouter.GetFeatures(route, aggregated);
+        }
+
+        /// <summary>
+        /// Converts the given route to a feature collection augmented with instructions.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public override FeatureCollection GetFeaturesWithInstructions(Route route)
+        {
+            return _multiModalRouter.GetFeaturesWithInstructions(route);
         }
 
         /// <summary>

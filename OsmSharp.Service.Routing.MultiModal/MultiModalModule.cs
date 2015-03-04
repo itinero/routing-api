@@ -156,7 +156,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicles, route);
+                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
 
                         if (fullFormat)
                         {
@@ -167,16 +167,9 @@ namespace OsmSharp.Service.Routing.MultiModal
                             });
                         }
                         else
-                        {
-                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
-                            var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                            var geoJson = geoJsonWriter.Write(featureCollection);
-
-                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new SimpleRoute()
-                            {
-                                Route = geoJson,
-                                Instructions = instruction
-                            });
+                        { // return a GeoJSON object.
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                         }
                     }
 
@@ -187,7 +180,6 @@ namespace OsmSharp.Service.Routing.MultiModal
                     else
                     { // return a GeoJSON object.
                         var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
-
                         return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                     }
                 }
@@ -450,7 +442,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicles, route);
+                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
 
                         if (fullFormat)
                         {
