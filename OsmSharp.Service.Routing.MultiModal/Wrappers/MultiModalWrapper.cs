@@ -137,7 +137,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
         /// <param name="route"></param>
         /// <param name="aggregated"></param>
         /// <returns></returns>
-        public override FeatureCollection GetFeatures(Route route, bool aggregated = true)
+        public override FeatureCollection GetFeatures(Route route, bool aggregated = false)
         {
             return _multiModalRouter.GetFeatures(route, aggregated);
         }
