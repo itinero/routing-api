@@ -93,5 +93,15 @@ namespace OsmSharp.Service.Routing.Wrappers
             // TODO: find a way to get nework features.
             return new FeatureCollection();
         }
+
+        /// <summary>
+        /// Returns true when the given vehicle is supported.
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <returns></returns>
+        public override bool SupportsVehicle(Vehicle vehicle)
+        {
+            return _router.SupportsVehicle(vehicle);
+        }
     }
 }

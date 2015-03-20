@@ -116,6 +116,12 @@ namespace OsmSharp.Service.Routing
                         complete = true;
                     }
 
+                    // check for support for the given vehicle.
+                    if(!ApiBootstrapper.Get(instance).SupportsVehicle(vehicle))
+                    { // vehicle is not supported.
+                        return Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel(string.Format("Vehicle with name '{0}' cannot be use with this routing instance.", vehicleName));
+                    }
+
                     // calculate route.
                     var route = ApiBootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete);
                     if (route == null)

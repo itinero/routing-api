@@ -58,5 +58,12 @@ namespace OsmSharp.Service.Routing
         /// <param name="box"></param>
         /// <returns></returns>
         public abstract FeatureCollection GetNeworkFeatures(GeoCoordinateBox box);
+
+        /// <summary>
+        /// Returns true when the given vehicle is supported.
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <returns></returns>
+        public abstract bool SupportsVehicle(Vehicle vehicle);
     }
 }

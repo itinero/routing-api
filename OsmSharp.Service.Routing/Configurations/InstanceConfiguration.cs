@@ -42,6 +42,7 @@ namespace OsmSharp.Service.Routing.Configurations
         ///          - raw: Raw osm-data.
         ///          - simple: Serialized routing graph.
         ///          - contracted: Contracted serialized data.
+        ///              -> a vehicle type is required in this case!
         /// </remarks>
         [ConfigurationProperty("type", IsRequired = true)]
         public string Type
@@ -62,6 +63,17 @@ namespace OsmSharp.Service.Routing.Configurations
         public string Format
         {
             get { return this["format"] as string; }
+        }
+
+        /// <summary>
+        /// Returns the vehicle type.
+        /// </summary>
+        /// <remarks>Allowed values: Any vehicle type currently registered.
+        /// </remarks>
+        [ConfigurationProperty("vehicle", IsRequired = false)]
+        public string Vehicle
+        {
+            get { return this["vehicle"] as string; }
         }
 
         /// <summary>

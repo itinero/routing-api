@@ -187,6 +187,7 @@ namespace OsmSharp.Service.Routing
                 var graph = instanceConfiguration.Graph;
                 var type = instanceConfiguration.Type;
                 var format = instanceConfiguration.Format;
+                var vehicleName = instanceConfiguration.Vehicle;
 
                 try
                 {
@@ -223,6 +224,28 @@ namespace OsmSharp.Service.Routing
                         case "contracted":
                             switch(format)
                             {
+                                case "osm-xml":
+                                    if (string.IsNullOrWhiteSpace(vehicleName))
+                                    { // invalid configuration.
+                                        throw new Exception("Invalid configuration, a vehicle type is required when building contracted graphs on-the-fly.");
+                                    }
+                                    using (var graphStream = graphFile.OpenRead())
+                                    {
+                                        var graphSource = new XmlOsmStreamSource(graphStream);
+                                        router = Router.CreateCHFrom(graphSource, new OsmRoutingInterpreter(), Vehicle.GetByUniqueName(vehicleName));
+                                    }
+                                    break;
+                                case "osm-pbf":
+                                    if (string.IsNullOrWhiteSpace(vehicleName))
+                                    { // invalid configuration.
+                                        throw new Exception("Invalid configuration, a vehicle type is required when building contracted graphs on-the-fly.");
+                                    }
+                                    using (var graphStream = graphFile.OpenRead())
+                                    {
+                                        var graphSource = new PBFOsmStreamSource(graphStream);
+                                        router = Router.CreateCHFrom(graphSource, new OsmRoutingInterpreter(), Vehicle.GetByUniqueName(vehicleName));
+                                    }
+                                    break;
                                 case "flat":
                                     using (var graphStream = graphFile.OpenRead())
                                     {
@@ -241,7 +264,6 @@ namespace OsmSharp.Service.Routing
                                     throw new Exception(string.Format("Invalid format {0} for type {1}.",
                                         format, type));
                             }
-
                             break;
                         case "simple":
                             switch (format)
