@@ -72,7 +72,13 @@ namespace OsmSharp.Service.Routing.Wrappers
             var geometryFactory = new GeometryFactory();
             var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
             var featureCollection = new FeatureCollection();
-            var feature = new Feature(lineString, new AttributesTable());
+
+            var attributes = new AttributesTable();
+            attributes.AddAttribute("osmsharp:total_time", route.TotalTime.ToInvariantString());
+            attributes.AddAttribute("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
+
+            var feature = new Feature(lineString, attributes);
+
             featureCollection.Add(feature);
             return featureCollection;
         }
