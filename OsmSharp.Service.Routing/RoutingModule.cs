@@ -136,10 +136,9 @@ namespace OsmSharp.Service.Routing
                     }
                     if (route != null && instructions)
                     { // also calculate instructions.
-                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(vehicle, route);
-
                         if (fullFormat)
                         {
+                            var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
                             return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
                                 {
                                     Route = route,
@@ -147,16 +146,9 @@ namespace OsmSharp.Service.Routing
                                 });
                         }
                         else
-                        {
-                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
-                            var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                            var geoJson = geoJsonWriter.Write(featureCollection);
-
-                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new SimpleRoute()
-                            {
-                                Route = geoJson,
-                                Instructions = instruction
-                            });
+                        { // return a GeoJSON object.
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                         }
                     }
 

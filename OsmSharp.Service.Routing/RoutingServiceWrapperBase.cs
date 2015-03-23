@@ -42,16 +42,22 @@ namespace OsmSharp.Service.Routing
         /// <summary>
         /// Calculates instructions for the given route and vehicle.
         /// </summary>
-        /// <param name="vehicle"></param>
         /// <param name="route"></param>
         /// <returns></returns>
-        public abstract List<Instruction> GetInstructions(Vehicle vehicle, Route route);
+        public abstract List<Instruction> GetInstructions( Route route);
 
         /// <summary>
         /// Converts the given route to a feature collection.
         /// </summary>
         /// <param name="route"></param>
         public abstract FeatureCollection GetFeatures(Route route);
+
+        /// <summary>
+        /// Converts the given route to a feature collection augmented with instructions.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public abstract FeatureCollection GetFeaturesWithInstructions(Route route);
 
         /// <summary>
         /// Returns all networkfeatures in the given box.

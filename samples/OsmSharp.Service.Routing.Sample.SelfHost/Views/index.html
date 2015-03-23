@@ -47,14 +47,22 @@
 		    });
 
 		    if (loc.length > 1) {
+		        var locations = loc.slice(0);
+		        locations.push(locations[0]);
+
 		        osmsharp.api.routing('http://localhost:1234/default/',
-		        'car', loc, function (route) {
-		            if (routeLayer) {
-		                map.removeLayer(routeLayer);
-		            }
-		            routeLayer = L.geoJson(route);
-		            routeLayer.addTo(map);
-		        });
+                    {
+                        vehicle: 'car',
+                        locations: locations,
+                        sort: true
+                    },
+		            function (route) {
+		                if (routeLayer) {
+		                    map.removeLayer(routeLayer);
+		                }
+		                routeLayer = L.geoJson(route);
+		                routeLayer.addTo(map);
+		            });
 		    }
         });
 

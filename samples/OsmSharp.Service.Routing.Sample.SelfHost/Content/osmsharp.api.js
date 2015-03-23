@@ -48,18 +48,28 @@ osmsharp.api = {
     },
 
     // sends a requests for multimodal route.
-    routing: function (url, vehicle, locations, callback, error, context) {
+    routing: function (url, options, callback, error, context) {
         // increase request id.
         this.id++;
 
         var requestString = '/routing?callback=%jsonp';
 
         // add vehicle parameter.
-        requestString += '&vehicle=' + vehicle;
+        requestString += '&vehicle=' + options.vehicle;
 
         // add locations.
-        for (var i = 0; i < locations.length; i++) {
-            requestString += '&loc=' + locations[i].lat.toFixed(6) + ',' + locations[i].lon.toFixed(6);
+        for (var i = 0; i < options.locations.length; i++) {
+            requestString += '&loc=' + options.locations[i].lat.toFixed(6) + ',' + options.locations[i].lon.toFixed(6);
+        }
+
+        // sort.
+        if (options.sort) {
+            requestString += '&sort=true';
+        }
+
+        // instructions.
+        if (options.instructions) {
+            requestString += '&instructions=true';
         }
 
         // execute JSONP request.
