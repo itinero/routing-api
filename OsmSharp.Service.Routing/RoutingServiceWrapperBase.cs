@@ -35,8 +35,9 @@ namespace OsmSharp.Service.Routing
         /// <param name="vehicle">The vehicle profile to use.</param>
         /// <param name="coordinates">The coordinates of the points to route along.</param>
         /// <param name="complete">Only output the route geometry if false.</param>
+        /// <param name="sort">Sorts the via-points.</param>
         /// <returns></returns>
-        public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete);
+        public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort);
 
         /// <summary>
         /// Calculates instructions for the given route and vehicle.
