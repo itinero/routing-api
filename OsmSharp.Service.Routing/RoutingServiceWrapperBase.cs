@@ -35,22 +35,29 @@ namespace OsmSharp.Service.Routing
         /// <param name="vehicle">The vehicle profile to use.</param>
         /// <param name="coordinates">The coordinates of the points to route along.</param>
         /// <param name="complete">Only output the route geometry if false.</param>
+        /// <param name="sort">Sorts the via-points.</param>
         /// <returns></returns>
-        public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete);
+        public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort);
 
         /// <summary>
         /// Calculates instructions for the given route and vehicle.
         /// </summary>
-        /// <param name="vehicle"></param>
         /// <param name="route"></param>
         /// <returns></returns>
-        public abstract List<Instruction> GetInstructions(Vehicle vehicle, Route route);
+        public abstract List<Instruction> GetInstructions( Route route);
 
         /// <summary>
         /// Converts the given route to a feature collection.
         /// </summary>
         /// <param name="route"></param>
         public abstract FeatureCollection GetFeatures(Route route);
+
+        /// <summary>
+        /// Converts the given route to a feature collection augmented with instructions.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
+        public abstract FeatureCollection GetFeaturesWithInstructions(Route route);
 
         /// <summary>
         /// Returns all networkfeatures in the given box.

@@ -26,6 +26,8 @@ namespace OsmSharp.Service.Routing.Domain.Queries
 
         public string instructions { get; set; }
 
+        public string sort { get; set; }
+
         public string format { get; set; }
 
         public string complete { get; set; }
