@@ -40,6 +40,15 @@ namespace OsmSharp.Service.Routing
         public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort);
 
         /// <summary>
+        /// Calculates routes from one source to many targets.
+        /// </summary>
+        /// <param name="vehicle">The vehicle profile to use.</param>
+        /// <param name="coordinates">The coordinates of the points to route along.</param>
+        /// <param name="complete">Only output the route geometry if false.</param>
+        /// <returns></returns>
+        public abstract Route[] GetOneToMany(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete);
+
+        /// <summary>
         /// Calculates instructions for the given route and vehicle.
         /// </summary>
         /// <param name="route"></param>

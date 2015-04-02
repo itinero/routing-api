@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using Nancy.Json;
 using Nancy.ModelBinding;
+using NetTopologySuite.Features;
 using Newtonsoft.Json;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
@@ -145,42 +146,113 @@ namespace OsmSharp.Service.Routing.MultiModal
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("No valid time parameter found, could not parse date: {0}. Expected to be in format yyyyMMddHHmm."));
                     }
-                    // calculate route.
-                    var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, operators, complete);
-                    OsmSharp.Logging.Log.TraceEvent("MultiModalModal", OsmSharp.Logging.TraceEventType.Information,
-                        string.Format("Multimodal request #{1} from {0} finished.", this.Request.UserHostAddress, requestId));
 
-                    if (route == null)
-                    { // route could not be calculated.
-                        return null;
-                    }
-                    if (route != null && instructions)
-                    { // also calculate instructions.
-                        var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
-
-                        if (fullFormat)
+                    bool otm = false;
+                    if (!string.IsNullOrWhiteSpace(query.type))
+                    { // custom type of routing request.
+                        if (query.type == "otm")
                         {
-                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
+                            otm = true;
+                        }
+                    }
+
+                    if (!otm)
+                    {
+                        // calculate route.
+                        var route = ApiBootstrapper.Get(instance).GetRoute(dt, vehicles, coordinates, operators, complete);
+                        OsmSharp.Logging.Log.TraceEvent("MultiModalModal", OsmSharp.Logging.TraceEventType.Information,
+                            string.Format("Multimodal request #{1} from {0} finished.", this.Request.UserHostAddress, requestId));
+
+                        if (route == null)
+                        { // route could not be calculated.
+                            return null;
+                        }
+                        if (route != null && instructions)
+                        { // also calculate instructions.
+                            var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
+
+                            if (fullFormat)
                             {
-                                Route = route,
-                                Instructions = instruction
-                            });
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
+                                {
+                                    Route = route,
+                                    Instructions = instruction
+                                });
+                            }
+                            else
+                            { // return a GeoJSON object.
+                                var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                            }
+                        }
+                        if (fullFormat)
+                        { // return a complete route but no instructions.
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
                         }
                         else
                         { // return a GeoJSON object.
-                            var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
                             return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                         }
                     }
-
-                    if (fullFormat)
-                    { // return a complete route but no instructions.
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
-                    }
                     else
-                    { // return a GeoJSON object.
-                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                    {
+                        // calculate route.
+                        var routes = ApiBootstrapper.Get(instance).GetOneToMany(dt, vehicles, coordinates, operators, complete);
+                        if (routes == null)
+                        { // route could not be calculated.
+                            return null;
+                        }
+                        if (routes != null && instructions)
+                        { // also calculate instructions.
+                            if (fullFormat)
+                            {
+                                throw new NotSupportedException();
+                            }
+                            else
+                            { // return a GeoJSON object.
+                                var featureCollection = new FeatureCollection();
+                                foreach (var route in routes)
+                                {
+                                    if (route != null)
+                                    {
+                                        var routeFeatures = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                                        if (routeFeatures != null)
+                                        {
+                                            foreach (var feature in routeFeatures.Features)
+                                            {
+                                                featureCollection.Add(feature);
+                                            }
+                                        }
+                                    }
+                                }
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                            }
+                        }
+
+                        if (fullFormat)
+                        {
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(routes);
+                        }
+                        else
+                        { // return a GeoJSON object.
+                            var featureCollection = new FeatureCollection();
+                            foreach (var route in routes)
+                            {
+                                if (route != null)
+                                {
+                                    var routeFeatures = ApiBootstrapper.Get(instance).GetFeatures(route);
+                                    if (routeFeatures != null)
+                                    {
+                                        foreach (var feature in routeFeatures.Features)
+                                        {
+                                            featureCollection.Add(feature);
+                                        }
+                                    }
+                                }
+                            }
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                        }
                     }
                 }
                 catch (Exception)

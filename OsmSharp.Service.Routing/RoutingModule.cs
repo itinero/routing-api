@@ -19,6 +19,7 @@
 using Nancy;
 using Nancy.Json;
 using Nancy.ModelBinding;
+using NetTopologySuite.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Service.Routing.Domain;
@@ -122,45 +123,116 @@ namespace OsmSharp.Service.Routing
                         complete = true;
                     }
 
+                    bool otm = false;
+                    if(!string.IsNullOrWhiteSpace(query.type))
+                    { // custom type of routing request.
+                        if (query.type == "otm")
+                        {
+                            otm = true;
+                        }
+                    }
+
                     // check for support for the given vehicle.
                     if(!ApiBootstrapper.Get(instance).SupportsVehicle(vehicle))
                     { // vehicle is not supported.
                         return Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel(string.Format("Vehicle with name '{0}' cannot be use with this routing instance.", vehicleName));
                     }
 
-                    // calculate route.
-                    var route = ApiBootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete, sort);
-                    if (route == null)
-                    { // route could not be calculated.
-                        return null;
-                    }
-                    if (route != null && instructions)
-                    { // also calculate instructions.
+                    if (!otm)
+                    {
+                        // calculate route.
+                        var route = ApiBootstrapper.Get(instance).GetRoute(vehicle, coordinates, complete, sort);
+                        if (route == null)
+                        { // route could not be calculated.
+                            return null;
+                        }
+                        if (route != null && instructions)
+                        { // also calculate instructions.
+                            if (fullFormat)
+                            {
+                                var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
+                                    {
+                                        Route = route,
+                                        Instructions = instruction
+                                    });
+                            }
+                            else
+                            { // return a GeoJSON object.
+                                var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                            }
+                        }
+
                         if (fullFormat)
-                        {
-                            var instruction = ApiBootstrapper.Get(instance).GetInstructions(route);
-                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new CompleteRoute()
-                                {
-                                    Route = route,
-                                    Instructions = instruction
-                                });
+                        { // return a complete route but no instructions.
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
                         }
                         else
                         { // return a GeoJSON object.
-                            var featureCollection = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                            var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
+
                             return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                         }
                     }
-
-                    if (fullFormat)
-                    { // return a complete route but no instructions.
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(route);
-                    }
                     else
-                    { // return a GeoJSON object.
-                        var featureCollection = ApiBootstrapper.Get(instance).GetFeatures(route);
+                    {
+                        // calculate route.
+                        var routes = ApiBootstrapper.Get(instance).GetOneToMany(vehicle, coordinates, complete);
+                        if (routes == null)
+                        { // route could not be calculated.
+                            return null;
+                        }
+                        if (routes != null && instructions)
+                        { // also calculate instructions.
+                            if (fullFormat)
+                            {
+                                throw new NotSupportedException();
+                            }
+                            else
+                            { // return a GeoJSON object.
+                                var featureCollection = new FeatureCollection();
+                                foreach (var route in routes)
+                                {
+                                    if(route != null)
+                                    {
+                                        var routeFeatures = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
+                                        if(routeFeatures != null)
+                                        {
+                                            foreach (var feature in routeFeatures.Features)
+                                            {
+                                                featureCollection.Add(feature);
+                                            }
+                                        }
+                                    }
+                                }
+                                return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                            }
+                        }
 
-                        return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                        if (fullFormat)
+                        {
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(routes);
+                        }
+                        else
+                        { // return a GeoJSON object.
+                            var featureCollection = new FeatureCollection();
+                            foreach (var route in routes)
+                            {
+                                if (route != null)
+                                {
+                                    var routeFeatures = ApiBootstrapper.Get(instance).GetFeatures(route);
+                                    if (routeFeatures != null)
+                                    {
+                                        foreach (var feature in routeFeatures.Features)
+                                        {
+                                            featureCollection.Add(feature);
+                                        }
+                                    }
+                                }
+                            }
+                            return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
+                        }
                     }
                 }
                 catch (Exception ex)

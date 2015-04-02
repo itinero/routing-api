@@ -36,6 +36,17 @@ namespace OsmSharp.Service.Routing.MultiModal
         public abstract Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
 
         /// <summary>
+        /// Calculates routes from one point to a number of given other points.
+        /// </summary>
+        /// <param name="departureTime">The departure time at the first location.</param>
+        /// <param name="vehicles">The vehicle profiles to use.</param>
+        /// <param name="coordinates">The coordinates of the points to route along.</param>
+        /// <param name="operators">The operators to allow. All operators are allowed when null, none when empty.</param>
+        /// <param name="complete">Only output the route geometry if false.</param>
+        /// <returns></returns>
+        public abstract Route[] GetOneToMany(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
+
+        /// <summary>
         /// Calculates the weight to all the points within the given range.
         /// </summary>
         /// <param name="departureTime"></param>

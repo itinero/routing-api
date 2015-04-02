@@ -53,6 +53,34 @@ namespace OsmSharp.Service.Routing.Wrappers
         }
 
         /// <summary>
+        /// Calculates a number of routes from one source to many targets.
+        /// </summary>
+        /// <param name="vehicle"></param>
+        /// <param name="coordinates"></param>
+        /// <param name="complete"></param>
+        public override Route[] GetOneToMany(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete)
+        {
+            // resolve all points.
+            var resolved = _router.Resolve(vehicle, coordinates);
+
+            // calculate one-to-many routes.
+            if (resolved[0] != null)
+            {
+                var targets = new List<RouterPoint>();
+                foreach(var point in resolved)
+                {
+                    if (point != null)
+                    {
+                        targets.Add(point);
+                    }
+                }
+
+                return _router.CalculateOneToMany(vehicle, resolved[0], targets.ToArray());
+            }
+            return new Route[coordinates.Length - 1];
+        }
+
+        /// <summary>
         /// Calculates a router along the given coordinates.
         /// </summary>
         /// <param name="vehicle"></param>
@@ -306,19 +334,22 @@ namespace OsmSharp.Service.Routing.Wrappers
         /// <returns></returns>
         public override FeatureCollection GetFeatures(Route route)
         {
-            var coordinates = route.GetPoints();
-            var ntsCoordinates = coordinates.Select(x => { return new Coordinate(x.Longitude, x.Latitude); });
-            var geometryFactory = new GeometryFactory();
-            var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
             var featureCollection = new FeatureCollection();
+            var coordinates = route.GetPoints();
+            if (coordinates.Count > 1)
+            {
+                var ntsCoordinates = coordinates.Select(x => { return new Coordinate(x.Longitude, x.Latitude); });
+                var geometryFactory = new GeometryFactory();
+                var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
 
-            var attributes = new AttributesTable();
-            attributes.AddAttribute("osmsharp:total_time", route.TotalTime.ToInvariantString());
-            attributes.AddAttribute("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
+                var attributes = new AttributesTable();
+                attributes.AddAttribute("osmsharp:total_time", route.TotalTime.ToInvariantString());
+                attributes.AddAttribute("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
 
-            var feature = new Feature(lineString, attributes);
+                var feature = new Feature(lineString, attributes);
 
-            featureCollection.Add(feature);
+                featureCollection.Add(feature);
+            }
             return featureCollection;
         }
 

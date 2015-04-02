@@ -48,6 +48,52 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
             return null;
         }
 
+        public override Route[] GetOneToMany(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            var toFirstStop = vehicles[0];
+            var interModal = vehicles[0];
+            var fromLastStop = vehicles[0];
+
+            if (vehicles.Count == 1)
+            { // the intermode is always pedestrian when only one profile given.
+                interModal = Vehicle.GetByUniqueName("Pedestrian");
+            }
+            else if (vehicles.Count == 2)
+            { // the intermode is always pedestrian when only two profiles given.
+                interModal = Vehicle.GetByUniqueName("Pedestrian");
+                fromLastStop = vehicles[1];
+            }
+            else if (vehicles.Count >= 3)
+            { // ignore vehicle 4 etc...
+                interModal = vehicles[1];
+                fromLastStop = vehicles[2];
+            }            
+
+            // resolve points with the correct profiles.
+            RouterPoint from;
+            var tos = new RouterPoint[coordinates.Length - 1];
+            lock (_multiModalRouter)
+            {
+                from = _multiModalRouter.Resolve(toFirstStop, coordinates[0]);
+                for (int idx = 1; idx < coordinates.Length; idx++)
+                {
+                    tos[idx - 1] = _multiModalRouter.Resolve(fromLastStop, coordinates[idx]);
+                }
+            }
+
+            HashSet<string> operatorSet = null; ;
+            if (operators != null)
+            {
+                operatorSet = new HashSet<string>();
+                foreach (var op in operators)
+                {
+                    operatorSet.Add(op);
+                }
+            }
+
+            return _multiModalRouter.CalculateTransitOneToMany(departureTime, toFirstStop, interModal, fromLastStop, from, tos, operatorSet);
+        }
+
         public override Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
         {
             var toFirstStop = vehicles[0];

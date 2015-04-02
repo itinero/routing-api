@@ -22,6 +22,8 @@ namespace OsmSharp.Service.Routing.Domain.Queries
     {
         public string loc { get; set; }
 
+        public string type { get; set; } // otm
+
         public string vehicle { get; set; }
 
         public string instructions { get; set; }

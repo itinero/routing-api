@@ -25,5 +25,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Domain.Queries
         public string time { get; set; }
 
         public string departure { get; set; }
+
+        public string type { get; set; }
     }
 }
