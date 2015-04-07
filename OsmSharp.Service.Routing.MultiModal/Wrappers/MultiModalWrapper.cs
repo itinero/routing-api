@@ -71,13 +71,17 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
 
             // resolve points with the correct profiles.
             RouterPoint from;
-            var tos = new RouterPoint[coordinates.Length - 1];
+            var tos = new List<RouterPoint>(coordinates.Length - 1);
             lock (_multiModalRouter)
             {
                 from = _multiModalRouter.Resolve(toFirstStop, coordinates[0]);
                 for (int idx = 1; idx < coordinates.Length; idx++)
                 {
-                    tos[idx - 1] = _multiModalRouter.Resolve(fromLastStop, coordinates[idx]);
+                    var to = _multiModalRouter.Resolve(fromLastStop, coordinates[idx]);
+                    if (to != null)
+                    {
+                        tos.Add(to);
+                    }
                 }
             }
 
@@ -91,7 +95,7 @@ namespace OsmSharp.Service.Routing.MultiModal.Wrappers
                 }
             }
 
-            return _multiModalRouter.CalculateTransitOneToMany(departureTime, toFirstStop, interModal, fromLastStop, from, tos, operatorSet);
+            return _multiModalRouter.CalculateTransitOneToMany(departureTime, toFirstStop, interModal, fromLastStop, from, tos.ToArray(), operatorSet);
         }
 
         public override Route GetRoute(DateTime departureTime, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
