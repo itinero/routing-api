@@ -91,7 +91,20 @@ namespace OsmSharp.Service.Routing.Wrappers
         public override Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort)
         {
             // resolve all points.
-            var resolved = _router.Resolve(vehicle, coordinates);
+            var resolved = _router.Resolve(vehicle, 0.0075f, coordinates);
+
+            // add id's to each resolved point.
+            for(int idx = 0; idx < resolved.Length; idx++)
+            {
+                if(resolved[idx] != null)
+                {
+                    if (resolved[idx].Tags == null)
+                    {
+                        resolved[idx].Tags = new List<KeyValuePair<string, string>>();
+                    }
+                    resolved[idx].Tags.Add(new KeyValuePair<string, string>("point_id", idx.ToInvariantString()));
+                }
+            }
 
             Route route;
             if (sort)
@@ -158,7 +171,7 @@ namespace OsmSharp.Service.Routing.Wrappers
                 
                 // sort points.
                 var routerTSP = new RouterTSPAEXGenetic();
-                var isRound = locations[0] == locations[locations.Length - 1];
+                var isRound = true; //locations[0] == locations[locations.Length - 1];
                 var tspSolution = routerTSP.CalculateTSP(weights, locations, isRound);
 
                 // build route.
