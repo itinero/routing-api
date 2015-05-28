@@ -138,7 +138,7 @@ namespace OsmSharp.Service.Routing.Wrappers
                     }
                 }
 
-                // augment the empty weights with weights 'as the crow flies'.
+                // augment the empty weights with weights 'as the crow flies' but with a penalty of a factor 10.
                 for(var row = 0; row < resolved.Length;row++)
                 {
                     if(weights[row] == null)
@@ -150,7 +150,7 @@ namespace OsmSharp.Service.Routing.Wrappers
                         if(resolved[row] == null || resolved[column] == null)
                         {
                             var distance = coordinates[row].DistanceReal(coordinates[column]).Value;
-                            weights[row][column] = distance / (vehicle.MaxSpeed().Value) * 3.6;
+                            weights[row][column] = distance / (vehicle.MaxSpeed().Value) * 3.6 * 10;
                         }
                     }
                 }
