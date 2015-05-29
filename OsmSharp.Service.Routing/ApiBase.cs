@@ -53,7 +53,8 @@ namespace OsmSharp.Service.Routing
         /// Calculates weight matrices.
         /// </summary>
         /// <returns></returns>
-        public abstract Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs);
+        public abstract Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs,
+            out Tuple<string, int, string>[] errors);
 
         /// <summary>
         /// Calculates instructions for the given route and vehicle.

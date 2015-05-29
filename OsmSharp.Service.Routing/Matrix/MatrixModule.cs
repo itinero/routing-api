@@ -20,6 +20,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using OsmSharp.Math.Geo;
 using System;
+using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing.Matrix
 {
@@ -67,7 +68,7 @@ namespace OsmSharp.Service.Routing.Matrix
             {
                 return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable);
             }
-            if (request.locations == null && (request.sources == null || request.locations == null))
+            if (request.locations == null && (request.sources == null || request.targets == null))
             {
                 return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable);
             }
@@ -129,7 +130,23 @@ namespace OsmSharp.Service.Routing.Matrix
 
             // calculate matrices.
             var api = ApiBootstrapper.Get(instance);
-            var matrices = api.GetMatrix(vehicle, sources, targets, request.output);
+            Tuple<string, int, string>[] errors;
+            var matrices = api.GetMatrix(vehicle, sources, targets, request.output, out errors);
+
+            // remove target errors and adapt source errors when only a locations array was in the request.
+            if(request.locations != null)
+            {
+                var errorsList = new List<Tuple<string, int, string>>();
+                foreach(var error in errors)
+                {
+                    if(error.Item1 == "source")
+                    {
+                        errorsList.Add(new Tuple<string, int, string>(null,
+                            error.Item2, error.Item3));
+                    }
+                }
+                errors = errorsList.ToArray();
+            }
 
             // build response.
             var response = new Matrix.Domain.Response();
@@ -146,6 +163,19 @@ namespace OsmSharp.Service.Routing.Matrix
                 else if (matrix.Item1 == Matrix.Domain.Request.WeightsOutputOption)
                 {
                     response.weights = matrix.Item2;
+                }
+            }
+            if(errors != null && errors.Length > 0)
+            {
+                response.errors = new Domain.Error[errors.Length];
+                for(var i = 0; i < errors.Length; i++)
+                {
+                    response.errors[i] = new Domain.Error()
+                    {
+                        type = errors[i].Item1,
+                        index = errors[i].Item2,
+                        message = errors[i].Item3
+                    };
                 }
             }
             return response;

@@ -26,9 +26,9 @@ using System.Collections.Generic;
 namespace OsmSharp.Service.Routing.Tests
 {
     /// <summary>
-    /// A mockup of the routing service wrapper.
+    /// A mockup of the API implementation.
     /// </summary>
-    class RoutingServiceWrapperMock : ApiBase
+    class ApiMock : ApiBase
     {
 
         public override Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort)
@@ -66,8 +66,37 @@ namespace OsmSharp.Service.Routing.Tests
             throw new System.NotImplementedException();
         }
 
-        public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs)
+        public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs,
+            out Tuple<string, int, string>[] errors)
         {
+            var errorsList = new List<Tuple<string, int, string>>();
+            for(var i = 0; i < source.Length;i++)
+            {
+                if(source[i] == null || source[i].Latitude > 180)
+                { // dummy incorrect coordinates had a lat bigger than 180.
+                    errorsList.Add(new Tuple<string, int, string>("source", i, "Coordinate invalid."));
+                    source[i] = null;
+                }
+            }
+            for (var i = 0; i < target.Length; i++)
+            {
+                if (target[i] == null || target[i].Latitude > 180)
+                { // dummy incorrect coordinates had a lat bigger than 180.
+                    errorsList.Add(new Tuple<string, int, string>("target", i, "Coordinate invalid."));
+                    target[i] = null;
+                }
+            }
+            errors = errorsList.ToArray();
+
+            // remove invalid coordinates.
+            var sourceList = new List<GeoCoordinate>(source);
+            sourceList.RemoveAll(x => x == null);
+            source = sourceList.ToArray();
+            var targetList = new List<GeoCoordinate>(target);
+            targetList.RemoveAll(x => x == null);
+            target = targetList.ToArray();
+
+            // build a dummy response.
             var matrices = new Tuple<string, double[][]>[outputs.Length];
             for(var i = 0; i < outputs.Length; i++)
             {

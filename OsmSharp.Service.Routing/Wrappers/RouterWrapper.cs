@@ -530,11 +530,42 @@ namespace OsmSharp.Service.Routing.Wrappers
         /// Calculates matrices of distances/times.
         /// </summary>
         /// <returns></returns>
-        public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs)
+        public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, 
+            string[] outputs, out Tuple<string, int, string>[] errors)
         {
             // resolve all points.
             var resolvedSources = _router.Resolve(vehicle, 0.0075f, source);
             var resolvedTargets = _router.Resolve(vehicle, 0.0075f, target);
+
+            // check for errors.
+            var errorList = new List<Tuple<string, int, string>>();
+            var resolvedSourcesList = new List<RouterPoint>();
+            var resolvedTargetsList = new List<RouterPoint>();
+            for(var i = 0; i < resolvedSources.Length; i++)
+            {
+                if(resolvedSources[i] == null)
+                {
+                    errorList.Add(new Tuple<string, int, string>("source", i, "Point could not be resolved."));
+                }
+                else
+                {
+                    resolvedSourcesList.Add(resolvedSources[i]);
+                }
+            }
+            for (var i = 0; i < resolvedTargets.Length; i++)
+            {
+                if (resolvedTargets[i] == null)
+                {
+                    errorList.Add(new Tuple<string, int, string>("target", i, "Point could not be resolved."));
+                }
+                else
+                {
+                    resolvedTargetsList.Add(resolvedTargets[i]);
+                }
+            }
+            errors = errorList.ToArray();
+            resolvedSources = resolvedSourcesList.ToArray();
+            resolvedTargets = resolvedTargetsList.ToArray();
 
             // calculates the routes.
             var matrices = new Tuple<string, double[][]>[outputs.Length];

@@ -140,6 +140,7 @@
     <Compile Include="GeoJsonResponse.cs" />
     <Compile Include="GeoJsonResponseProcessor.cs" />
     <Compile Include="Logging\DebugTraceListener.cs" />
+    <Compile Include="Matrix\Domain\Error.cs" />
     <Compile Include="Matrix\Domain\Response.cs" />
     <Compile Include="Matrix\MatrixModule.cs" />
     <Compile Include="Matrix\Domain\Profile.cs" />

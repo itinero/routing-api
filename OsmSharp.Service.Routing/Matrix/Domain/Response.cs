@@ -26,5 +26,6 @@ namespace OsmSharp.Service.Routing.Matrix.Domain
         public double[][] times { get; set; }
         public double[][] distances { get; set; }
         public double[][] weights { get; set; }
+        public Error[] errors { get; set; }
     }
 }
