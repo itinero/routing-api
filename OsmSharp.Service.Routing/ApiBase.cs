@@ -20,14 +20,15 @@ using NetTopologySuite.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;
+using System;
 using System.Collections.Generic;
 
 namespace OsmSharp.Service.Routing
 {
     /// <summary>
-    /// An abstract representation of routing service wrapper.
+    /// An abstract representation of the entire API.
     /// </summary>
-    public abstract class RoutingServiceWrapperBase
+    public abstract class ApiBase
     {
         /// <summary>
         /// Calculates a route along the given points.
@@ -47,6 +48,12 @@ namespace OsmSharp.Service.Routing
         /// <param name="complete">Only output the route geometry if false.</param>
         /// <returns></returns>
         public abstract Route[] GetOneToMany(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete);
+
+        /// <summary>
+        /// Calculates weight matrices.
+        /// </summary>
+        /// <returns></returns>
+        public abstract Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs);
 
         /// <summary>
         /// Calculates instructions for the given route and vehicle.

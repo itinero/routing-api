@@ -25,7 +25,6 @@ using OsmSharp.Math.VRP.Core.Routes;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;
 using OsmSharp.Routing.Osm.Interpreter;
-using OsmSharp.Routing.TSP;
 using OsmSharp.Routing.TSP.Genetic;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace OsmSharp.Service.Routing.Wrappers
     /// <summary>
     /// A routing service wrapper class around a router.
     /// </summary>
-    public class RouterWrapper : RoutingServiceWrapperBase
+    public class RouterWrapper : ApiBase
     {
         /// <summary>
         /// Holds the router.
@@ -525,6 +524,66 @@ namespace OsmSharp.Service.Routing.Wrappers
         public override bool SupportsVehicle(Vehicle vehicle)
         {
             return _router.SupportsVehicle(vehicle);
+        }
+
+        /// <summary>
+        /// Calculates matrices of distances/times.
+        /// </summary>
+        /// <returns></returns>
+        public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs)
+        {
+            // resolve all points.
+            var resolvedSources = _router.Resolve(vehicle, 0.0075f, source);
+            var resolvedTargets = _router.Resolve(vehicle, 0.0075f, target);
+
+            // calculates the routes.
+            var matrices = new Tuple<string, double[][]>[outputs.Length];
+            if (outputs.Length == 1 && outputs[0] == "weights")
+            { // calculate weights only.
+                matrices[0] = new Tuple<string, double[][]>(outputs[0],
+                    _router.CalculateManyToManyWeight(vehicle, resolvedSources, resolvedTargets));
+                return matrices;
+            }
+            else
+            { // calculate complete routes and extract information from there.
+                var routes = _router.CalculateManyToMany(vehicle, resolvedSources, resolvedTargets, float.MaxValue, false);
+
+                // TODO: if weights are requested now the time-value is taken because in OsmSharp at the moment weights equal time for now.
+                // this will change and at that time this needs to be updated.
+                var times = new double[routes.Length][];
+                for(var x = 0; x < times.Length; x++)
+                {
+                    times[x] = new double[routes[x].Length];
+                    for(var y = 0; y < times[x].Length; y++)
+                    {
+                        times[x][y] = routes[x][y].TotalTime;
+                    }
+                }
+                var distances = new double[routes.Length][];
+                for (var x = 0; x < distances.Length; x++)
+                {
+                    distances[x] = new double[routes[x].Length];
+                    for (var y = 0; y < distances[x].Length; y++)
+                    {
+                        distances[x][y] = routes[x][y].TotalDistance;
+                    }
+                }
+                for(var i = 0; i < outputs.Length; i++)
+                {
+                    if(outputs[i] == "weights" ||
+                        outputs[i] == "times")
+                    {
+                        matrices[i] = new Tuple<string, double[][]>(
+                            outputs[i], times);
+                    }
+                    else if (outputs[i] == "distances")
+                    {
+                        matrices[i] = new Tuple<string, double[][]>(
+                            outputs[i], distances);
+                    }
+                }
+            }
+            return matrices;
         }
     }
 }

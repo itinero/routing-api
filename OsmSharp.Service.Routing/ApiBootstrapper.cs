@@ -43,7 +43,7 @@ namespace OsmSharp.Service.Routing
         /// <summary>
         /// Holds the routing service instances.
         /// </summary>
-        private static Dictionary<string, RoutingServiceWrapperBase> _routingServiceInstances = new Dictionary<string,RoutingServiceWrapperBase>();
+        private static Dictionary<string, ApiBase> _routingServiceInstances = new Dictionary<string,ApiBase>();
 
         /// <summary>
         /// Returns true if a routing service has been initialized.
@@ -59,7 +59,7 @@ namespace OsmSharp.Service.Routing
         /// <summary>
         /// Returns the routing service instance.
         /// </summary>
-        public static RoutingServiceWrapperBase Get(string instance)
+        public static ApiBase Get(string instance)
         {
             return _routingServiceInstances[instance];
         }
@@ -69,7 +69,7 @@ namespace OsmSharp.Service.Routing
         /// </summary>
         /// <param name="instance">The instance name.</param>
         /// <param name="routingServiceInstance"></param>
-        public static void Add(string instance, RoutingServiceWrapperBase routingServiceInstance)
+        public static void Add(string instance, ApiBase routingServiceInstance)
         {
             _routingServiceInstances.Add(instance, routingServiceInstance);
         }
@@ -79,7 +79,7 @@ namespace OsmSharp.Service.Routing
         /// </summary>
         /// <param name="instance">The instance name.</param>
         /// <param name="routingServiceInstance"></param>
-        public static void AddOrUpdate(string instance, RoutingServiceWrapperBase routingServiceInstance)
+        public static void AddOrUpdate(string instance, ApiBase routingServiceInstance)
         {
             _routingServiceInstances[instance] = routingServiceInstance;
         }
