@@ -1,4 +1,4 @@
-﻿using NetTopologySuite.Features;
+﻿using OsmSharp.Geo.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;

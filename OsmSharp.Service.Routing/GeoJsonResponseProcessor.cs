@@ -18,7 +18,7 @@
 
 using Nancy;
 using Nancy.Responses.Negotiation;
-using NetTopologySuite.Features;
+using OsmSharp.Geo.Features;
 using System;
 using System.Collections.Generic;
 

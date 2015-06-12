@@ -1,8 +1,7 @@
 ﻿using Nancy;
 using Nancy.Json;
 using Nancy.ModelBinding;
-using NetTopologySuite.Features;
-using Newtonsoft.Json;
+using OsmSharp.Geo.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Vehicles;
@@ -220,7 +219,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                                         var routeFeatures = ApiBootstrapper.Get(instance).GetFeaturesWithInstructions(route);
                                         if (routeFeatures != null)
                                         {
-                                            foreach (var feature in routeFeatures.Features)
+                                            foreach (var feature in routeFeatures)
                                             {
                                                 featureCollection.Add(feature);
                                             }
@@ -245,7 +244,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                                     var routeFeatures = ApiBootstrapper.Get(instance).GetFeatures(route);
                                     if (routeFeatures != null)
                                     {
-                                        foreach (var feature in routeFeatures.Features)
+                                        foreach (var feature in routeFeatures)
                                         {
                                             featureCollection.Add(feature);
                                         }
@@ -610,8 +609,7 @@ namespace OsmSharp.Service.Routing.MultiModal
                     }
 
                     var features = ApiBootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
-                    var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                    return geoJsonWriter.Write(features);
+                    return OsmSharp.Geo.Streams.GeoJson.GeoJsonConverter.ToGeoJson(features);
                 }
                 catch (Exception)
                 { // an unhandled exception!

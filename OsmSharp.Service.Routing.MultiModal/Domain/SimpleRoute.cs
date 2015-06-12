@@ -1,5 +1,4 @@
-﻿using NetTopologySuite.Features;
-using OsmSharp.Routing.Instructions;
+﻿using OsmSharp.Routing.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using GeoAPI.Geometries;
-using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
 using OsmSharp.Collections.Tags;
+using OsmSharp.Geo.Attributes;
+using OsmSharp.Geo.Features;
+using OsmSharp.Geo.Geometries;
 using OsmSharp.Math.Geo;
 using OsmSharp.Math.VRP.Core.Routes;
 using OsmSharp.Routing;
@@ -351,13 +351,11 @@ namespace OsmSharp.Service.Routing.Wrappers
             var coordinates = route.GetPoints();
             if (coordinates.Count > 1)
             {
-                var ntsCoordinates = coordinates.Select(x => { return new Coordinate(x.Longitude, x.Latitude); });
-                var geometryFactory = new GeometryFactory();
-                var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
+                var lineString = new LineString(coordinates.ToArray());
 
-                var attributes = new AttributesTable();
-                attributes.AddAttribute("osmsharp:total_time", route.TotalTime.ToInvariantString());
-                attributes.AddAttribute("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
+                var attributes = new SimpleGeometryAttributeCollection();
+                attributes.Add("osmsharp:total_time", route.TotalTime.ToInvariantString());
+                attributes.Add("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
 
                 var feature = new Feature(lineString, attributes);
 
@@ -383,25 +381,25 @@ namespace OsmSharp.Service.Routing.Wrappers
                 for (int i = 0; i < instructions.Count; i++)
                 {
                     var instruction = instructions[i];
-                    var coordinates = new List<GeoAPI.Geometries.Coordinate>();
+                    var coordinates = new List<GeoCoordinate>();
                     for (int segmentIdx = instruction.FirstSegmentIdx; segmentIdx <= instruction.LastSegmentIdx; segmentIdx++)
                     {
-                        coordinates.Add(new GeoAPI.Geometries.Coordinate(route.Segments[segmentIdx].Longitude, route.Segments[segmentIdx].Latitude));
+                        coordinates.Add(new GeoCoordinate(route.Segments[segmentIdx].Latitude, route.Segments[segmentIdx].Longitude));
                     }
 
                     // build attributes.
                     var currentArcTags = instruction.MetaData;
-                    var attributesTable = new AttributesTable();
+                    var attributesTable = new SimpleGeometryAttributeCollection();
                     if (currentArcTags != null)
                     { // there are tags.
                         foreach (var tag in currentArcTags)
                         {
-                            attributesTable.AddAttribute(tag.Key, tag.Value);
+                            attributesTable.Add(tag.Key, tag.Value);
                         }
                     }
 
                     // build feature.
-                    var lineString = new LineString(coordinates.ToArray());
+                    var lineString = new LineString(coordinates);
                     featureCollection.Add(new Feature(lineString, attributesTable));
 
                     // build poi-features if any.
@@ -411,17 +409,17 @@ namespace OsmSharp.Service.Routing.Wrappers
                         {
                             // build attributes.
                             var poiTags = poi.Tags;
-                            var poiAttributesTable = new AttributesTable();
+                            var poiAttributesTable = new SimpleGeometryAttributeCollection();
                             if (poiTags != null)
                             { // there are tags.
                                 foreach (var tag in poiTags)
                                 {
-                                    poiAttributesTable.AddAttribute(tag.Key, tag.Value);
+                                    poiAttributesTable.Add(tag.Key, tag.Value);
                                 }
                             }
 
                             // build feature.
-                            var point = new Point(new GeoAPI.Geometries.Coordinate(poi.Location.Longitude, poi.Location.Latitude));
+                            var point = new Point(poi.Location);
                             featureCollection.Add(new Feature(point, poiAttributesTable));
                         }
                     }
@@ -430,36 +428,33 @@ namespace OsmSharp.Service.Routing.Wrappers
             else if (aggregated)
             { // aggregate all, just return geometry.
                 var coordinates = route.GetPoints();
-                var ntsCoordinates = coordinates.Select(x => { return new GeoAPI.Geometries.Coordinate(x.Longitude, x.Latitude); });
-                var geometryFactory = new GeometryFactory();
-                var lineString = geometryFactory.CreateLineString(ntsCoordinates.ToArray());
-                var feature = new Feature(lineString, new AttributesTable());
+                var lineString = new LineString(coordinates);
+                var feature = new Feature(lineString, new SimpleGeometryAttributeCollection());
                 featureCollection.Add(feature);
             }
             else
             { // just keep segments as they are.
-                var geometryFactory = new GeometryFactory();
                 for (int i = 0; i < route.Segments.Length - 1; i++)
                 {
                     // create a line string for the current segment.
-                    var segmentLineString = geometryFactory.CreateLineString(new GeoAPI.Geometries.Coordinate[]{
-                        new GeoAPI.Geometries.Coordinate(route.Segments[i].Longitude, route.Segments[i].Latitude),
-                        new GeoAPI.Geometries.Coordinate(route.Segments[i+1].Longitude, route.Segments[i+1].Latitude)
+                    var segmentLineString = new LineString(new GeoCoordinate[]{
+                        new GeoCoordinate(route.Segments[i].Latitude, route.Segments[i].Longitude),
+                        new GeoCoordinate(route.Segments[i+1].Latitude, route.Segments[i+1].Longitude)
                     });
                     var segmentTags = route.Segments[i].Tags;
-                    var attributesTable = new AttributesTable();
+                    var attributesTable = new SimpleGeometryAttributeCollection();
                     if (segmentTags != null)
                     { // there are tags.
                         foreach (var tag in segmentTags)
                         {
-                            attributesTable.AddAttribute(tag.Key, tag.Value);
+                            attributesTable.Add(tag.Key, tag.Value);
                         }
                     }
-                    attributesTable.AddAttribute("segment:time", route.Segments[i].Time);
-                    attributesTable.AddAttribute("segment:distance", route.Segments[i].Distance);
+                    attributesTable.Add("segment:time", route.Segments[i].Time);
+                    attributesTable.Add("segment:distance", route.Segments[i].Distance);
                     if (route.Segments[i].Vehicle != null)
                     {
-                        attributesTable.AddAttribute("vehicle_unique_name", route.Segments[i].Vehicle);
+                        attributesTable.Add("vehicle_unique_name", route.Segments[i].Vehicle);
                     }
                     featureCollection.Add(new Feature(segmentLineString, attributesTable));
 
@@ -470,17 +465,17 @@ namespace OsmSharp.Service.Routing.Wrappers
                         {
                             // build attributes.
                             var currentPointTags = point.Tags;
-                            attributesTable = new AttributesTable();
+                            attributesTable = new SimpleGeometryAttributeCollection();
                             if (currentPointTags != null)
                             { // there are tags.
                                 foreach (var tag in currentPointTags)
                                 {
-                                    attributesTable.AddAttribute(tag.Key, tag.Value);
+                                    attributesTable.Add(tag.Key, tag.Value);
                                 }
                             }
 
                             // build feature.
-                            var pointGeometry = new Point(new GeoAPI.Geometries.Coordinate(point.Longitude, point.Latitude));
+                            var pointGeometry = new Point(new GeoCoordinate(point.Latitude, point.Longitude));
                             pointsCollection.Add(new Feature(pointGeometry, attributesTable));
                         }
                     }
@@ -488,7 +483,7 @@ namespace OsmSharp.Service.Routing.Wrappers
             }
 
             // add points
-            foreach (var point in pointsCollection.Features)
+            foreach (var point in pointsCollection)
             {
                 featureCollection.Add(point);
             }

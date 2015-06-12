@@ -2,9 +2,7 @@
 using Nancy.IO;
 using Nancy.Json;
 using Nancy.Responses.Negotiation;
-using NetTopologySuite.Features;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using OsmSharp.Geo.Features;
 using System;
 using System.Collections.Generic;
 using System.IO;

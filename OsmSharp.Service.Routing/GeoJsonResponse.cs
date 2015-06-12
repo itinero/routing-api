@@ -18,7 +18,7 @@
 
 using Nancy;
 using Nancy.Json;
-using NetTopologySuite.Features;
+using OsmSharp.Geo.Features;
 using System;
 using System.IO;
 
@@ -60,8 +60,7 @@ namespace OsmSharp.Service.Routing
         {
             return stream =>
             {
-                var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                var geoJson = geoJsonWriter.Write(model as FeatureCollection);
+                var geoJson = OsmSharp.Geo.Streams.GeoJson.GeoJsonConverter.ToGeoJson(model as FeatureCollection);
 
                 var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(geoJson);
                 stream.Write(geoJsonBytes, 0, geoJsonBytes.Length);

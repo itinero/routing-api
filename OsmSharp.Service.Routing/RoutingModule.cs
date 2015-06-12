@@ -19,7 +19,6 @@
 using Nancy;
 using Nancy.Json;
 using Nancy.ModelBinding;
-using NetTopologySuite.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Vehicles;
@@ -85,8 +84,7 @@ namespace OsmSharp.Service.Routing
                     }
 
                     var features = ApiBootstrapper.Get(instance).GetNeworkFeatures(new GeoCoordinateBox(new GeoCoordinate(top, left), new GeoCoordinate(bottom, right)));
-                    var geoJsonWriter = new NetTopologySuite.IO.GeoJsonWriter();
-                    return geoJsonWriter.Write(features);
+                    return OsmSharp.Geo.Streams.GeoJson.GeoJsonConverter.ToGeoJson(features);
                 }
                 catch (Exception)
                 { // an unhandled exception!
