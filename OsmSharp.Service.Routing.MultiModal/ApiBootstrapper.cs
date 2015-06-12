@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using OsmSharp.Routing.Transit.MultiModal;
-using OsmSharp.Service.Routing.MultiModal.Wrappers;
 using System;
 using System.Collections.Generic;
 
@@ -73,34 +71,6 @@ namespace OsmSharp.Service.Routing.MultiModal
         public static void AddOrUpdate(string instance, MultiModalRouterWrapperBase multiModalWrapperInstance)
         {
             _multiModalWrapperInstances[instance] = multiModalWrapperInstance;
-        }
-
-        /// <summary>
-        /// Initializes the multi modal router service.
-        /// </summary>
-        /// <param name="instance">The instance name.</param>
-        /// <param name="transitRouter">The transit router.</param>
-        /// <remarks>Also initializes the routing and transit API's.</remarks>
-        public static void Add(string instance, MultiModalRouter transitRouter)
-        {
-            // initialize all APIs, a multi modal router should be able to support all of them.
-            OsmSharp.Service.Routing.ApiBootstrapper.Add(instance, transitRouter);
-            OsmSharp.Service.Routing.Transit.ApiBootstrapper.Add(instance, new Wrappers.TransitServiceWrapper(transitRouter));
-            ApiBootstrapper.Add(instance, new MultiModalWrapper(transitRouter));
-        }
-
-        /// <summary>
-        /// Initializes or updates the multi modal router service.
-        /// </summary>
-        /// <param name="instance">The instance name.</param>
-        /// <param name="transitRouter">The transit router.</param>
-        /// <remarks>Also initializes the routing and transit API's.</remarks>
-        public static void AddOrUpdate(string instance, MultiModalRouter transitRouter)
-        {
-            // initialize all APIs, a multi modal router should be able to support all of them.
-            OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instance, transitRouter);
-            OsmSharp.Service.Routing.Transit.ApiBootstrapper.AddOrUpdate(instance, new Wrappers.TransitServiceWrapper(transitRouter));
-            ApiBootstrapper.AddOrUpdate(instance, new MultiModalWrapper(transitRouter));
         }
     }
 }

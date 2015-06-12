@@ -35,7 +35,7 @@ namespace OsmSharp.Service.Routing.Sample.SelfHost
                 var pbfSource = new PBFOsmStreamSource(source);
                 var progress = new OsmStreamFilterProgress();
                 progress.RegisterSource(pbfSource);
-                var router = Router.CreateLiveFrom(progress, new OsmRoutingInterpreter());
+                var router = Router.CreateFrom(progress, new OsmRoutingInterpreter());
 
                 OsmSharp.Service.Routing.ApiBootstrapper.Add("default", router);
             }

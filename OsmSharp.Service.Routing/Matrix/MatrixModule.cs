@@ -126,7 +126,7 @@ namespace OsmSharp.Service.Routing.Matrix
             }
 
             // build profile.
-            var vehicle = OsmSharp.Routing.Vehicle.GetByUniqueName(request.profile.vehicle);
+            var vehicle = OsmSharp.Routing.Vehicles.Vehicle.GetByUniqueName(request.profile.vehicle);
 
             // calculate matrices.
             var api = ApiBootstrapper.Get(instance);

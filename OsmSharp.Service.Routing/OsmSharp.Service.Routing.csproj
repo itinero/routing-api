@@ -60,13 +60,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\GeoAPI.1.7.3\lib\net45-client\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS, Version=0.0.3.73, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.73-beta\lib\GTFS.dll</HintPath>
+    <Reference Include="GTFS">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO, Version=0.0.3.73, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.73-beta\lib\GTFS.IO.dll</HintPath>
+    <Reference Include="GTFS.IO">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="GTFS.IO.Desktop">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.IO.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -84,25 +85,25 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Osm, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Osm, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.UI, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.UI, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.UI.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.WinForms.UI, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.WinForms.UI, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2573bf8a1bdddcd5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -134,9 +135,10 @@
     <Compile Include="Configurations\InstanceConfiguration.cs" />
     <Compile Include="Configurations\InstanceConfigurationCollection.cs" />
     <Compile Include="Domain\CompleteRoute.cs" />
-    <Compile Include="Domain\Queries\BoxQuery.cs" />
-    <Compile Include="Domain\Queries\RoutingQuery.cs" />
-    <Compile Include="Domain\SimpleRoute.cs" />
+    <Compile Include="Domain\Profile.cs" />
+    <Compile Include="Domain\BoxRequest.cs" />
+    <Compile Include="Domain\Request.cs" />
+    <Compile Include="Domain\UrlParametersRequest.cs" />
     <Compile Include="GeoJsonResponse.cs" />
     <Compile Include="GeoJsonResponseProcessor.cs" />
     <Compile Include="Logging\DebugTraceListener.cs" />

@@ -60,13 +60,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\GeoAPI.1.7.3\lib\net45-client\GeoAPI.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS, Version=0.0.3.73, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.73-beta\lib\GTFS.dll</HintPath>
+    <Reference Include="GTFS">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.dll</HintPath>
     </Reference>
-    <Reference Include="GTFS.IO, Version=0.0.3.73, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\GTFS.0.0.3.73-beta\lib\GTFS.IO.dll</HintPath>
+    <Reference Include="GTFS.IO">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="GTFS.IO.Desktop">
+      <HintPath>..\packages\GTFS.0.0.4.85-beta\lib\net40\GTFS.IO.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -84,33 +85,31 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Osm, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Osm, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Osm.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.Routing, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.91, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.91-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+    <Reference Include="OsmSharp.Routing.Transit">
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=0.1.0.91, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.Transit.0.1.0.91-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal">
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.UI, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.UI, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.UI.dll</HintPath>
     </Reference>
-    <Reference Include="OsmSharp.WinForms.UI, Version=4.3.0.1012, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OsmSharp.WinForms.UI, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OsmSharp.4.3.0.1012-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
+      <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.WinForms.UI.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2573bf8a1bdddcd5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -150,24 +149,20 @@
     <Compile Include="MultiModalModule.cs" />
     <Compile Include="MultiModalRouterWrapperBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wrappers\TransitServiceWrapper.cs" />
-    <Compile Include="Wrappers\MultiModalWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OsmSharp.Service.Routing.Transit\OsmSharp.Service.Routing.Transit.csproj">
-      <Project>{9dea5c5e-d630-4466-bbd1-12c7c79131d8}</Project>
-      <Name>OsmSharp.Service.Routing.Transit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OsmSharp.Service.Routing\OsmSharp.Service.Routing.csproj">
       <Project>{a2c54724-3be5-4004-904f-b784aa103008}</Project>
       <Name>OsmSharp.Service.Routing</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Wrappers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

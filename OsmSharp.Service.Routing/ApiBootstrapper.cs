@@ -21,10 +21,10 @@ using OsmSharp.Osm.Xml.Streams;
 using OsmSharp.Routing;
 using OsmSharp.Routing.CH;
 using OsmSharp.Routing.CH.Serialization;
-using OsmSharp.Routing.CH.Serialization.Sorted;
 using OsmSharp.Routing.Graph.Routing;
-using OsmSharp.Routing.Osm.Graphs.Serialization;
+using OsmSharp.Routing.Graph.Serialization;
 using OsmSharp.Routing.Osm.Interpreter;
+using OsmSharp.Routing.Vehicles;
 using OsmSharp.Service.Routing.Configurations;
 using OsmSharp.Service.Routing.Monitoring;
 using OsmSharp.Service.Routing.Wrappers;
@@ -129,7 +129,7 @@ namespace OsmSharp.Service.Routing
         public static void BootFromConfiguration()
         {
             // register vehicle profiles.
-            OsmSharp.Routing.Vehicle.RegisterVehicles();
+            Vehicle.RegisterVehicles();
 
             // enable logging and use the console as output.
             OsmSharp.Logging.Log.Enable();
@@ -206,14 +206,14 @@ namespace OsmSharp.Service.Routing
                                     using(var graphStream = graphFile.OpenRead())
                                     {
                                         var graphSource = new XmlOsmStreamSource(graphStream);
-                                        router = Router.CreateLiveFrom(graphSource, new OsmRoutingInterpreter());
+                                        router = Router.CreateFrom(graphSource, new OsmRoutingInterpreter());
                                     }
                                     break;
                                 case "osm-pbf":
                                     using (var graphStream = graphFile.OpenRead())
                                     {
                                         var graphSource = new PBFOsmStreamSource(graphStream);
-                                        router = Router.CreateLiveFrom(graphSource, new OsmRoutingInterpreter());
+                                        router = Router.CreateFrom(graphSource, new OsmRoutingInterpreter());
                                     }
                                     break;
                                 default:
@@ -246,16 +246,8 @@ namespace OsmSharp.Service.Routing
                                         router = Router.CreateCHFrom(graphSource, new OsmRoutingInterpreter(), Vehicle.GetByUniqueName(vehicleName));
                                     }
                                     break;
-                                case "flat":
-                                    using (var graphStream = graphFile.OpenRead())
-                                    {
-                                        var routingSerializer = new CHEdgeFlatfileSerializer();
-                                        var graphInstance = routingSerializer.Deserialize(graphStream);
-                                        router = Router.CreateCHFrom(graphInstance, new CHRouter(), new OsmRoutingInterpreter());
-                                    }
-                                    break;
                                 case "mobile":
-                                    var mobileRoutingSerializer = new CHEdgeDataDataSourceSerializer();
+                                    var mobileRoutingSerializer = new CHEdgeSerializer();
                                     // keep this stream open, it is used while routing!
                                     var mobileGraphInstance = mobileRoutingSerializer.Deserialize(graphFile.OpenRead());
                                     router = Router.CreateCHFrom(mobileGraphInstance, new CHRouter(), new OsmRoutingInterpreter());
@@ -271,9 +263,9 @@ namespace OsmSharp.Service.Routing
                                 case "flat":
                                     using (var graphStream = graphFile.OpenRead())
                                     {
-                                        var routingSerializer = new LiveEdgeFlatfileSerializer();
+                                        var routingSerializer = new RoutingDataSourceSerializer();
                                         var graphInstance = routingSerializer.Deserialize(graphStream);
-                                        router = Router.CreateLiveFrom(graphInstance, new Dykstra(), new OsmRoutingInterpreter());
+                                        router = Router.CreateFrom(graphInstance, new Dykstra(), new OsmRoutingInterpreter());
                                     }
                                     break;
                                 default:

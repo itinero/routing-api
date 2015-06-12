@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-namespace OsmSharp.Service.Routing.Domain.Queries
+namespace OsmSharp.Service.Routing.Domain
 {
-    class BoxQuery
+    class UrlParametersRequest
     {
-        public string left { get; set; }
+        public string loc { get; set; }
 
-        public string right { get; set; }
+        public string vehicle { get; set; }
 
-        public string top { get; set; }
+        public string sort { get; set; }
 
-        public string bottom { get; set; }
+        public string format { get; set; }
     }
 }

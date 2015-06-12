@@ -16,12 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-namespace OsmSharp.Service.Routing.Matrix.Domain
+namespace OsmSharp.Service.Routing.Domain
 {
-    public class Error
+    class BoxQuery
     {
-        public string type { get; set; }
-        public int index { get; set; }
-        public string message { get; set; }
+        public string left { get; set; }
+
+        public string right { get; set; }
+
+        public string top { get; set; }
+
+        public string bottom { get; set; }
     }
 }

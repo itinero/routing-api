@@ -16,15 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
-using OsmSharp.Routing.Instructions;
-using System.Collections.Generic;
-
 namespace OsmSharp.Service.Routing.Domain
 {
-    class SimpleRoute
+    class Profile
     {
-        public string Route { get; set; }
-
-        public List<Instruction> Instructions { get; set; }
+        public string vehicle { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using NetTopologySuite.Features;
 using Newtonsoft.Json;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
+using OsmSharp.Routing.Vehicles;
 using OsmSharp.Service.Routing.MultiModal.Domain;
 using OsmSharp.Service.Routing.MultiModal.Domain.Queries;
 using System;

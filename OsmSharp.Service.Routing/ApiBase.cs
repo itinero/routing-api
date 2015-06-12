@@ -20,6 +20,7 @@ using NetTopologySuite.Features;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;
+using OsmSharp.Routing.Vehicles;
 using System;
 using System.Collections.Generic;
 
