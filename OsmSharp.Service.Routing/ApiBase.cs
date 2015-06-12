@@ -90,5 +90,36 @@ namespace OsmSharp.Service.Routing
         /// <param name="vehicle"></param>
         /// <returns></returns>
         public abstract bool SupportsVehicle(Vehicle vehicle);
+
+        /// <summary>
+        /// Returns a number of transit routes from one point to many others.
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="vehicles"></param>
+        /// <param name="coordinates"></param>
+        /// <param name="operators"></param>
+        /// <param name="complete"></param>
+        /// <returns></returns>
+        public abstract Route[] GetTransitOneToMany(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
+
+        public IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime dt, List<Vehicle> vehicles, GeoCoordinate geoCoordinate, int max, int zoom)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Route GetTransitRoute(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FeatureCollection GetTransitFeatures(Route route, bool p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

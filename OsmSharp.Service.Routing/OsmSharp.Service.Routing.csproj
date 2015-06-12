@@ -81,6 +81,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
+    <Reference Include="OsmSharp.Routing.Transit, Version=0.1.0.98, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+    </Reference>
     <Reference Include="OsmSharp.UI, Version=4.4.0.1031, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.UI.dll</HintPath>
@@ -129,6 +137,16 @@
     <Compile Include="Matrix\Domain\Request.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
     <Compile Include="Monitoring\InstanceMonitoring.cs" />
+    <Compile Include="Multimodal\Domain\CompleteRoute.cs" />
+    <Compile Include="Multimodal\Domain\Queries\BoxQuery.cs" />
+    <Compile Include="Multimodal\Domain\Queries\Range.cs" />
+    <Compile Include="Multimodal\Domain\Queries\RangeQuery.cs" />
+    <Compile Include="Multimodal\Domain\Queries\RoutingQuery.cs" />
+    <Compile Include="Multimodal\Domain\Queries\VertexAndTime.cs" />
+    <Compile Include="Multimodal\Domain\SimpleRoute.cs" />
+    <Compile Include="Multimodal\Domain\Status.cs" />
+    <Compile Include="Multimodal\MultimodalModule.cs" />
+    <Compile Include="Multimodal\MultimodalRouterWrapperBase.cs" />
     <Compile Include="NancyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoutingModule.cs" />

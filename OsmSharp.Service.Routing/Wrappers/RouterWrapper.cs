@@ -612,5 +612,10 @@ namespace OsmSharp.Service.Routing.Wrappers
             }
             return matrices;
         }
+
+        public override Route[] GetTransitOneToMany(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -77,6 +77,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OsmSharp.4.4.0.1031-beta\lib\net45\OsmSharp.Routing.dll</HintPath>
     </Reference>
+    <Reference Include="OsmSharp.Routing.Transit">
+      <HintPath>..\..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.dll</HintPath>
+    </Reference>
+    <Reference Include="OsmSharp.Routing.Transit.MultiModal">
+      <HintPath>..\..\packages\OsmSharp.Transit.0.1.0.98-beta\lib\net45\OsmSharp.Routing.Transit.MultiModal.dll</HintPath>
+    </Reference>
     <Reference Include="OsmSharp.Service.Tiles">
       <HintPath>..\..\packages\OsmSharp.Service.Tiles.0.0.1.60-beta\lib\net45\OsmSharp.Service.Tiles.dll</HintPath>
     </Reference>
