@@ -3,9 +3,7 @@
 <head>
     <title>(Very Simple) Tile Server Test Page</title>
     <meta charset="utf-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="Content/leaflet/leaflet.css" type="text/css" />
     <style>
         html, body, #map {
@@ -15,11 +13,9 @@
             margin: 0px;
         }
     </style>
-
 </head>
 <body>
     <div id="map"></div>
-
     <script src="Content/leaflet/leaflet-src.js"></script>
     <script src="Content/jquery/jquery-1.11.1.min.js"></script>
     <script src="Content/osmsharp.JSONP.js"></script>
@@ -28,29 +24,29 @@
 
         var loc = [];
         var routeLayer = undefined;
-        var map = L.map('map').setView([50.8228, 3.2629], 15);
+        var map = L.map('map').setView([51.2633, 4.7853], 15);
 
-		L.tileLayer('http://localhost:1234/default/{z}/{x}/{y}.png', {
-			maxZoom: 18,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        L.tileLayer('http://localhost:1234/default/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-		}).addTo(map);
+        }).addTo(map);
 
-		map.on('click', function (e) {
-		    var latlng = e.latlng;
+        map.on('click', function (e) {
+            var latlng = e.latlng;
 
-		    L.marker(latlng).addTo(map);
+            L.marker(latlng).addTo(map);
 
-		    loc.push({
-		        lat: latlng.lat,
-		        lon: latlng.lng
-		    });
+            loc.push({
+                lat: latlng.lat,
+                lon: latlng.lng
+            });
 
-		    if (loc.length > 1) {
-		        var locations = loc.slice(0);
-		        locations.push(locations[0]);
+            if (loc.length > 1) {
+                var locations = loc.slice(0);
+                locations.push(locations[0]);
 
-		        osmsharp.api.routing('http://localhost:1234/default/',
+                osmsharp.api.routing('http://localhost:1234/default/',
                     {
                         vehicle: 'car',
                         locations: locations,
@@ -63,7 +59,7 @@
 		                routeLayer = L.geoJson(route);
 		                routeLayer.addTo(map);
 		            });
-		    }
+            }
         });
 
     </script>
