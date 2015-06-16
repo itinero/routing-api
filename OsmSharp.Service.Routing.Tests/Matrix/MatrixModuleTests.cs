@@ -37,10 +37,21 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
             // given
             var bootstrapper = new DefaultNancyBootstrapper();
             var browser = new Browser(bootstrapper, defaults: to => to.Accept("application/json"));
-            ApiBootstrapper.Add("mock", new ApiMock());
+            ApiBootstrapper.AddOrUpdate("mock", new ApiMock());
+
+            // when incorrect instance request
+            var result = browser.Put("notmock/matrix/", with =>
+            {
+                with.Body(string.Empty);
+                with.Header("content-type", "application/json");
+                with.HttpRequest();
+            });
+
+            // then not found
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
 
             // when empty request
-            var result = browser.Put("mock/matrix/", with =>
+            result = browser.Put("mock/matrix/", with =>
             {
                 with.Body(string.Empty);
                 with.Header("content-type", "application/json");
@@ -92,7 +103,7 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
             // given
             var bootstrapper = new DefaultNancyBootstrapper();
             var browser = new Browser(bootstrapper, defaults: to => to.Accept("application/json"));
-            ApiBootstrapper.Add("mock", new ApiMock());
+            ApiBootstrapper.AddOrUpdate("mock", new ApiMock());
 
             // form a valid request.
             var locations = new double[4][];
@@ -114,7 +125,7 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
                 with.HttpRequest();
             });
 
-            // not acceptable
+            // test response.
             Assert.IsNotNull(result);
             var response = result.Body.DeserializeJson<OsmSharp.Service.Routing.Matrix.Domain.Response>();
             Assert.IsNotNull(response);
@@ -185,6 +196,32 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
                     Assert.AreEqual(100, weight);
                 }
             }
+            
+            // default weights.
+            request = new OsmSharp.Service.Routing.Matrix.Domain.Request()
+            {
+                locations = locations
+            };
+            result = browser.Put("mock/matrix/", with =>
+            {
+                with.JsonBody(request);
+                with.HttpRequest();
+            });
+
+            // check result.
+            Assert.IsNotNull(result);
+            response = result.Body.DeserializeJson<OsmSharp.Service.Routing.Matrix.Domain.Response>();
+            Assert.IsNotNull(response);
+            Assert.IsNull(response.distances);
+            Assert.IsNull(response.weights);
+            Assert.IsNotNull(response.times);
+            foreach (var times in response.times)
+            {
+                foreach (var weight in times)
+                {
+                    Assert.AreEqual(100, weight);
+                }
+            }
         }
 
         /// <summary>
@@ -196,7 +233,7 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
             // given
             var bootstrapper = new DefaultNancyBootstrapper();
             var browser = new Browser(bootstrapper, defaults: to => to.Accept("application/json"));
-            ApiBootstrapper.Add("mock", new ApiMock());
+            ApiBootstrapper.AddOrUpdate("mock", new ApiMock());
 
             // form an invalid location array.
             var locations = new double[4][];
