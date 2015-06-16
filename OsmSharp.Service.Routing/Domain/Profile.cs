@@ -18,8 +18,14 @@
 
 namespace OsmSharp.Service.Routing.Domain
 {
-    class Profile
+    /// <summary>
+    /// Defines a profile.
+    /// </summary>
+    public class Profile
     {
+        /// <summary>
+        /// Gets or sets the vehicle.
+        /// </summary>
         public string vehicle { get; set; }
     }
 }

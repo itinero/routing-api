@@ -18,12 +18,29 @@
 
 namespace OsmSharp.Service.Routing.Domain
 {
-    class Request
+    /// <summary>
+    /// Defines a request.
+    /// </summary>
+    public class Request
     {
+        /// <summary>
+        /// Gets or sets the locations.
+        /// </summary>
         public double[][] locations { get; set; }
+
+        /// <summary>
+        /// Gets or sets the profile.
+        /// </summary>
         public Profile profile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the format.
+        /// </summary>
         public string format { get; set; }
 
+        /// <summary>
+        /// Gets or sets the sorting parameter.
+        /// </summary>
         public string sort { get; set; }
     }
 }

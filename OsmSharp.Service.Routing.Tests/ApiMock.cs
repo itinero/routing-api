@@ -16,7 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
+using NUnit.Framework;
 using OsmSharp.Geo.Features;
+using OsmSharp.Geo.Geometries;
 using OsmSharp.Math.Geo;
 using OsmSharp.Routing;
 using OsmSharp.Routing.Instructions;
@@ -31,10 +33,37 @@ namespace OsmSharp.Service.Routing.Tests
     /// </summary>
     class ApiMock : ApiBase
     {
-
         public override Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort)
         {
-            throw new System.NotImplementedException();
+            Assert.IsNotNull(vehicle);
+            Assert.IsNotNull(coordinates);
+            Assert.IsTrue(coordinates.Length > 1);
+
+            var route = new Route();
+            route.Segments = new RouteSegment[coordinates.Length];
+            for(var idx = 0; idx < coordinates.Length; idx++)
+            {
+                route.Segments[idx] = new RouteSegment()
+                {
+                    Latitude = (float)coordinates[idx].Latitude,
+                    Longitude = (float)coordinates[idx].Longitude
+                };
+            }
+            route.Segments[0].Type = RouteSegmentType.Start;
+            route.Segments[route.Segments.Length - 1].Type = RouteSegmentType.Stop;
+            route.Tags = new RouteTags[]
+            {
+                new RouteTags() {
+                    Key = "complete",
+                    Value = complete.ToInvariantString().ToLowerInvariant()
+                },
+                new RouteTags() {
+                    Key = "sort",
+                    Value = sort.ToInvariantString().ToLowerInvariant()
+                }    
+            };
+            route.Vehicle = vehicle.UniqueName;
+            return route;
         }
 
         public override Route[] GetOneToMany(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete)
@@ -49,7 +78,21 @@ namespace OsmSharp.Service.Routing.Tests
 
         public override FeatureCollection GetFeatures(Route route)
         {
-            throw new System.NotImplementedException();
+            var featureCollection = new FeatureCollection();
+            var coordinates = route.GetPoints();
+            if (coordinates.Count > 1)
+            {
+                var lineString = new LineString(coordinates.ToArray());
+
+                var attributes = new OsmSharp.Geo.Attributes.SimpleGeometryAttributeCollection();
+                attributes.Add("osmsharp:total_time", route.TotalTime.ToInvariantString());
+                attributes.Add("osmsharp:total_distance", route.TotalDistance.ToInvariantString());
+
+                var feature = new Feature(lineString, attributes);
+
+                featureCollection.Add(feature);
+            }
+            return featureCollection;
         }
 
         public override FeatureCollection GetFeaturesWithInstructions(Route route)
@@ -64,7 +107,7 @@ namespace OsmSharp.Service.Routing.Tests
 
         public override bool SupportsVehicle(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
+            return vehicle.UniqueName.ToLowerInvariant() == "car";
         }
 
         public override Tuple<string, double[][]>[] GetMatrix(Vehicle vehicle, GeoCoordinate[] source, GeoCoordinate[] target, string[] outputs,

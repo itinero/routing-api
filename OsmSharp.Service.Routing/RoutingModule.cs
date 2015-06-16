@@ -141,12 +141,12 @@ namespace OsmSharp.Service.Routing
                 if(this.Request.Body == null || this.Request.Body.Length == 0)
                 { // there is no body.
                     var urlParameterRequest = this.Bind<UrlParametersRequest>();
-                    if (!string.IsNullOrWhiteSpace(urlParameterRequest.loc))
+                    if (string.IsNullOrWhiteSpace(urlParameterRequest.loc))
                     { // no loc parameters.
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("loc parameter not found or request invalid.");
                     }
                     var locs = urlParameterRequest.loc.Split(',');
-                    if (locs.Length < 2)
+                    if (locs.Length < 4)
                     { // less than two loc parameters.
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel("only one loc parameter found or request invalid.");
                     }
@@ -171,12 +171,10 @@ namespace OsmSharp.Service.Routing
                     { // a vehicle was defined.
                         vehicleName = urlParameterRequest.vehicle;
                     }
-                    vehicle = Vehicle.GetByUniqueName(vehicleName);
-                    if (vehicle == null)
-                    { // vehicle not found or not registered.
+                    if(!Vehicle.TryGetByUniqueName(vehicleName, out vehicle))
+                    {// vehicle not found or not registered.
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(string.Format("vehicle with name '{0}' not found.", vehicleName));
                     }
-
                     if (!string.IsNullOrWhiteSpace(urlParameterRequest.sort))
                     { // there is a sort flag.
                         sort = urlParameterRequest.sort.ToLowerInvariant() == "true";
@@ -207,8 +205,7 @@ namespace OsmSharp.Service.Routing
                     { // a vehicle was defined.
                         vehicleName = request.profile.vehicle;
                     }
-                    vehicle = Vehicle.GetByUniqueName(vehicleName);
-                    if (vehicle == null)
+                    if (!Vehicle.TryGetByUniqueName(vehicleName, out vehicle))
                     { // vehicle not found or not registered.
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("vehicle with name '{0}' not found.", vehicleName));
@@ -228,7 +225,7 @@ namespace OsmSharp.Service.Routing
                 // check for support for the given vehicle.
                 if (!ApiBootstrapper.Get(instance).SupportsVehicle(vehicle))
                 { // vehicle is not supported.
-                    return Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel(
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                         string.Format("Vehicle with name '{0}' cannot be use with this routing instance.", vehicle.UniqueName));
                 }
 

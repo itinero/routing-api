@@ -95,6 +95,7 @@
     <Compile Include="Matrix\MatrixModuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApiMock.cs" />
+    <Compile Include="RoutingModuleTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
