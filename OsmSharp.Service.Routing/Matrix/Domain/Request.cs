@@ -19,18 +19,46 @@
 namespace OsmSharp.Service.Routing.Matrix.Domain
 {
     /// <summary>
-    /// A request definition.
+    /// Defines a request
     /// </summary>
     public class Request
     {
+        /// <summary>
+        /// The default name of the times-option.
+        /// </summary>
         public const string TimesOutputOption = "times";
+        /// <summary>
+        /// The default name of the distance-option.
+        /// </summary>
         public const string DistanceOutputOption = "distances";
+        /// <summary>
+        /// The default name of weight-option.
+        /// </summary>
         public const string WeightsOutputOption = "weights";
 
+        /// <summary>
+        /// Gets or sets the locations.
+        /// </summary>
         public double[][] locations { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sources.
+        /// </summary>
         public double[][] sources { get; set; }
+
+        /// <summary>
+        /// Gets or sets the targets.
+        /// </summary>
         public double[][] targets { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the profile.
+        /// </summary>
         public Profile profile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the output options.
+        /// </summary>
         public string[] output { get; set; }
     }
 }

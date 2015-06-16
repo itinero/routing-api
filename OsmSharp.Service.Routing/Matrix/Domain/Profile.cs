@@ -23,6 +23,9 @@ namespace OsmSharp.Service.Routing.Matrix.Domain
     /// </summary>
     public class Profile
     {
+        /// <summary>
+        /// Gets or sets the vehicle.
+        /// </summary>
         public string vehicle { get; set; }
     }
 }

@@ -189,8 +189,6 @@ namespace OsmSharp.Service.Routing.Wrappers
         /// <summary>
         /// Builds a dummy route (as the crow flies) for segments of a route not found.
         /// </summary>
-        /// <param name="coordinate1">The start-coordinate.</param>
-        /// <param name="coordinate2">The end-coordinate.</param>
         /// <returns></returns>
         public virtual Route BuildDummyRoute(Vehicle vehicle, GeoCoordinate coordinate1, GeoCoordinate coordinate2)
         {

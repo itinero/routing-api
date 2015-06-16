@@ -19,13 +19,25 @@
 namespace OsmSharp.Service.Routing.Matrix.Domain
 {
     /// <summary>
-    /// A response definition.
+    /// Defines a response.
     /// </summary>
     public class Response
     {
+        /// <summary>
+        /// Gets or sets the times.
+        /// </summary>
         public double[][] times { get; set; }
+        /// <summary>
+        /// Gets or sets the distances.
+        /// </summary>
         public double[][] distances { get; set; }
+        /// <summary>
+        /// Gets or sets the weights.
+        /// </summary>
         public double[][] weights { get; set; }
+        /// <summary>
+        /// Gets or sets the errors.
+        /// </summary>
         public Error[] errors { get; set; }
     }
 }

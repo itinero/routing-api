@@ -18,10 +18,22 @@
 
 namespace OsmSharp.Service.Routing.Matrix.Domain
 {
+    /// <summary>
+    /// Defines an error.
+    /// </summary>
     public class Error
     {
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
         public string type { get; set; }
+        /// <summary>
+        /// Gets or sets the index.
+        /// </summary>
         public int index { get; set; }
+        /// <summary>
+        /// Gets or sets the message.
+        /// </summary>
         public string message { get; set; }
     }
 }
