@@ -92,6 +92,29 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
 
             // not acceptable
             Assert.AreEqual(HttpStatusCode.NotAcceptable, result.StatusCode);
+
+            // invalid output options
+            var locations = new double[4][];
+            for (var i = 0; i < 4; i++)
+            {
+                locations[i] = new double[2];
+            }
+            request = new OsmSharp.Service.Routing.Matrix.Domain.Request()
+            {
+                locations = locations,
+                profile = new Routing.Matrix.Domain.Profile()
+                {
+                    vehicle = "pedestrian"
+                }
+            };
+            result = browser.Put("mock/matrix/", with =>
+            {
+                with.JsonBody(request);
+                with.HttpRequest();
+            });
+
+            // not acceptable
+            Assert.AreEqual(HttpStatusCode.NotAcceptable, result.StatusCode);
         }
 
         /// <summary>
@@ -109,7 +132,7 @@ namespace OsmSharp.Service.Routing.Tests.Matrix
             var locations = new double[4][];
             for(var i = 0; i < 4; i++)
             {
-                locations[i] = new double[4];
+                locations[i] = new double[2];
             }
             var request = new OsmSharp.Service.Routing.Matrix.Domain.Request()
             {

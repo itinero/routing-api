@@ -55,6 +55,7 @@ namespace OsmSharp.Service.Routing.Matrix
             { // oeps, instance not active!
                 return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             }
+            var api = ApiBootstrapper.Get(instance);
 
             // bind the request if any.
             var request = this.Bind<Domain.Request>();
@@ -127,9 +128,13 @@ namespace OsmSharp.Service.Routing.Matrix
 
             // build profile.
             var vehicle = OsmSharp.Routing.Vehicles.Vehicle.GetByUniqueName(request.profile.vehicle);
+            if (!ApiBootstrapper.Get(instance).SupportsVehicle(vehicle))
+            { // vehicle is not supported.
+                return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
+                    string.Format("Vehicle with name '{0}' cannot be use with this routing instance.", vehicle.UniqueName));
+            }
 
             // calculate matrices.
-            var api = ApiBootstrapper.Get(instance);
             Tuple<string, int, string>[] errors;
             var matrices = api.GetMatrix(vehicle, sources, targets, request.output, out errors);
 
