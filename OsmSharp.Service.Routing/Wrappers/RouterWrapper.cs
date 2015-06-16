@@ -53,6 +53,14 @@ namespace OsmSharp.Service.Routing.Wrappers
         }
 
         /// <summary>
+        /// Returns true if transit is supported.
+        /// </summary>
+        public override bool TransitSupport
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Calculates a number of routes from one source to many targets.
         /// </summary>
         /// <param name="vehicle"></param>
@@ -184,6 +192,17 @@ namespace OsmSharp.Service.Routing.Wrappers
 
             // TODO: implement complete boolean.
             return route;
+        }
+
+        /// <summary>
+        /// Returns a concatenated route along all coordinates with the given vehicles.
+        /// </summary>
+        /// <param name="vehicles"></param>
+        /// <param name="coordinates"></param>
+        /// <returns></returns>
+        public override Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -611,9 +630,41 @@ namespace OsmSharp.Service.Routing.Wrappers
             return matrices;
         }
 
+        /// <summary>
+        /// Returns a number of transit routes from one point to many others.
+        /// </summary>
+        /// <returns></returns>
         public override Route[] GetTransitOneToMany(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Returns all points on a grid within a given range.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime dt, List<Vehicle> vehicles, GeoCoordinate geoCoordinate, int max, int zoom)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Returns a transit route.
+        /// </summary>
+        public override Route GetTransitRoute(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Returns features for a route taking into account transit-data.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <param name="aggregate"></param>
+        /// <returns></returns>
+        public override FeatureCollection GetTransitFeatures(Route route, bool aggregate)
+        {
+            throw new NotSupportedException();
         }
     }
 }

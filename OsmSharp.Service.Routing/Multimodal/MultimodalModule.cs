@@ -58,6 +58,12 @@ namespace OsmSharp.Service.Routing.Multimodal
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
+                // check transit support.
+                if (!ApiBootstrapper.Get(instance).TransitSupport)
+                { // not found, this is not active!
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
+
                 OsmSharp.Logging.Log.TraceEvent(string.Format("MultimodalModal.{0}", instance), OsmSharp.Logging.TraceEventType.Information,
                     string.Format("Multimodal request #{1} from {0}.", this.Request.UserHostAddress, requestId));
                 try

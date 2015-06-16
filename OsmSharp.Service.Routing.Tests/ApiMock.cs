@@ -41,7 +41,7 @@ namespace OsmSharp.Service.Routing.Tests
 
             var route = new Route();
             route.Segments = new RouteSegment[coordinates.Length];
-            for(var idx = 0; idx < coordinates.Length; idx++)
+            for (var idx = 0; idx < coordinates.Length; idx++)
             {
                 route.Segments[idx] = new RouteSegment()
                 {
@@ -114,9 +114,9 @@ namespace OsmSharp.Service.Routing.Tests
             out Tuple<string, int, string>[] errors)
         {
             var errorsList = new List<Tuple<string, int, string>>();
-            for(var i = 0; i < source.Length;i++)
+            for (var i = 0; i < source.Length; i++)
             {
-                if(source[i] == null || source[i].Latitude > 180)
+                if (source[i] == null || source[i].Latitude > 180)
                 { // dummy incorrect coordinates had a lat bigger than 180.
                     errorsList.Add(new Tuple<string, int, string>("source", i, "Coordinate invalid."));
                     source[i] = null;
@@ -142,13 +142,13 @@ namespace OsmSharp.Service.Routing.Tests
 
             // build a dummy response.
             var matrices = new Tuple<string, double[][]>[outputs.Length];
-            for(var i = 0; i < outputs.Length; i++)
+            for (var i = 0; i < outputs.Length; i++)
             {
                 var weights = new double[source.Length][];
-                for(var x = 0; x < weights.Length; x++)
+                for (var x = 0; x < weights.Length; x++)
                 {
                     weights[x] = new double[target.Length];
-                    for(var y = 0; y < target.Length; y++)
+                    for (var y = 0; y < target.Length; y++)
                     {
                         weights[x][y] = 100;
                     }
@@ -160,6 +160,31 @@ namespace OsmSharp.Service.Routing.Tests
         }
 
         public override Route[] GetTransitOneToMany(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool TransitSupport
+        {
+            get { return true; }
+        }
+
+        public override Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override FeatureCollection GetTransitFeatures(Route route, bool aggregate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Route GetTransitRoute(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime dt, List<Vehicle> vehicles, GeoCoordinate geoCoordinate, int max, int zoom)
         {
             throw new NotImplementedException();
         }

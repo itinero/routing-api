@@ -120,6 +120,8 @@
     </Compile>
     <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="Configurations\ApiConfiguration.cs" />
+    <Compile Include="Configurations\GTFSConfiguration.cs" />
+    <Compile Include="Configurations\GTFSConfigurationCollection.cs" />
     <Compile Include="Configurations\InstanceConfiguration.cs" />
     <Compile Include="Configurations\InstanceConfigurationCollection.cs" />
     <Compile Include="Domain\CompleteRoute.cs" />

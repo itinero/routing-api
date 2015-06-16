@@ -57,7 +57,6 @@ namespace OsmSharp.Service.Routing.Configurations
         ///          - osm-xml: Raw osm-data in the form of OSM-XML.
         ///          - osm-pbf: Raw osm-data in the form of OSM-PBF.
         ///          - flat: Serialized routing graph.
-        ///          - mobile: Serialized routing graph optimized for mobile routing.
         /// </remarks>
         [ConfigurationProperty("format", IsRequired = true)]
         public string Format
@@ -101,6 +100,15 @@ namespace OsmSharp.Service.Routing.Configurations
                 }
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Returns the collection of GTFS configurations.
+        /// </summary>
+        [ConfigurationProperty("feeds", IsRequired = false)]
+        public GTFSConfigurationCollection Feeds
+        {
+            get { return this["feeds"] as GTFSConfigurationCollection; }
         }
     }
 }

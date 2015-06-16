@@ -32,6 +32,11 @@ namespace OsmSharp.Service.Routing
     public abstract class ApiBase
     {
         /// <summary>
+        /// Returns true if transit queries are supported.
+        /// </summary>
+        public abstract bool TransitSupport { get; }
+
+        /// <summary>
         /// Calculates a route along the given points.
         /// </summary>
         /// <param name="vehicle">The vehicle profile to use.</param>
@@ -40,6 +45,14 @@ namespace OsmSharp.Service.Routing
         /// <param name="sort">Sorts the via-points.</param>
         /// <returns></returns>
         public abstract Route GetRoute(Vehicle vehicle, GeoCoordinate[] coordinates, bool complete, bool sort);
+
+        /// <summary>
+        /// Returns a concatenated route along all coordinates with the given vehicles.
+        /// </summary>
+        /// <param name="vehicles"></param>
+        /// <param name="coordinates"></param>
+        /// <returns></returns>
+        public abstract Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates);
 
         /// <summary>
         /// Calculates routes from one source to many targets.
@@ -94,32 +107,26 @@ namespace OsmSharp.Service.Routing
         /// <summary>
         /// Returns a number of transit routes from one point to many others.
         /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="vehicles"></param>
-        /// <param name="coordinates"></param>
-        /// <param name="operators"></param>
-        /// <param name="complete"></param>
         /// <returns></returns>
         public abstract Route[] GetTransitOneToMany(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
 
-        public IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime dt, List<Vehicle> vehicles, GeoCoordinate geoCoordinate, int max, int zoom)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Returns all points on a grid within a given range.
+        /// </summary>
+        /// <returns></returns>
+        public abstract IEnumerable<Tuple<GeoCoordinate, ulong, double>> GetWithinRange(DateTime dt, List<Vehicle> vehicles, GeoCoordinate geoCoordinate, int max, int zoom);
 
-        public Route GetTransitRoute(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Returns a transit route.
+        /// </summary>
+        public abstract Route GetTransitRoute(DateTime dt, List<Vehicle> vehicles, GeoCoordinate[] coordinates, HashSet<string> operators, bool complete);
 
-        public Route GetRouteAlongOne(List<Vehicle> vehicles, GeoCoordinate[] coordinates)
-        {
-            throw new NotImplementedException();
-        }
-
-        public FeatureCollection GetTransitFeatures(Route route, bool p)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Returns features for a route taking into account transit-data.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <param name="aggregate"></param>
+        /// <returns></returns>
+        public abstract FeatureCollection GetTransitFeatures(Route route, bool aggregate);
     }
 }
