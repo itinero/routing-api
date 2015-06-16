@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing.MultiModal", "OsmSharp.Service.Routing.MultiModal\OsmSharp.Service.Routing.MultiModal.csproj", "{C51F9999-0DDB-4839-BE46-72EA796887CA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing", "OsmSharp.Service.Routing\OsmSharp.Service.Routing.csproj", "{A2C54724-3BE5-4004-904F-B784AA103008}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmSharp.Service.Routing.Sample.SelfHost", "samples\OsmSharp.Service.Routing.Sample.SelfHost\OsmSharp.Service.Routing.Sample.SelfHost.csproj", "{5F8BC685-682E-400D-90D6-793B618CED27}"
@@ -23,14 +21,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Debug|x64.ActiveCfg = Debug|x64
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Debug|x64.Build.0 = Debug|x64
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Release|x64.ActiveCfg = Release|x64
-		{C51F9999-0DDB-4839-BE46-72EA796887CA}.Release|x64.Build.0 = Release|x64
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C54724-3BE5-4004-904F-B784AA103008}.Debug|x64.ActiveCfg = Debug|x64
