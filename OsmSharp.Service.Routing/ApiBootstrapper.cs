@@ -16,17 +16,23 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
+using GTFS;
+using GTFS.IO;
 using OsmSharp.Osm.PBF.Streams;
 using OsmSharp.Osm.Xml.Streams;
 using OsmSharp.Routing;
 using OsmSharp.Routing.CH;
 using OsmSharp.Routing.CH.Serialization;
+using OsmSharp.Routing.Graph;
 using OsmSharp.Routing.Graph.Routing;
 using OsmSharp.Routing.Graph.Serialization;
 using OsmSharp.Routing.Osm.Interpreter;
+using OsmSharp.Routing.Transit.Data;
+using OsmSharp.Routing.Transit.Multimodal.Data;
 using OsmSharp.Routing.Vehicles;
 using OsmSharp.Service.Routing.Configurations;
 using OsmSharp.Service.Routing.Monitoring;
+using OsmSharp.Service.Routing.Multimodal;
 using OsmSharp.Service.Routing.Wrappers;
 using System;
 using System.Collections.Generic;
@@ -195,6 +201,7 @@ namespace OsmSharp.Service.Routing
                     OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
                         string.Format("Creating {0} instance...", instanceConfiguration.Name));
                     Router router = null;
+                    RouterDataSource<Edge> data = null;
 
                     var graphFile = new FileInfo(graph);
                     switch (type)
@@ -205,15 +212,17 @@ namespace OsmSharp.Service.Routing
                                 case "osm-xml":
                                     using(var graphStream = graphFile.OpenRead())
                                     {
-                                        var graphSource = new XmlOsmStreamSource(graphStream);
-                                        router = Router.CreateFrom(graphSource, new OsmRoutingInterpreter());
+                                        data = OsmSharp.Routing.Osm.Streams.GraphOsmStreamTarget.Preprocess(
+                                            new XmlOsmStreamSource(graphStream), new OsmRoutingInterpreter());
+                                        router = Router.CreateFrom(data, new OsmRoutingInterpreter());
                                     }
                                     break;
                                 case "osm-pbf":
                                     using (var graphStream = graphFile.OpenRead())
                                     {
-                                        var graphSource = new PBFOsmStreamSource(graphStream);
-                                        router = Router.CreateFrom(graphSource, new OsmRoutingInterpreter());
+                                        data = OsmSharp.Routing.Osm.Streams.GraphOsmStreamTarget.Preprocess(
+                                            new PBFOsmStreamSource(graphStream), new OsmRoutingInterpreter());
+                                        router = Router.CreateFrom(data, new OsmRoutingInterpreter());
                                     }
                                     break;
                                 default:
@@ -222,6 +231,13 @@ namespace OsmSharp.Service.Routing
                             }
                             break;
                         case "contracted":
+                            // check for GTFS-feeds and give warning if they are there.
+                            if(instanceConfiguration.Feeds != null && instanceConfiguration.Feeds.Count > 0)
+                            { // ... oeps a feed and a contracted network are not supported for now.
+                                OsmSharp.Logging.Log.TraceEvent("ApiBootstrapper", OsmSharp.Logging.TraceEventType.Warning,
+                                    "NotSupported: GTFS and contracted graphs cannot (yet) be combined.");
+                            }
+
                             switch(format)
                             {
                                 case "osm-xml":
@@ -246,7 +262,7 @@ namespace OsmSharp.Service.Routing
                                         router = Router.CreateCHFrom(graphSource, new OsmRoutingInterpreter(), Vehicle.GetByUniqueName(vehicleName));
                                     }
                                     break;
-                                case "mobile":
+                                case "flat":
                                     var mobileRoutingSerializer = new CHEdgeSerializer();
                                     // keep this stream open, it is used while routing!
                                     var mobileGraphInstance = mobileRoutingSerializer.Deserialize(graphFile.OpenRead());
@@ -264,8 +280,8 @@ namespace OsmSharp.Service.Routing
                                     using (var graphStream = graphFile.OpenRead())
                                     {
                                         var routingSerializer = new RoutingDataSourceSerializer();
-                                        var graphInstance = routingSerializer.Deserialize(graphStream);
-                                        router = Router.CreateFrom(graphInstance, new Dykstra(), new OsmRoutingInterpreter());
+                                        data = routingSerializer.Deserialize(graphStream);
+                                        router = Router.CreateFrom(data, new Dykstra(), new OsmRoutingInterpreter());
                                     }
                                     break;
                                 default:
@@ -275,9 +291,33 @@ namespace OsmSharp.Service.Routing
                             break;
                     }
 
-                    lock (_sync)
-                    {
-                        OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instanceConfiguration.Name, router);
+                    if(instanceConfiguration.Feeds != null && instanceConfiguration.Feeds.Count > 0)
+                    { // transit-data use the transit-api.
+                        if(instanceConfiguration.Feeds.Count > 1)
+                        { // for now only one feed at a time is supported.
+                            OsmSharp.Logging.Log.TraceEvent("ApiBootstrapper", OsmSharp.Logging.TraceEventType.Warning,
+                                "NotSupported: Only one GTFS-feed at a time is supported.");
+                        }
+
+                        var feed = instanceConfiguration.Feeds[0];
+                        var reader = new GTFSReader<GTFSFeed>();
+                        var gtfsFeed = reader.Read<GTFSFeed>(new GTFSDirectorySource(feed.Path));
+                        var connectionsDb = new GTFSConnectionsDb(gtfsFeed);
+                        var multimodalConnectionsDb = new MultimodalConnectionsDb(data, connectionsDb,
+                            new OsmRoutingInterpreter(), Vehicle.Pedestrian);
+
+                        lock (_sync)
+                        {
+                            OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instanceConfiguration.Name,
+                                new MultimodalRouterWrapperBase(multimodalConnectionsDb));
+                        }
+                    }
+                    else
+                    { // no transit-data just use the regular routing api implementation.
+                        lock (_sync)
+                        {
+                            OsmSharp.Service.Routing.ApiBootstrapper.AddOrUpdate(instanceConfiguration.Name, router);
+                        }
                     }
 
                     OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
