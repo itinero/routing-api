@@ -58,6 +58,12 @@ namespace OsmSharp.Routing.API.Routing
             {
                 this.EnableCors();
 
+                // validate requests.
+                if(!Bootstrapper.ValidateRequest(this, _))
+                {
+                    return Negotiate.WithStatusCode(HttpStatusCode.Forbidden);
+                }
+
                 // get instance and check if active.
                 string instance = _.instance;
                 if (!RoutingBootstrapper.IsActive(instance))
@@ -173,7 +179,8 @@ namespace OsmSharp.Routing.API.Routing
                 }
                 else
                 { // return a GeoJSON object.
-                    var featureCollection = route.Value.ToFeatureCollection();
+                    var featureCollection = route.Value.ToFeatureCollection(
+                        OsmSharp.Routing.Algorithms.Routes.RouteSegmentAggregator.ModalAggregator);
 
                     return Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(featureCollection);
                 }

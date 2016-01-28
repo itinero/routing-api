@@ -1,5 +1,5 @@
 ﻿// OsmSharp - OpenStreetMap (OSM) SDK
-// Copyright (C) 2015 Abelshausen Ben
+// Copyright (C) 2016 Abelshausen Ben
 // 
 // This file is part of OsmSharp.
 // 
@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU General Public License
 // along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
 
+using Nancy;
 using OsmSharp.Routing.API.Configurations;
 using OsmSharp.Routing.Osm.Vehicles;
-using OsmSharp.Routing.Profiles;
+using System;
 using System.Configuration;
 using System.IO;
 
@@ -62,8 +63,25 @@ namespace OsmSharp.Routing.API
                     }
 
                     // register instance.
+                    var router = new Router(routerDb);
+                    router.CustomRouteBuilder = (db, profile, getFactor, 
+                        source, target, path) =>
+                    {
+                        var builder = new OsmSharp.Routing.Algorithms.Routes.FastRouteBuilder(
+                            db, profile, getFactor, source, target, path);
+                        builder.Run();
+                        if(builder.HasSucceeded)
+                        {
+                            return new Result<Route>(builder.Route);
+                        }
+                        return new Result<Route>("Building route failed.");
+                    };
+                    
+                    router.ProfileFactorCache = new OsmSharp.Routing.Profiles.ProfileFactorCache(router.Db);
+                    router.ProfileFactorCache.CalculateFor(Vehicle.Car.Fastest());
+
                     Routing.RoutingBootstrapper.Register(instanceConfiguration.Name,
-                        new Routing.Instances.DefaultRoutingModuleInstance(new Router(routerDb)));
+                        new Routing.Instances.DefaultRoutingModuleInstance(router));
 
                     OsmSharp.Logging.Log.TraceEvent("Bootstrapper", OsmSharp.Logging.TraceEventType.Information,
                         string.Format("Instance {0} created successfully!", instanceConfiguration.Name));
@@ -71,5 +89,13 @@ namespace OsmSharp.Routing.API
                 thread.Start();
             }
         }
+
+        /// <summary>
+        /// A function to validate requests.
+        /// </summary>
+        public static Func<NancyModule, dynamic, bool> ValidateRequest = (m, _) =>
+        {
+            return true;
+        };
     }
 }

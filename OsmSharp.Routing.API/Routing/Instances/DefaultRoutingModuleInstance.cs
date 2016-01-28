@@ -54,7 +54,18 @@ namespace OsmSharp.Routing.API.Routing.Instances
         public Result<Route> Calculate(Profile profile, ICoordinate[] locations, 
             Dictionary<string, object> parameters)
         {
-            return _router.TryCalculate(profile, locations);
+            var routerPoints = new RouterPoint[locations.Length];
+            for (var i = 0; i < routerPoints.Length; i++)
+            {
+                var resolveResult = _router.TryResolve(profile, locations[i], 500);
+                if (resolveResult.IsError)
+                {
+                    return resolveResult.ConvertError<Route>();
+                }
+                routerPoints[i] = resolveResult.Value;
+            }
+
+            return _router.TryCalculate(profile, routerPoints);
         }
 
         /// <summary>
@@ -63,7 +74,18 @@ namespace OsmSharp.Routing.API.Routing.Instances
         public Result<Feature> CalculateGeometry(Profile profile, ICoordinate[] locations, 
             Dictionary<string, object> parameters)
         {
-            var result = _router.TryCalculate(profile, locations);
+            var routerPoints = new RouterPoint[locations.Length];
+            for(var i = 0; i < routerPoints.Length; i++)
+            {
+                var resolveResult = _router.TryResolve(profile, locations[i], 500);
+                if (resolveResult.IsError)
+                {
+                    return resolveResult.ConvertError<Feature>();
+                }
+                routerPoints[i] = resolveResult.Value;
+            }
+
+            var result = _router.TryCalculate(profile, routerPoints);
             if(result.IsError)
             {
                 return result.ConvertError<Feature>();
