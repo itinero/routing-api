@@ -18,7 +18,7 @@
 
 using System.Collections.Generic;
 
-namespace OsmSharp.Routing.API.Routing
+namespace OsmSharp.Routing.API
 {
     /// <summary>
     /// The bootstrapper for the routing module.

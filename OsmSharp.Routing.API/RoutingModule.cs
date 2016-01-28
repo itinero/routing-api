@@ -24,7 +24,7 @@ using OsmSharp.Routing.Profiles;
 using System;
 using System.Collections.Generic;
 
-namespace OsmSharp.Routing.API.Routing
+namespace OsmSharp.Routing.API
 {
     /// <summary>
     /// The routing module.

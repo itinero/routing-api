@@ -109,13 +109,13 @@
     <Compile Include="NancyExtensions.cs" />
     <Compile Include="Responses\GeoJsonResponse.cs" />
     <Compile Include="Responses\GeoJsonResponseProcessor.cs" />
-    <Compile Include="Routing\Domain\Profile.cs" />
-    <Compile Include="Routing\Domain\Request.cs" />
-    <Compile Include="Routing\Domain\UrlParametersRequest.cs" />
-    <Compile Include="Routing\Instances\DefaultRoutingModuleInstance.cs" />
-    <Compile Include="Routing\IRoutingModuleInstance.cs" />
-    <Compile Include="Routing\RoutingBootstrapper.cs" />
-    <Compile Include="Routing\RoutingModule.cs" />
+    <Compile Include="Domain\Profile.cs" />
+    <Compile Include="Domain\Request.cs" />
+    <Compile Include="Domain\UrlParametersRequest.cs" />
+    <Compile Include="Instances\DefaultRoutingModuleInstance.cs" />
+    <Compile Include="IRoutingModuleInstance.cs" />
+    <Compile Include="RoutingBootstrapper.cs" />
+    <Compile Include="RoutingModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
