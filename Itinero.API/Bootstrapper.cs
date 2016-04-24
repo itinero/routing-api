@@ -1,28 +1,10 @@
-﻿// OsmSharp - OpenStreetMap (OSM) SDK
-// Copyright (C) 2016 Abelshausen Ben
-// 
-// This file is part of OsmSharp.
-// 
-// OsmSharp is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-// 
-// OsmSharp is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with OsmSharp. If not, see <http://www.gnu.org/licenses/>.
-
-using Nancy;
-using Itinero.API.Configurations;
+﻿using Nancy;
 using Itinero.Osm.Vehicles;
 using Itinero.Logging;
 using System;
 using System.Configuration;
 using System.IO;
+using System.Threading;
 
 namespace Itinero.API
 {
@@ -36,60 +18,80 @@ namespace Itinero.API
         /// </summary>
         public static void BootFromConfiguration()
         {
-            // register vehicle profiles.
-            Vehicle.RegisterVehicles();
-
-            // enable logging and use the console as output.
-            OsmSharp.Logging.Logger.LogAction = (origin, level, message, parameters) =>
+            try
             {
-                Console.WriteLine("{0}:{1} - {2}", origin, level, message);
-            };
+                // register vehicle profiles.
+                Vehicle.RegisterVehicles();
 
-            // get the api configuration.
-            var apiConfiguration = (ApiConfiguration)ConfigurationManager.GetSection("ApiConfiguration");
+                // enable logging and use the console as output.
+                OsmSharp.Logging.Logger.LogAction = (origin, level, message, parameters) =>
+                {
+                    Console.WriteLine("{0}:{1} - {2}", origin, level, message);
+                };
+                Logger.LogAction = (origin, level, message, parameters) =>
+                {
+                    Console.WriteLine("{0}:{1} - {2}", origin, level, message);
+                };
 
-            // load all relevant routers.
-            foreach (InstanceConfiguration instanceConfiguration in apiConfiguration.Instances)
-            {
-                var thread = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-                {                   
-                    // create routing instance.
-                    Logger.Log("Bootstrapper", TraceEventType.Information,
-                        string.Format("Creating {0} instance...", instanceConfiguration.Name));
+                // load all .routing files.
+                var dataDirectory = new DirectoryInfo(Properties.Settings.Default.Data);
+                if (!dataDirectory.Exists)
+                {
+                    throw new DirectoryNotFoundException(
+                        string.Format("Configured data directory doesn't exist: {0}", dataDirectory.FullName));
+                }
 
-                    // load data.
-                    RouterDb routerDb = null;
-                    using(var stream = new FileInfo(instanceConfiguration.RouterDb).OpenRead())
+                // load all relevant files.
+                var routingFiles = dataDirectory.GetFiles("*.routing");
+                if (routingFiles.Length == 0)
+                {
+                    throw new DirectoryNotFoundException(
+                        string.Format("No .routing files found in {0}", dataDirectory.FullName));
+                }
+
+                for(var i = 0; i < routingFiles.Length; i++)
+                {
+                    var thread = new Thread((state) =>
                     {
-                        routerDb = RouterDb.Deserialize(stream);
-                    }
-
-                    // register instance.
-                    var router = new Router(routerDb);
-                    router.CustomRouteBuilder = (db, profile, getFactor, 
-                        source, target, path) =>
-                    {
-                        var builder = new Itinero.Algorithms.Routes.FastRouteBuilder(
-                            db, profile, getFactor, source, target, path);
-                        builder.Run();
-                        if(builder.HasSucceeded)
+                        var j = (int)state;
+                        var name = routingFiles[j].Name.GetNameUntilFirstDot();
+                        try
                         {
-                            return new Result<Route>(builder.Route);
+                            RouterDb routerDb = null;
+                            using (var stream = routingFiles[j].OpenRead())
+                            {
+                                routerDb = RouterDb.Deserialize(stream);
+                            }
+                            var instance = new Instances.DefaultRoutingModuleInstance(new Router(routerDb));
+                            RoutingBootstrapper.Register(name, instance);
                         }
-                        return new Result<Route>("Building route failed.");
-                    };
-                    
-                    router.ProfileFactorCache = new Itinero.Profiles.ProfileFactorCache(router.Db);
-                    router.ProfileFactorCache.CalculateFor(Vehicle.Car.Fastest());
-
-                    RoutingBootstrapper.Register(instanceConfiguration.Name,
-                        new Instances.DefaultRoutingModuleInstance(router));
-
-                    Logger.Log("Bootstrapper", TraceEventType.Information,
-                        string.Format("Instance {0} created successfully!", instanceConfiguration.Name));
-                }));
-                thread.Start();
+                        catch (Exception ex)
+                        {
+                            Logger.Log("Bootstrapper", TraceEventType.Critical,
+                                "Failed load file or create instance: {0}", ex.ToInvariantString());
+                        }
+                    });
+                    thread.Start(i);
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Log("Bootstrapper", TraceEventType.Critical, 
+                    "Failed to start service: {0}", ex.ToInvariantString());
+            }
+        }
+
+        /// <summary>
+        /// Gets the substring until the first dot.
+        /// </summary>
+        private static string GetNameUntilFirstDot(this string name)
+        {
+            var dotIdx = name.IndexOf('.');
+            if (dotIdx == 0)
+            {
+                throw new Exception("No '.' found in file name.");
+            }
+            return name.Substring(0, dotIdx);
         }
 
         /// <summary>

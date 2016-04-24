@@ -94,10 +94,12 @@
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Configurations\ApiConfiguration.cs" />
-    <Compile Include="Configurations\InstanceConfiguration.cs" />
-    <Compile Include="Configurations\InstanceConfigurationCollection.cs" />
     <Compile Include="NancyExtensions.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Responses\GeoJsonResponse.cs" />
     <Compile Include="Responses\GeoJsonResponseProcessor.cs" />
     <Compile Include="Domain\Profile.cs" />
@@ -110,7 +112,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
