@@ -23,16 +23,6 @@ namespace Itinero.API
                 // register vehicle profiles.
                 Vehicle.RegisterVehicles();
 
-                // enable logging and use the console as output.
-                OsmSharp.Logging.Logger.LogAction = (origin, level, message, parameters) =>
-                {
-                    Console.WriteLine("{0}:{1} - {2}", origin, level, message);
-                };
-                Logger.LogAction = (origin, level, message, parameters) =>
-                {
-                    Console.WriteLine("{0}:{1} - {2}", origin, level, message);
-                };
-
                 // load all .routing files.
                 var dataDirectory = new DirectoryInfo(Properties.Settings.Default.Data);
                 if (!dataDirectory.Exists)
