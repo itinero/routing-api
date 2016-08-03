@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Data" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\work\eurostation\data\kortrijk\config\phase1</Value>
+      <Value Profile="(Default)">C:\work\data\routing\</Value>
     </Setting>
   </Settings>
 </SettingsFile>

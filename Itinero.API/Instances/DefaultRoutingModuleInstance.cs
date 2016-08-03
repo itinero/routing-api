@@ -31,12 +31,12 @@ namespace Itinero.API.Instances
     /// </summary>
     public class DefaultRoutingModuleInstance : IRoutingModuleInstance
     {
-        private readonly IRouter _router;
+        private readonly RouterBase _router;
 
         /// <summary>
         /// Creates a new default routing instance.
         /// </summary>
-        public DefaultRoutingModuleInstance(IRouter router)
+        public DefaultRoutingModuleInstance(RouterBase router)
         {
             _router = router;
         }
