@@ -22,10 +22,11 @@
 
 //!!!using Nancy;
 //!!!using Nancy.Json;
+
 using System;
 using System.IO;
 
-namespace Itinero.API.Reponses
+namespace Itinero.API.Responses
 {
     /// <summary>
     /// A GeoJSON response.

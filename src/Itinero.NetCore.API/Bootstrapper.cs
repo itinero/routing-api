@@ -104,14 +104,5 @@ namespace Itinero.API
             }
             return name.Substring(0, dotIdx);
         }
-
-        // no clue
-        /// <summary>
-        /// A function to validate requests.
-        /// </summary>
-        //public static Func<NancyModule, dynamic, bool> ValidateRequest = (m, _) =>
-        //{
-        //    return true;
-        //};
     }
 }
