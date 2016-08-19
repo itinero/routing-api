@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,20 +13,20 @@ namespace Itinero.API
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true);
 
             if (env.IsEnvironment("Development"))
             {
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
-                builder.AddApplicationInsightsSettings(developerMode: true);
+                builder.AddApplicationInsightsSettings(true);
             }
             
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-
+            
             var dataPath = Configuration["dataDirectory"];
-
+            
             Bootstrapper.BootFromConfiguration(dataPath);
         }
 
@@ -37,8 +38,10 @@ namespace Itinero.API
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddMvc();
-
+            var mvcBuilder = services.AddMvc();
+            // Use the custom json serializer for Route. Make sure it is inserted at 0, so it precedes the regualr serializer
+            mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(0, new RouteOutputFormatter()));
+                
             services.AddSwaggerGen();
         }
 

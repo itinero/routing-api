@@ -42,7 +42,7 @@ namespace Itinero.API
         {
             return _instances.ContainsKey(name);
         }
-
+        
         /// <summary>
         /// Returns the routing module instance with the given name.
         /// </summary>
@@ -57,6 +57,15 @@ namespace Itinero.API
         public static void Register(string name, IRoutingModuleInstance instance)
         {
             _instances[name] = instance;
+        }
+
+        /// <summary>
+        /// Get names of all registered instances
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<string> GetNamesRegistered()
+        {
+            return _instances.Keys;
         }
     }
 }

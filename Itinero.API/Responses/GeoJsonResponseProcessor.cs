@@ -129,8 +129,8 @@ namespace Itinero.API.Responses
 
             var subtypeString = requestedContentType.Subtype.ToString();
 
-            return (subtypeString.StartsWith("vnd", StringComparison.InvariantCultureIgnoreCase) &&
-                    subtypeString.EndsWith("+json", StringComparison.InvariantCultureIgnoreCase));
+            return subtypeString.StartsWith("vnd", StringComparison.InvariantCultureIgnoreCase) &&
+                    subtypeString.EndsWith("+json", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

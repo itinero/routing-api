@@ -20,13 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//!!!using Nancy;
 using Itinero.Osm.Vehicles;
 using Itinero.Logging;
 using System;
 using System.IO;
 using System.Threading;
-using Microsoft.Extensions.Configuration;
 
 namespace Itinero.API
 {
@@ -70,7 +68,7 @@ namespace Itinero.API
                         var name = routingFiles[j].Name.GetNameUntilFirstDot();
                         try
                         {
-                            RouterDb routerDb = null;
+                            RouterDb routerDb;
                             using (var stream = routingFiles[j].OpenRead())
                             {
                                 routerDb = RouterDb.Deserialize(stream);

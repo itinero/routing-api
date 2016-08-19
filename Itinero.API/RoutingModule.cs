@@ -115,7 +115,7 @@ namespace Itinero.API
                     { // a vehicle was defined.
                         profileName = urlParameterRequest.profile;
                     }
-                    if (!Profile.TryGet(profileName, out profile))
+                    if (!Profile.TryGet("car.fastest", out profile))
                     {// vehicle not found or not registered.
                         return Negotiate.WithStatusCode(HttpStatusCode.NotAcceptable).WithModel(
                             string.Format("Profile with name '{0}' not found.", profileName));
