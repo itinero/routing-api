@@ -20,53 +20,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//!!!using Nancy;
-//!!!using Nancy.Json;
+using System.Collections.Generic;
+using Itinero.LocalGeo;
+using Itinero.Profiles;
 
-using System;
-using System.IO;
-
-namespace Itinero.API.Responses
+namespace Itinero.API
 {
     /// <summary>
-    /// A GeoJSON response.
+    /// A default routing module instance implemenation.
     /// </summary>
-    public class GeoJsonResponse //!!! : Response
+    public class DefaultRoutingModuleInstance : IRoutingModuleInstance
     {
+        private readonly RouterBase _router;
+
         /// <summary>
-        /// Holds the default content type.
+        /// Creates a new default routing instance.
         /// </summary>
-        private static string DefaultContentType
+        public DefaultRoutingModuleInstance(RouterBase router)
         {
-            get
+            _router = router;
+        }
+
+        /// <summary>
+        /// Returns true if the given profile is supported.
+        /// </summary>
+        public bool Supports(Profile profile)
+        {
+            return _router.SupportsAll(profile);
+        }
+
+        /// <summary>
+        /// Calculates a route along the given locations.
+        /// </summary>
+        public Result<Route> Calculate(Profile profile, Coordinate[] locations, 
+            Dictionary<string, object> parameters)
+        {
+            var routerPoints = new RouterPoint[locations.Length];
+            for (var i = 0; i < routerPoints.Length; i++)
             {
-                return ""; //!!!"application/json" + "; charset=" + JsonSettings.DefaultEncoding.EncodingName;
+                var resolveResult = _router.TryResolve(profile, locations[i], 500);
+                if (resolveResult.IsError)
+                {
+                    return resolveResult.ConvertError<Route>();
+                }
+                routerPoints[i] = resolveResult.Value;
             }
-        }
 
-        /// <summary>
-        /// Creates a new GeoJSON response.
-        /// </summary>
-        public GeoJsonResponse(Route model)
-        {
-            //this.Contents = model == null ? NoBody : GetGeoJsonContents(model);
-            //this.ContentType = DefaultContentType;
-            //this.StatusCode = HttpStatusCode.OK;
-        }
-
-        /// <summary>
-        /// Gets a stream for a given feature collection.
-        /// </summary>
-        /// <returns></returns>
-        private static Action<Stream> GetGeoJsonContents(Route model)
-        {
-            return stream =>
-            {
-                var geoJson = model.ToGeoJson();
-
-                var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(geoJson);
-                stream.Write(geoJsonBytes, 0, geoJsonBytes.Length);
-            };
+            return _router.TryCalculate(profile, routerPoints);
         }
     }
 }
