@@ -11,29 +11,29 @@ namespace Itinero.API.Controllers
     public class RoutingController : Controller
     {
         [HttpGet]
-        public Route Get([FromQuery] float fromLat, [FromQuery] float fromLon,
-            [FromQuery] float toLat, [FromQuery] float toLon, [FromQuery] string profile)
+        public Route Get(
+            [FromQuery] float fromLat, 
+            [FromQuery] float fromLon,
+            [FromQuery] float toLat, [FromQuery] float toLon, 
+            [FromQuery] string profile = null, 
+            [FromQuery] string instance = null)
         {
-            var instance = RoutingBootstrapper.Get("belgium");
-
+            var routingInstance = GetInstance(instance);
             var routingProfile = GetProfile(profile);
-
             var coordinates = new[] {new Coordinate(fromLat, fromLon), new Coordinate(toLat, toLon)};
-
-            var result = instance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
-
+            var result = routingInstance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
             return result.Value;
         }
 
         [HttpPost]
-        public Route Post([FromBody] Coordinate[] coordinates, [FromQuery] string profile)
+        public Route Post(
+            [FromBody] Coordinate[] coordinates, 
+            [FromQuery] string profile = null, 
+            [FromQuery] string instance = null)
         {
-            var instance = RoutingBootstrapper.Get("belgium");
-
+            var routingInstance = GetInstance(instance);
             var routingProfile = GetProfile(profile);
-            
-            var result = instance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
-
+            var result = routingInstance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
             return result.Value;
         }
 
@@ -49,6 +49,15 @@ namespace Itinero.API.Controllers
                 throw new Exception("Profile was not found");
             }
             return routingProfile;
+        }
+
+        private static IRoutingModuleInstance GetInstance(string instance)
+        {
+            if (string.IsNullOrWhiteSpace(instance))
+            {
+                return RoutingBootstrapper.Get(RoutingBootstrapper.GetNamesRegistered().First());
+            }
+            return RoutingBootstrapper.Get(instance);
         }
     }
 }
