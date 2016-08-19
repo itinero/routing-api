@@ -55,9 +55,9 @@ namespace Itinero.API.Controllers
         {
             if (string.IsNullOrWhiteSpace(instance))
             {
-                return RoutingBootstrapper.Get(RoutingBootstrapper.GetNamesRegistered().First());
+                return Instances.Get(Instances.GetRegisteredNames().First());
             }
-            return RoutingBootstrapper.Get(instance);
+            return Instances.Get(instance);
         }
     }
 }

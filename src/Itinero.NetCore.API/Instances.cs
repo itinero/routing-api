@@ -27,12 +27,12 @@ namespace Itinero.API
     /// <summary>
     /// The bootstrapper for the routing module.
     /// </summary>
-    public class RoutingBootstrapper
+    public class Instances
     {
         /// <summary>
         /// Holds the routing service instances.
         /// </summary>
-        private static readonly Dictionary<string, IRoutingModuleInstance> Instances =
+        private static readonly Dictionary<string, IRoutingModuleInstance> Items =
             new Dictionary<string, IRoutingModuleInstance>();
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Itinero.API
         /// </summary>
         public static bool IsActive(string name)
         {
-            return Instances.ContainsKey(name);
+            return Items.ContainsKey(name);
         }
         
         /// <summary>
@@ -48,7 +48,7 @@ namespace Itinero.API
         /// </summary>
         public static IRoutingModuleInstance Get(string name)
         {
-            return Instances[name];
+            return Items[name];
         }
 
         /// <summary>
@@ -56,16 +56,16 @@ namespace Itinero.API
         /// </summary>
         public static void Register(string name, IRoutingModuleInstance instance)
         {
-            Instances[name] = instance;
+            Items[name] = instance;
         }
 
         /// <summary>
         /// Get names of all registered instances
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<string> GetNamesRegistered()
+        public static IEnumerable<string> GetRegisteredNames()
         {
-            return Instances.Keys;
+            return Items.Keys;
         }
     }
 }

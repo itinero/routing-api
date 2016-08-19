@@ -9,7 +9,7 @@ namespace Itinero.API.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return RoutingBootstrapper.GetNamesRegistered();
+            return Instances.GetRegisteredNames();
         }
     }
 }

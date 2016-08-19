@@ -74,7 +74,7 @@ namespace Itinero.API
                                 routerDb = RouterDb.Deserialize(stream);
                             }
                             var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
-                            RoutingBootstrapper.Register(name, instance);
+                            Instances.Register(name, instance);
                         }
                         catch (Exception ex)
                         {
