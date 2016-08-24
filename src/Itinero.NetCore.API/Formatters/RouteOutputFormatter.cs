@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-namespace Itinero.API
+namespace Itinero.API.Formatters
 {
     public class RouteOutputFormatter : IOutputFormatter
     {
