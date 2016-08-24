@@ -42,7 +42,7 @@ namespace Itinero.API.Controllers
             Profile routingProfile;
             if (string.IsNullOrWhiteSpace(profile))
             {
-                routingProfile = Profile.GetAllRegistered().First();
+                routingProfile = Profile.GetAllRegistered().OrderBy(p => p.Name).First();
             }
             else if (!Profile.TryGet(profile, out routingProfile))
             {
@@ -55,7 +55,7 @@ namespace Itinero.API.Controllers
         {
             if (string.IsNullOrWhiteSpace(instance))
             {
-                return Instances.Get(Instances.GetRegisteredNames().First());
+                return Instances.Get(Instances.GetRegisteredNames().OrderBy(i => i).First());
             }
             return Instances.Get(instance);
         }
