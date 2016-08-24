@@ -61,6 +61,12 @@ namespace Itinero.API
 
             // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
             app.UseSwaggerUi();
+
+            // Docs on CORS: https://docs.asp.net/en/latest/security/cors.html
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
         }
     }
 }
