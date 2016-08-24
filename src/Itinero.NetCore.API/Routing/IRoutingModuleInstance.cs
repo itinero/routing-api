@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Collections.Generic;
 using Itinero.LocalGeo;
 using Itinero.Profiles;
-using System.Collections.Generic;
 
-namespace Itinero.API
+namespace Itinero.API.Routing
 {
     /// <summary>
     /// Abstract representation of the routing module functionality.

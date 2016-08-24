@@ -4,6 +4,7 @@ using Itinero.LocalGeo;
 using Itinero.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Itinero.API.Routing;
 
 namespace Itinero.API.Controllers
 {

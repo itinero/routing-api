@@ -21,52 +21,51 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
-using Itinero.LocalGeo;
-using Itinero.Profiles;
 
-namespace Itinero.API
+namespace Itinero.API.Routing
 {
     /// <summary>
-    /// A default routing module instance implemenation.
+    /// The bootstrapper for the routing module.
     /// </summary>
-    public class DefaultRoutingModuleInstance : IRoutingModuleInstance
+    public class Instances
     {
-        private readonly RouterBase _router;
+        /// <summary>
+        /// Holds the routing service instances.
+        /// </summary>
+        private static readonly Dictionary<string, IRoutingModuleInstance> Items =
+            new Dictionary<string, IRoutingModuleInstance>();
 
         /// <summary>
-        /// Creates a new default routing instance.
+        /// Returns true if the given instance is active.
         /// </summary>
-        public DefaultRoutingModuleInstance(RouterBase router)
+        public static bool IsActive(string name)
         {
-            _router = router;
+            return Items.ContainsKey(name);
+        }
+        
+        /// <summary>
+        /// Returns the routing module instance with the given name.
+        /// </summary>
+        public static IRoutingModuleInstance Get(string name)
+        {
+            return Items[name];
         }
 
         /// <summary>
-        /// Returns true if the given profile is supported.
+        /// Registers a new instance.
         /// </summary>
-        public bool Supports(Profile profile)
+        public static void Register(string name, IRoutingModuleInstance instance)
         {
-            return _router.SupportsAll(profile);
+            Items[name] = instance;
         }
 
         /// <summary>
-        /// Calculates a route along the given locations.
+        /// Get names of all registered instances
         /// </summary>
-        public Result<Route> Calculate(Profile profile, Coordinate[] locations, 
-            Dictionary<string, object> parameters)
+        /// <returns></returns>
+        public static IEnumerable<string> GetRegisteredNames()
         {
-            var routerPoints = new RouterPoint[locations.Length];
-            for (var i = 0; i < routerPoints.Length; i++)
-            {
-                var resolveResult = _router.TryResolve(profile, locations[i], 500);
-                if (resolveResult.IsError)
-                {
-                    return resolveResult.ConvertError<Route>();
-                }
-                routerPoints[i] = resolveResult.Value;
-            }
-
-            return _router.TryCalculate(profile, routerPoints);
+            return Items.Keys;
         }
     }
 }

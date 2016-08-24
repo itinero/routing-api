@@ -25,6 +25,7 @@ using Itinero.Logging;
 using System;
 using System.IO;
 using System.Threading;
+using Itinero.API.Routing;
 
 namespace Itinero.API
 {
