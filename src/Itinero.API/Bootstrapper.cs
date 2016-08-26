@@ -37,45 +37,25 @@ namespace Itinero.API
         /// <summary>
         /// Initializes all routing instance from the configuration in the configuration file.
         /// </summary>
-        public static void BootFromConfiguration(string dataPath)
+        public static void BootFromConfiguration(string routingFilePath)
         {
             try
             {
                 // register vehicle profiles.
                 Vehicle.RegisterVehicles();
 
-                // load all .routing files.
-               
-                var dataDirectory = new DirectoryInfo(dataPath);
-                if (!dataDirectory.Exists)
-                {
-                    throw new DirectoryNotFoundException(
-                        string.Format("Configured data directory doesn't exist: {0}", dataDirectory.FullName));
-                }
-
-                // load all relevant files.
-                var routingFiles = dataDirectory.GetFiles("*.routing");
-                if (routingFiles.Length == 0)
-                {
-                    throw new DirectoryNotFoundException(
-                        string.Format("No .routing files found in {0}", dataDirectory.FullName));
-                }
-
-                for(var i = 0; i < routingFiles.Length; i++)
-                {
-                    var thread = new Thread(state =>
+                   var thread = new Thread(state =>
                     {
-                        var j = (int)state;
-                        var name = routingFiles[j].Name.GetNameUntilFirstDot();
                         try
                         {
                             RouterDb routerDb;
-                            using (var stream = routingFiles[j].OpenRead())
+
+                            using (var stream = File.OpenRead(routingFilePath))
                             {
                                 routerDb = RouterDb.Deserialize(stream);
                             }
                             var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
-                            Instances.Register(name, instance);
+                            Instances.Register(routingFilePath, instance);
                         }
                         catch (Exception ex)
                         {
@@ -83,8 +63,8 @@ namespace Itinero.API
                                 "Failed load file or create instance: {0}", ex.ToInvariantString());
                         }
                     });
-                    thread.Start(i);
-                }
+                    thread.Start();
+                
             }
             catch (Exception ex)
             {

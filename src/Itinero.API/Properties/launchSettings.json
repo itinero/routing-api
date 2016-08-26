@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Itinero.NetCore.API": {
+    "Itinero.API": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000/swagger/ui",

@@ -25,9 +25,9 @@ namespace Itinero.API
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
             
-            var dataPath = Configuration["dataDirectory"];
+            var routingFilePath = Configuration["routingFilePath"];
             
-            Bootstrapper.BootFromConfiguration(dataPath);
+            Bootstrapper.BootFromConfiguration(routingFilePath);
         }
 
         public IConfigurationRoot Configuration { get; }
