@@ -18,10 +18,9 @@ namespace Itinero.API.Controllers
             [FromQuery] float fromLon,
             [FromQuery] float toLat, 
             [FromQuery] float toLon, 
-            [FromQuery] string profile = null, 
-            [FromQuery] string instance = null)
+            [FromQuery] string profile = null)
         {
-            var routingInstance = GetInstance(instance);
+            var routingInstance = GetInstance();
             var routingProfile = GetProfile(profile);
             var coordinates = new[] {new Coordinate(fromLat, fromLon), new Coordinate(toLat, toLon)};
             var result = routingInstance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
@@ -34,9 +33,8 @@ namespace Itinero.API.Controllers
             [FromQuery] string profile = null, 
             [FromQuery] string instance = null)
         {
-            var routingInstance = GetInstance(instance);
             var routingProfile = GetProfile(profile);
-            var result = routingInstance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
+            var result = Instances.GetDefault().Calculate(routingProfile, coordinates, new Dictionary<string, object>());
             return result.Value;
         }
 
@@ -54,13 +52,9 @@ namespace Itinero.API.Controllers
             return routingProfile;
         }
 
-        private static IRoutingModuleInstance GetInstance(string instance)
+        private static IRoutingModuleInstance GetInstance()
         {
-            if (string.IsNullOrWhiteSpace(instance))
-            {
-                return Instances.Get(Instances.GetRegisteredNames().OrderBy(i => i).First());
-            }
-            return Instances.Get(instance);
+            return Instances.Get(Instances.GetRegisteredNames().OrderBy(i => i).First());
         }
     }
 }

@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Itinero.API.Routing
 {
@@ -42,7 +43,16 @@ namespace Itinero.API.Routing
         {
             return Items.ContainsKey(name);
         }
-        
+
+
+        /// <summary>
+        /// Returns the routing module instance with the given name.
+        /// </summary>
+        public static IRoutingModuleInstance GetDefault()
+        {
+            return Items[GetRegisteredNames().OrderBy(n => n).First()];
+        }
+
         /// <summary>
         /// Returns the routing module instance with the given name.
         /// </summary>
