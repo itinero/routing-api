@@ -15,7 +15,8 @@ namespace Itinero.API.Controllers
         public Route Get(
             [FromQuery] float fromLat, 
             [FromQuery] float fromLon,
-            [FromQuery] float toLat, [FromQuery] float toLon, 
+            [FromQuery] float toLat, 
+            [FromQuery] float toLon, 
             [FromQuery] string profile = null, 
             [FromQuery] string instance = null)
         {
