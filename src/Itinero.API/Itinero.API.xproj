@@ -6,7 +6,7 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>bf81ac0e-c5e3-4ba2-ae51-582a8f8864ae</ProjectGuid>
+    <ProjectGuid>78a13e78-c400-4023-87eb-1a6f942cb24e</ProjectGuid>
     <RootNamespace>Itinero.API</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
