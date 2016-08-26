@@ -12,6 +12,7 @@ namespace Itinero.API.Controllers
     public class RoutingController : Controller
     {
         [HttpGet]
+        [Produces("application/json", "application/vnd.geo+json")]
         public Route Get(
             [FromQuery] float fromLat, 
             [FromQuery] float fromLon,
