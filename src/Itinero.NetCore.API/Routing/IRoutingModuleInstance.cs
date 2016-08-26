@@ -36,6 +36,8 @@ namespace Itinero.API.Routing
         /// </summary>
         bool Supports(Profile profile);
 
+        RouterBase Router { get; }
+
         /// <summary>
         /// Calculates a route along the given locations.
         /// </summary>

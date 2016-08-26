@@ -31,14 +31,14 @@ namespace Itinero.API.Routing
     /// </summary>
     public class DefaultRoutingModuleInstance : IRoutingModuleInstance
     {
-        private readonly RouterBase _router;
+        public RouterBase Router { get; }
 
         /// <summary>
         /// Creates a new default routing instance.
         /// </summary>
         public DefaultRoutingModuleInstance(RouterBase router)
         {
-            _router = router;
+            Router = router;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Itinero.API.Routing
         /// </summary>
         public bool Supports(Profile profile)
         {
-            return _router.SupportsAll(profile);
+            return Router.SupportsAll(profile);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Itinero.API.Routing
             var routerPoints = new RouterPoint[locations.Length];
             for (var i = 0; i < routerPoints.Length; i++)
             {
-                var resolveResult = _router.TryResolve(profile, locations[i], 500);
+                var resolveResult = Router.TryResolve(profile, locations[i], 500);
                 if (resolveResult.IsError)
                 {
                     return resolveResult.ConvertError<Route>();
@@ -66,7 +66,7 @@ namespace Itinero.API.Routing
                 routerPoints[i] = resolveResult.Value;
             }
 
-            return _router.TryCalculate(profile, routerPoints);
+            return Router.TryCalculate(profile, routerPoints);
         }
     }
 }
