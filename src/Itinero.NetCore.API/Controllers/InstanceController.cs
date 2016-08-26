@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Itinero.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class InstanceController : Controller
     {
         [HttpGet]

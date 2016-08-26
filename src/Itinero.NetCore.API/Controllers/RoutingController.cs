@@ -8,7 +8,7 @@ using Itinero.API.Routing;
 
 namespace Itinero.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class RoutingController : Controller
     {
         [HttpGet]

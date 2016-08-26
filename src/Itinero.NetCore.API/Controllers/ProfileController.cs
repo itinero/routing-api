@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Itinero.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ProfileController : Controller
     {
         [HttpGet]
