@@ -14,7 +14,7 @@ namespace Itinero.API.Formatters
 
         public Task WriteAsync(OutputFormatterWriteContext context)
         {
-            return context.HttpContext.Response.WriteAsync(((Route) context.Object).ToJson());
+            return context.HttpContext.Response.WriteAsync(((Route) context.Object).ToGeoJson());
         }
     }
 }
