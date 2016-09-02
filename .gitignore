@@ -39,3 +39,4 @@ packages/*
 # Visual Studio 2015 cache/options directory
 .vs/
 /src/Itinero.NetCore.API/Controllers/RoutingController.cs~RF5455a63.TMP
+*.TMP
