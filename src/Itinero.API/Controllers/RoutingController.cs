@@ -20,25 +20,41 @@ namespace Itinero.API.Controllers
             [FromQuery] float toLon, 
             [FromQuery] string profile = null)
         {
-            var routingInstance = GetInstance();
+            if (!HasCorrectConfiguration()) return null;
             var routingProfile = GetProfile(profile);
+            if (routingProfile == null) return null;
+
+            var parameters = new Dictionary<string, object>(); // empty but compulsory
             var coordinates = new[] {new Coordinate(fromLat, fromLon), new Coordinate(toLat, toLon)};
-            var result = routingInstance.Calculate(routingProfile, coordinates, new Dictionary<string, object>());
+            var result = RoutingInstances.GetDefault().Calculate(routingProfile, coordinates, parameters);
             return result.Value;
         }
 
         [HttpPost]
         public Route Post(
             [FromBody] Coordinate[] coordinates, 
-            [FromQuery] string profile = null, 
-            [FromQuery] string instance = null)
+            [FromQuery] string profile = null)
         {
+            if (!HasCorrectConfiguration()) return null;
             var routingProfile = GetProfile(profile);
-            var result = RoutingInstances.GetDefault().Calculate(routingProfile, coordinates, new Dictionary<string, object>());
-            return result.Value;
+            if (routingProfile == null) return null;
+
+            var parameters = new Dictionary<string, object>(); // empty but compulsory
+            var result = RoutingInstances.GetDefault().Calculate(routingProfile, coordinates, parameters);
+            return result.Value; // There is a custom RouteOutputFormatter registered for the Route class
         }
 
-        private static Profile GetProfile(string profile)
+        private bool HasCorrectConfiguration()
+        {
+            if (!RoutingInstances.HasInstances || !HasProfiles())
+            {
+                HttpContext.Response.StatusCode = 500;
+                return false;
+            }
+            return true;
+        }
+
+        private Profile GetProfile(string profile)
         {
             Profile routingProfile;
             if (string.IsNullOrWhiteSpace(profile))
@@ -47,14 +63,12 @@ namespace Itinero.API.Controllers
             }
             else if (!Profile.TryGet(profile, out routingProfile))
             {
-                throw new Exception("Profile was not found");
+                HttpContext.Response.StatusCode = 400;
+                return null;
             }
             return routingProfile;
         }
-
-        private static IRoutingModuleInstance GetInstance()
-        {
-            return RoutingInstances.Get(RoutingInstances.GetRegisteredNames().OrderBy(i => i).First());
-        }
+        
+        private static bool HasProfiles() => Profile.GetAllRegistered().Any();
     }
 }

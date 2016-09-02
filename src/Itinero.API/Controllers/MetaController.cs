@@ -13,6 +13,12 @@ namespace Itinero.API.Controllers
         [HttpGet]
         public MetaModel Get()
         {
+            if (!RoutingInstances.HasInstances)
+            {
+                HttpContext.Response.StatusCode = 500;
+                return null;
+            }
+
             var instance = RoutingInstances.Get(RoutingInstances.GetRegisteredNames().First());
             return Create(instance.Router.Db, Profile.GetAllRegistered().Select(p => p.Name));
         }

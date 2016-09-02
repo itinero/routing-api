@@ -45,6 +45,8 @@ namespace Itinero.API.Routing
         }
 
 
+        public static bool HasInstances => Items.Count > 0;
+
         /// <summary>
         /// Returns the routing module instance with the given name.
         /// </summary>

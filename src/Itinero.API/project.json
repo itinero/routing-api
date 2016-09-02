@@ -16,8 +16,8 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "OsmSharp.Core": "2.2.9-beta",
-    "Itinero": "0.21.0-rc1",
-    "Itinero.IO.Osm": "0.21.0-rc1",
+    "Itinero": "0.22.0-rc1",
+    "Itinero.IO.Osm": "0.22.0-rc1",
     "Swashbuckle": "6.0.0-beta902",
     "Reminiscence": "1.0.5-rc1"  },
 
