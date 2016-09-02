@@ -5,7 +5,10 @@ namespace Itinero.API.Models
 {
     public class MetaModel
     {
-        public MetaModel(string id, IAttributeCollection meta, IEnumerable<string> profiles, 
+        public MetaModel(
+            string id, 
+            IAttributeCollection meta, 
+            IEnumerable<string> profiles, 
             IEnumerable<string> contracted)
         {
             Id = id;
