@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Itinero.LocalGeo;
 using Itinero.Profiles;
 using Microsoft.AspNetCore.Mvc;
