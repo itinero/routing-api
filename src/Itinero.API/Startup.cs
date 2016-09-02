@@ -43,7 +43,8 @@ namespace Itinero.API
             var mvcBuilder = services.AddMvc();
             // Use the custom json serializer for Route. Make sure it is inserted at 0, so it precedes the regualr serializer
             mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(0, new RouteOutputFormatter()));
-                
+            mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(1, new PolygonListOutputFormatter()));
+
             services.AddSwaggerGen();
         }
 
