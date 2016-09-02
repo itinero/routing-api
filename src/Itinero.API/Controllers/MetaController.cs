@@ -11,7 +11,7 @@ namespace Itinero.API.Controllers
         [HttpGet]
         public RouterDb Get()
         {
-            var instance = Instances.Get(Instances.GetRegisteredNames().First());
+            var instance = RoutingInstances.Get(RoutingInstances.GetRegisteredNames().First());
             return instance.Router.Db;
         }
     }

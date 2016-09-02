@@ -28,7 +28,7 @@ namespace Itinero.API.Routing
     /// <summary>
     /// The bootstrapper for the routing module.
     /// </summary>
-    public class Instances
+    public class RoutingInstances
     {
         /// <summary>
         /// Holds the routing service instances.

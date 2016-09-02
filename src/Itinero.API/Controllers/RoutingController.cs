@@ -34,7 +34,7 @@ namespace Itinero.API.Controllers
             [FromQuery] string instance = null)
         {
             var routingProfile = GetProfile(profile);
-            var result = Instances.GetDefault().Calculate(routingProfile, coordinates, new Dictionary<string, object>());
+            var result = RoutingInstances.GetDefault().Calculate(routingProfile, coordinates, new Dictionary<string, object>());
             return result.Value;
         }
 
@@ -54,7 +54,7 @@ namespace Itinero.API.Controllers
 
         private static IRoutingModuleInstance GetInstance()
         {
-            return Instances.Get(Instances.GetRegisteredNames().OrderBy(i => i).First());
+            return RoutingInstances.Get(RoutingInstances.GetRegisteredNames().OrderBy(i => i).First());
         }
     }
 }
