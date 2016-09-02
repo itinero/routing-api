@@ -44,27 +44,7 @@ namespace Itinero.API
                 // register vehicle profiles.
                 Vehicle.RegisterVehicles();
 
-                   var thread = new Thread(state =>
-                    {
-                        try
-                        {
-                            RouterDb routerDb;
-
-                            using (var stream = File.OpenRead(routingFilePath))
-                            {
-                                routerDb = RouterDb.Deserialize(stream);
-                            }
-                            var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
-                            Instances.Register(routingFilePath, instance);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Log("Bootstrapper", TraceEventType.Critical,
-                                "Failed load file or create instance: {0}", ex.ToInvariantString());
-                        }
-                    });
-                    thread.Start();
-                
+                LoadRouterDbOnThread(routingFilePath);
             }
             catch (Exception ex)
             {
@@ -73,17 +53,28 @@ namespace Itinero.API
             }
         }
 
-        /// <summary>
-        /// Gets the substring until the first dot.
-        /// </summary>
-        private static string GetNameUntilFirstDot(this string name)
+        public static void LoadRouterDbOnThread(string routingFilePath)
         {
-            var dotIdx = name.IndexOf('.');
-            if (dotIdx == 0)
+            var thread = new Thread(state =>
             {
-                throw new Exception("No '.' found in file name.");
-            }
-            return name.Substring(0, dotIdx);
+                try
+                {
+                    RouterDb routerDb;
+
+                    using (var stream = File.OpenRead(routingFilePath))
+                    {
+                        routerDb = RouterDb.Deserialize(stream);
+                    }
+                    var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
+                    Instances.Register(routingFilePath, instance);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Bootstrapper", TraceEventType.Critical,
+                        "Failed load file or create instance: {0}", ex.ToInvariantString());
+                }
+            });
+            thread.Start();
         }
     }
 }
