@@ -28,7 +28,7 @@ namespace Itinero.API.Controllers
             return new MetaModel(
                 routerDb.Guid.ToString(),
                 routerDb.Meta,
-                profiles,
+                routerDb.GetSupportedProfiles(),
                 routerDb.GetContractedProfiles());
         }
     }
