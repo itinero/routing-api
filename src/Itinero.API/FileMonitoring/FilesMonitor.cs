@@ -71,6 +71,8 @@ namespace Itinero.API.FileMonitoring
             foreach (var monitor in _filesToMonitor)
             {
                 monitor.Stop();
+                // ReSharper disable once DelegateSubtraction 
+                // It is okay here: http://stackoverflow.com/questions/11180068/delegate-subtraction-has-unpredictable-result-in-resharper-c
                 monitor.FileChanged -= monitor_FileChanged;
             }
             _timer.Change(Timeout.Infinite, Timeout.Infinite);

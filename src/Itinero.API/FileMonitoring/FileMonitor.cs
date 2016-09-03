@@ -9,7 +9,7 @@ namespace Itinero.API.FileMonitoring
     /// </summary>
     internal class FileMonitor
     {
-        private const int MONITOR_INTERVAL = 9 * 1000;
+        private const int MonitorInterval = 9 * 1000;
         private readonly FileInfo _fileInfo; // Holds the fileinfo of the file to monitor.
         private readonly Timer _timer; // Holds the timer to poll file changes.
 
@@ -22,7 +22,7 @@ namespace Itinero.API.FileMonitoring
             _fileInfo = new FileInfo(path);
             _timestamp = _fileInfo.LastWriteTime.Ticks;
 
-            _timer = new Timer(Tick, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+            _timer = new Timer(Tick, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Itinero.API.FileMonitoring
         {
             _fileInfo.Refresh();
             _timestamp = _fileInfo.LastWriteTime.Ticks;
-            _timer.Change(MONITOR_INTERVAL, MONITOR_INTERVAL);
+            _timer.Change(MonitorInterval, MonitorInterval);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Itinero.API.FileMonitoring
         /// </summary>
         public void Stop()
         {
-            _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Itinero.API.FileMonitoring
         }
 
         private long _timestamp; // Holds the last modified timestamp.
-        private object _sync = new object(); // Holds an object that is used to sync the timer.
+        private readonly object _sync = new object(); // Holds an object that is used to sync the timer.
 
         /// <summary>
         /// Called when the timer ticks.
@@ -80,7 +80,7 @@ namespace Itinero.API.FileMonitoring
         {
             lock (_sync)
             {
-                if (this.FileChanged != null)
+                if (FileChanged != null)
                 {
                     _fileInfo.Refresh();
                     if (_fileInfo.Exists)
@@ -88,7 +88,7 @@ namespace Itinero.API.FileMonitoring
                         if (_timestamp != _fileInfo.LastWriteTime.Ticks)
                         { // file has been written to.
                             _timestamp = _fileInfo.LastWriteTime.Ticks;
-                            this.FileChanged(this);
+                            FileChanged(this);
                         }
                     }
                 }
@@ -118,8 +118,7 @@ namespace Itinero.API.FileMonitoring
             }
             finally
             {
-                if (stream != null)
-                    stream.Dispose();
+                stream?.Dispose();
             }
 
             //file is not locked

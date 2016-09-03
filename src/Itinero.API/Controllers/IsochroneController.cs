@@ -4,7 +4,6 @@ using Itinero.Algorithms.Networks.Analytics.Isochrones;
 using Itinero.API.Routing;
 using Itinero.LocalGeo;
 using Itinero.Profiles;
-using System.Linq;
 using Itinero.API.Helpers;
 
 namespace Itinero.API.Controllers
