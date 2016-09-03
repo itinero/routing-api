@@ -1,11 +1,11 @@
-﻿using System;
-using Itinero.API.FileMonitoring;
+﻿using Itinero.API.FileMonitoring;
 using Itinero.API.Formatters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Itinero.Logging;
 
 namespace Itinero.API
 {
@@ -77,11 +77,11 @@ namespace Itinero.API
 
         private static void AddFileMonitor(string fileToMonitor)
         {
-            Console.WriteLine($"Start monitoring of file: {fileToMonitor}");
+            Logger.Log("Startup", TraceEventType.Information,  $"Start monitoring of file: {fileToMonitor}");
 
             var monitor = new FilesMonitor<string>(t =>
             {
-                Console.WriteLine("A changed was detected: {0}", t);
+                Logger.Log("Startup", TraceEventType.Information, "A changed was detected: {0}", t);
                 Bootstrapper.LoadRouterDbOnThread(t);
                 return true;
             }, "trigger triggered because it's, yes, a trigger!", 1000);
