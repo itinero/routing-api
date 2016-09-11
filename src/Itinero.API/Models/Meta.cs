@@ -20,23 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-
-namespace Itinero.API
+namespace Itinero.API.Models
 {
-    public class Program
+    /// <summary>
+    /// Represents meta-data.
+    /// </summary>
+    public class Meta
     {
-        public static void Main(string[] args)
-        {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
-        }
+        /// <summary>
+        /// Gets the instances.
+        /// </summary>
+        public string[] Instances { get; set; }
     }
 }

@@ -20,28 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using Itinero.LocalGeo;
-using Itinero.Profiles;
-
-namespace Itinero.API.Routing
+namespace Itinero.API.Models
 {
     /// <summary>
-    /// Abstract representation of the routing module functionality.
+    /// Represents meta-data about a profile.
     /// </summary>
-    public interface IRoutingModuleInstance
+    public class ProfileMeta
     {
         /// <summary>
-        /// Returns true if the given profile is supported.
+        /// Gets or sets the name.
         /// </summary>
-        bool Supports(Profile profile);
-
-        RouterBase Router { get; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Calculates a route along the given locations.
+        /// Gets or sets the profile metric.
         /// </summary>
-        Result<Route> Calculate(Profile profile, Coordinate[] locations, 
-            Dictionary<string, object> parameters);
+        public string Metric { get; set; }
     }
 }

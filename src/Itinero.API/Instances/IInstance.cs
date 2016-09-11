@@ -20,23 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
+using Itinero.Algorithms.Networks.Analytics.Heatmaps;
+using Itinero.API.Models;
+using Itinero.LocalGeo;
+using System.Collections.Generic;
 
-namespace Itinero.API
+namespace Itinero.API.Instances
 {
-    public class Program
+    /// <summary>
+    /// Abstract representation of a routing instance.
+    /// </summary>
+    public interface IInstance
     {
-        public static void Main(string[] args)
-        {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+        /// <summary>
+        /// Gets meta-data about the instance with the given name.
+        /// </summary>
+        InstanceMeta GetMeta();
 
-            host.Run();
-        }
+        /// <summary>
+        /// Returns true if the given profile is supported.
+        /// </summary>
+        bool Supports(string profile);
+
+        /// <summary>
+        /// Calculates a route along the given coordinates.
+        /// </summary>
+        Result<Route> Calculate(string profile, Coordinate[] coordinates);
+
+        /// <summary>
+        /// Calculates a heatmap.
+        /// </summary>
+        Result<HeatmapResult> CalculateHeatmap(string profile, Coordinate coordinate, int max);
+
+        /// <summary>
+        /// Calculates isochrones.
+        /// </summary>
+        Result<List<Polygon>> CalculateIsochrones(string profile, Coordinate coordinate, float[] limits);
     }
 }

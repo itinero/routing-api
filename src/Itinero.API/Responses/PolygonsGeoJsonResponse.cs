@@ -20,64 +20,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using Itinero.LocalGeo;
+using Itinero.LocalGeo.IO;
+using Nancy;
+using Nancy.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 
-namespace Itinero.API.Routing
+namespace Itinero.API.Reponses
 {
     /// <summary>
-    /// The bootstrapper for the routing module.
+    /// A GeoJSON response.
     /// </summary>
-    public class RoutingInstances
+    public class PolygonsGeoJsonResponse : Response
     {
         /// <summary>
-        /// Holds the routing service instances.
+        /// Holds the default content type.
         /// </summary>
-        private static readonly Dictionary<string, IRoutingModuleInstance> Items =
-            new Dictionary<string, IRoutingModuleInstance>();
-
-        /// <summary>
-        /// Returns true if the given instance is active.
-        /// </summary>
-        public static bool IsActive(string name)
+        private static string DefaultContentType
         {
-            return Items.ContainsKey(name);
-        }
-
-
-        public static bool HasInstances => Items.Count > 0;
-
-        /// <summary>
-        /// Returns the routing module instance with the given name.
-        /// </summary>
-        public static IRoutingModuleInstance GetDefault()
-        {
-            return Items[GetRegisteredNames().OrderBy(n => n).First()];
+            get
+            {
+                return "application/json";
+            }
         }
 
         /// <summary>
-        /// Returns the routing module instance with the given name.
+        /// Creates a new GeoJSON response.
         /// </summary>
-        public static IRoutingModuleInstance Get(string name)
+        public PolygonsGeoJsonResponse(List<Polygon> model)
         {
-            return Items[name];
+            this.Contents = model == null ? NoBody : GetGeoJsonContents(model);
+            this.ContentType = DefaultContentType;
+            this.StatusCode = HttpStatusCode.OK;
         }
 
         /// <summary>
-        /// Registers a new instance.
-        /// </summary>
-        public static void Register(string name, IRoutingModuleInstance instance)
-        {
-            Items[name] = instance;
-        }
-
-        /// <summary>
-        /// Get names of all registered instances
+        /// Gets a stream for a given feature collection.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<string> GetRegisteredNames()
+        private static Action<Stream> GetGeoJsonContents(List<Polygon> model)
         {
-            return Items.Keys;
+            return stream =>
+            {
+                var geoJson = model.ToGeoJson();
+
+                var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(geoJson);
+                stream.Write(geoJsonBytes, 0, geoJsonBytes.Length);
+            };
         }
     }
 }

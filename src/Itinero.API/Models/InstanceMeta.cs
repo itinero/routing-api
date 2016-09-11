@@ -20,23 +20,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
+using Itinero.Attributes;
 
-namespace Itinero.API
+namespace Itinero.API.Models
 {
-    public class Program
+    /// <summary>
+    /// Represents meta-data about a router db.
+    /// </summary>
+    public class InstanceMeta
     {
-        public static void Main(string[] args)
-        {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+        /// <summary>
+        /// Gets or sets the id.
+        /// </summary>
+        public string Id { get; set; }
 
-            host.Run();
-        }
+        /// <summary>
+        /// Gets or sets the meta-data.
+        /// </summary>
+        public IAttributeCollection Meta { get; set; }
+
+        /// <summary>
+        /// Gets or sets the supported profiles.
+        /// </summary>
+        public ProfileMeta[] Profiles { get; set; }
+
+        /// <summary>
+        /// Gets or sets the contracted profiles.
+        /// </summary>
+        public string[] Contracted { get; set; }
     }
 }

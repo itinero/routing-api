@@ -1,12 +1,16 @@
 FROM microsoft/dotnet:latest
 
+ARG routerdb
+
+RUN wget $routerdb
+
 COPY . /app
 
 WORKDIR /app
 
 RUN ["dotnet", "restore"]
 
-RUN ["dotnet", "build"]
+RUN cd ./src/Itinero.API/ ; dotnet build
 
 EXPOSE 5000/tcp
 

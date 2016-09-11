@@ -1,16 +1,39 @@
-﻿using Itinero.API.FileMonitoring;
-using Itinero.API.Formatters;
+﻿// The MIT License (MIT)
+
+// Copyright (c) 2016 Ben Abelshausen
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Itinero.Logging;
+using Nancy.Owin;
+using Microsoft.Extensions.Configuration;
 
 namespace Itinero.API
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { get; }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -23,71 +46,26 @@ namespace Itinero.API
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(true);
             }
-            
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            
-            var routingFilePath = Configuration["routingFilePath"];
-            
+
+            var routingFilePath = Configuration["routingfilepath"];
+
             Bootstrapper.BootFromConfiguration(routingFilePath);
         }
 
-        public IConfigurationRoot Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddApplicationInsightsTelemetry(Configuration);
 
-            var mvcBuilder = services.AddMvc();
-            // Use the custom json serializer for Route. Make sure it is inserted at 0, so it precedes the regualr serializer
-            mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(0, new RouteOutputFormatter()));
-            mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(1, new PolygonListOutputFormatter()));
-
-            services.AddSwaggerGen();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            app.UseApplicationInsightsRequestTelemetry();
-
-            app.UseApplicationInsightsExceptionTelemetry();
-
-            app.UseMvc();
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
-            app.UseSwaggerUi();
-
-            // Docs on CORS: https://docs.asp.net/en/latest/security/cors.html
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
-            AddFileMonitor(Configuration["routingFilePath"]);
-        }
-
-        private static void AddFileMonitor(string fileToMonitor)
-        {
-            Logger.Log("Startup", TraceEventType.Information,  $"Start monitoring of file: {fileToMonitor}");
-
-            var monitor = new FilesMonitor<string>(t =>
-            {
-                Logger.Log("Startup", TraceEventType.Information, "A changed was detected: {0}", t);
-                Bootstrapper.LoadRouterDbOnThread(t);
-                return true;
-            }, "trigger triggered because it's, yes, a trigger!", 1000);
-
-            monitor.AddFile(fileToMonitor);
-            monitor.Start();
+            app.UseOwin(x => x.UseNancy());
         }
     }
 }
