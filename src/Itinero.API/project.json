@@ -13,7 +13,7 @@
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.0",
-    "Itinero": "0.23.8-rc1"
+    "Itinero": "0.24.0-rc1"
   },
 
   "tools": {

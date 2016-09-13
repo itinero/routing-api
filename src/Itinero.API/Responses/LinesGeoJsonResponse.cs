@@ -20,47 +20,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using Itinero.Algorithms.Networks.Analytics.Heatmaps;
-using Itinero.API.Models;
 using Itinero.LocalGeo;
+using Itinero.LocalGeo.IO;
+using Nancy;
+using Nancy.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace Itinero.API.Instances
+namespace Itinero.API.Reponses
 {
     /// <summary>
-    /// Abstract representation of a routing instance.
+    /// A GeoJSON response.
     /// </summary>
-    public interface IInstance
+    public class LinesGeoJsonResponse : Response
     {
         /// <summary>
-        /// Gets meta-data about the instance with the given name.
+        /// Holds the default content type.
         /// </summary>
-        InstanceMeta GetMeta();
+        private static string DefaultContentType
+        {
+            get
+            {
+                return "application/json";
+            }
+        }
 
         /// <summary>
-        /// Returns true if the given profile is supported.
+        /// Creates a new GeoJSON response.
         /// </summary>
-        bool Supports(string profile);
+        public LinesGeoJsonResponse(List<Tuple<float, float, List<Coordinate>>> model)
+        {
+            this.Contents = model == null ? NoBody : GetGeoJsonContents(model);
+            this.ContentType = DefaultContentType;
+            this.StatusCode = HttpStatusCode.OK;
+        }
 
         /// <summary>
-        /// Calculates a route along the given coordinates.
+        /// Gets a stream.
         /// </summary>
-        Result<Route> Calculate(string profile, Coordinate[] coordinates);
+        /// <returns></returns>
+        private static Action<Stream> GetGeoJsonContents(List<Tuple<float, float, List<Coordinate>>> model)
+        {
+            return stream =>
+            {
+                var geoJson = model.ToGeoJson();
 
-        /// <summary>
-        /// Calculates a heatmap.
-        /// </summary>
-        Result<HeatmapResult> CalculateHeatmap(string profile, Coordinate coordinate, int max);
-
-        /// <summary>
-        /// Calculates isochrones.
-        /// </summary>
-        Result<List<Polygon>> CalculateIsochrones(string profile, Coordinate coordinate, float[] limits);
-
-        /// <summary>
-        /// Calculates a tree.
-        /// </summary>
-        Result<List<Tuple<float, float, List<Coordinate>>>> CalculateTree(string profile, Coordinate coordinate, int max);
+                var geoJsonBytes = System.Text.Encoding.UTF8.GetBytes(geoJson);
+                stream.Write(geoJsonBytes, 0, geoJsonBytes.Length);
+            };
+        }
     }
 }

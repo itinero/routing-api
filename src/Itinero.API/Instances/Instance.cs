@@ -28,6 +28,7 @@ using System;
 using System.Linq;
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.Algorithms.Networks.Analytics.Isochrones;
+using Itinero.Algorithms.Networks.Analytics.Trees;
 
 namespace Itinero.API.Instances
 {
@@ -132,6 +133,18 @@ namespace Itinero.API.Instances
             var point = _router.Resolve(profile, coordinate, 200);
 
             return new Result<List<Polygon>>(_router.CalculateIsochrones(profile, point, limits.ToList()));
+        }
+
+        /// <summary>
+        /// Calculates a tree.
+        /// </summary>
+        public Result<List<Tuple<float, float, List<Coordinate>>>> CalculateTree(string profileName, Coordinate coordinate, int max)
+        {
+            var profile = Profile.Get(profileName);
+
+            var point = _router.Resolve(profile, coordinate, 200);
+
+            return new Result<List<Tuple<float, float, List<Coordinate>>>>(_router.CalculateTree(profile, point, max));
         }
     }
 }

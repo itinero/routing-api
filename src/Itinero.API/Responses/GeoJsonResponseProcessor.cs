@@ -103,6 +103,26 @@ namespace Itinero.API.Responses
                     };
                 }
             }
+            if (model is List<Tuple<float, float, List<Coordinate>>>)
+            {
+                if (IsExactJsonContentType(requestedMediaRange))
+                {
+                    return new ProcessorMatch
+                    {
+                        ModelResult = MatchResult.ExactMatch,
+                        RequestedContentTypeResult = MatchResult.ExactMatch
+                    };
+                }
+
+                if (IsWildcardJsonContentType(requestedMediaRange))
+                {
+                    return new ProcessorMatch
+                    {
+                        ModelResult = MatchResult.ExactMatch,
+                        RequestedContentTypeResult = MatchResult.NonExactMatch
+                    };
+                }
+            }
             return new ProcessorMatch
             {
                 ModelResult = MatchResult.DontCare,
@@ -126,6 +146,10 @@ namespace Itinero.API.Responses
             if (model is List<Polygon>)
             {
                 return new PolygonsGeoJsonResponse(model as List<Polygon>);
+            }
+            if (model is List<Tuple<float, float, List<Coordinate>>>)
+            {
+                return new LinesGeoJsonResponse(model as List<Tuple<float, float, List<Coordinate>>>);
             }
             throw new ArgumentOutOfRangeException("GeoJsonResponseProcessor can only process Routes.");
         }
