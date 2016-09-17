@@ -25,6 +25,7 @@ using Itinero.Logging;
 using System;
 using System.IO;
 using System.Threading;
+using Itinero.API.Helpers;
 using Itinero.API.Routing;
 
 namespace Itinero.API
@@ -61,10 +62,18 @@ namespace Itinero.API
                 {
                     RouterDb routerDb;
 
-                    using (var stream = File.OpenRead(routingFilePath))
+                    if (IsUrl(routingFilePath))
                     {
-                        routerDb = RouterDb.Deserialize(stream);
+                        routerDb = RouterDb.Deserialize(HttpHelper.GetRoutingFileFromUrl(routingFilePath));
                     }
+                    else
+                    {
+                        using (var stream = File.OpenRead(routingFilePath))
+                        {
+                            routerDb = RouterDb.Deserialize(stream);
+                        }
+                    }
+  
                     var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
                     RoutingInstances.Register(routingFilePath, instance);
                 }
@@ -75,6 +84,12 @@ namespace Itinero.API
                 }
             });
             thread.Start();
+        }
+
+        private static bool IsUrl(string routingFilePath)
+        {
+            Uri uriResult;
+            return  Uri.TryCreate(routingFilePath, UriKind.Absolute, out uriResult);
         }
     }
 }
