@@ -1,4 +1,5 @@
-﻿using Itinero.API.FileMonitoring;
+﻿using System;
+using Itinero.API.FileMonitoring;
 using Itinero.API.Formatters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,20 +27,27 @@ namespace Itinero.API
             
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            
+
             var routingFilePath = Configuration["routingFilePath"];
-            
+            if (Environment.GetEnvironmentVariables().Contains("routingFilePath"))
+            {
+                routingFilePath = Environment.GetEnvironmentVariables()["routingFilePath"].ToString();
+            }
+
             Bootstrapper.BootFromConfiguration(routingFilePath);
         }
 
-        public IConfigurationRoot Configuration { get; }
+        private IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-
+            services.Configure<SourceOptions>(options =>
+            {
+                options.FileLocation = Configuration["routingFilePath"];
+            });
             var mvcBuilder = services.AddMvc();
             // Use the custom json serializer for Route. Make sure it is inserted at 0, so it precedes the regualr serializer
             mvcBuilder.AddMvcOptions(options => options.OutputFormatters.Insert(0, new RouteOutputFormatter()));

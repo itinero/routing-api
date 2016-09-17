@@ -13,6 +13,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger/ui",
       "environmentVariables": {
+        "routingFilePath": "http://localhost/OsmRoutingData/belgium.zip",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
