@@ -5,13 +5,13 @@ namespace Itinero.API.Helpers
 {
     public class HttpHelper
     {
-        public static Stream GetRoutingFileFromUrl(string routingFilePath)
+        public static Stream GetRoutingFileFromUrl(string source)
         {
             using (var client = new HttpClient())
             {
                 // New code:
                 client.DefaultRequestHeaders.Accept.Clear();
-                var stream = client.GetStreamAsync(routingFilePath).Result;
+                var stream = client.GetStreamAsync(source).Result;
                 return ZipHelper.Unzip(stream).Result;
             }
         }

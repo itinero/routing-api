@@ -28,13 +28,13 @@ namespace Itinero.API
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            var routingFilePath = Configuration["routingFilePath"];
-            if (Environment.GetEnvironmentVariables().Contains("routingFilePath"))
+            var source = Configuration[Bootstrapper.SourceField];
+            if (Environment.GetEnvironmentVariables().Contains(Bootstrapper.SourceField))
             {
-                routingFilePath = Environment.GetEnvironmentVariables()["routingFilePath"].ToString();
+                source = Environment.GetEnvironmentVariables()[Bootstrapper.SourceField].ToString();
             }
 
-            Bootstrapper.BootFromConfiguration(routingFilePath);
+            Bootstrapper.BootFromConfiguration(source);
         }
 
         private IConfigurationRoot Configuration { get; }
@@ -46,7 +46,7 @@ namespace Itinero.API
             services.AddApplicationInsightsTelemetry(Configuration);
             services.Configure<SourceOptions>(options =>
             {
-                options.FileLocation = Configuration["routingFilePath"];
+                options.Source = Configuration[Bootstrapper.SourceField];
             });
             var mvcBuilder = services.AddMvc();
             // Use the custom json serializer for Route. Make sure it is inserted at 0, so it precedes the regualr serializer
@@ -80,7 +80,7 @@ namespace Itinero.API
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            AddFileMonitor(Configuration["routingFilePath"]);
+            // disabled because working with urls now: AddFileMonitor(Configuration[Bootstrapper.SourceField]);
         }
 
         private static void AddFileMonitor(string fileToMonitor)

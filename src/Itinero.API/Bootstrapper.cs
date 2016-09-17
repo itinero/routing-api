@@ -35,17 +35,19 @@ namespace Itinero.API
     /// </summary>
     public static class Bootstrapper
     {
+        public const string SourceField = "source";
+
         /// <summary>
         /// Initializes all routing instance from the configuration in the configuration file.
         /// </summary>
-        public static void BootFromConfiguration(string routingFilePath)
+        public static void BootFromConfiguration(string source)
         {
             try
             {
                 // register vehicle profiles.
                 Vehicle.RegisterVehicles();
 
-                LoadRouterDbOnThread(routingFilePath);
+                LoadRouterDbOnThread(source);
             }
             catch (Exception ex)
             {
@@ -54,7 +56,7 @@ namespace Itinero.API
             }
         }
 
-        public static void LoadRouterDbOnThread(string routingFilePath)
+        public static void LoadRouterDbOnThread(string source)
         {
             var thread = new Thread(state =>
             {
@@ -62,20 +64,20 @@ namespace Itinero.API
                 {
                     RouterDb routerDb;
 
-                    if (IsUrl(routingFilePath))
+                    if (IsUrl(source))
                     {
-                        routerDb = RouterDb.Deserialize(HttpHelper.GetRoutingFileFromUrl(routingFilePath));
+                        routerDb = RouterDb.Deserialize(HttpHelper.GetRoutingFileFromUrl(source));
                     }
                     else
                     {
-                        using (var stream = File.OpenRead(routingFilePath))
+                        using (var stream = File.OpenRead(source))
                         {
                             routerDb = RouterDb.Deserialize(stream);
                         }
                     }
   
                     var instance = new DefaultRoutingModuleInstance(new Router(routerDb));
-                    RoutingInstances.Register(routingFilePath, instance);
+                    RoutingInstances.Register(source, instance);
                 }
                 catch (Exception ex)
                 {
@@ -86,10 +88,10 @@ namespace Itinero.API
             thread.Start();
         }
 
-        private static bool IsUrl(string routingFilePath)
+        private static bool IsUrl(string source)
         {
             Uri uriResult;
-            return  Uri.TryCreate(routingFilePath, UriKind.Absolute, out uriResult);
+            return  Uri.TryCreate(source, UriKind.Absolute, out uriResult);
         }
     }
 }

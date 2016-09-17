@@ -7,17 +7,17 @@ namespace Itinero.API.Controllers
     public class SourceController
     {
         // This controller is for development purposes
-        private readonly IOptions<SourceOptions> _optionsAccessor;
+        private readonly IOptions<SourceOptions> _options;
 
-        public SourceController(IOptions<SourceOptions> optionsAccessor)
+        public SourceController(IOptions<SourceOptions> options)
         {
-            _optionsAccessor = optionsAccessor;
+            _options = options;
         }
 
         [HttpGet]
         public string Get()
         {
-            return _optionsAccessor.Value.FileLocation;
+            return _options.Value.Source;
         }
     }
 }

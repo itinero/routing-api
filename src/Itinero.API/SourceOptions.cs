@@ -2,6 +2,6 @@
 {
     public class SourceOptions
     {
-        public string FileLocation { get; set; }
+        public string Source { get; set; }
     }
 }
