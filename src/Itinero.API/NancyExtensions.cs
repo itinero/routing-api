@@ -21,57 +21,25 @@
 // THE SOFTWARE.
 
 using Nancy;
-using Itinero.API.Instances;
-using System;
 
-namespace Itinero.API.Modules
+namespace Itinero.API
 {
     /// <summary>
-    /// A module responsible for service meta-data.
+    /// Contains extensions for nancy.
     /// </summary>
-    public class MetaModule : NancyModule
+    public static class NancyExtensions
     {
         /// <summary>
-        /// Creates a new meta model.
+        /// Adds cors headers to reposonse.
         /// </summary>
-        public MetaModule()
+        public static void EnableCors(this NancyModule module)
         {
-            Get("meta", _ =>
+            module.After.AddItemToEndOfPipeline(x =>
             {
-                return this.DoGetMeta(_);
+                x.Response.WithHeader("Access-Control-Allow-Origin", "*")
+                            .WithHeader("Access-Control-Allow-Methods", "POST,GET")
+                            .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
             });
-            Get("{instance}/meta", _ =>
-            {
-                return this.DoGetInstanceMeta(_);
-            });
-        }
-
-        /// <summary>
-        /// Executes the get meta call.
-        /// </summary>
-        private object DoGetMeta(dynamic _)
-        {
-            this.EnableCors();
-
-            return InstanceManager.GetMeta();
-        }
-
-        /// <summary>
-        /// Executes the get meta call for an instance.
-        /// </summary>
-        private object DoGetInstanceMeta(dynamic _)
-        {
-            this.EnableCors();
-
-            // get instance and check if active.
-            string instanceName = _.instance;
-            IInstance instance;
-            if (!InstanceManager.TryGet(instanceName, out instance))
-            { // oeps, instance not active!
-                return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
-            }
-
-            return Negotiate.WithContentType("application/json").WithModel(instance.GetMeta());
         }
     }
 }

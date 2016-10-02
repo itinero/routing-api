@@ -138,13 +138,16 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Calculates a tree.
         /// </summary>
-        public Result<List<Tuple<float, float, List<Coordinate>>>> CalculateTree(string profileName, Coordinate coordinate, int max)
+        public Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profileName, Coordinate coordinate, int max)
         {
             var profile = Profile.Get(profileName);
 
-            var point = _router.Resolve(profile, coordinate, 200);
+            lock (_router)
+            {
+                var point = _router.Resolve(profile, coordinate, 200);
 
-            return new Result<List<Tuple<float, float, List<Coordinate>>>>(_router.CalculateTree(profile, point, max));
+                return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.CalculateTree(profile, point, max));
+            }
         }
     }
 }

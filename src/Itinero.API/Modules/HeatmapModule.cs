@@ -42,6 +42,8 @@ namespace Itinero.API.Modules
 
         private object DoHeatmap(dynamic _)
         {
+            this.EnableCors();
+
             // get instance and check if active.
             string instanceName = _.instance;
             IInstance instance;

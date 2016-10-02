@@ -61,6 +61,6 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Calculates a tree.
         /// </summary>
-        Result<List<Tuple<float, float, List<Coordinate>>>> CalculateTree(string profile, Coordinate coordinate, int max);
+        Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profile, Coordinate coordinate, int max);
     }
 }
