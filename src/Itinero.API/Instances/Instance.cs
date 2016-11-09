@@ -58,10 +58,9 @@ namespace Itinero.API.Instances
             meta.Meta = _router.Db.Meta;
             
             var metaProfiles = new List<ProfileMeta>();
-            foreach(var profileName in _router.Db.GetSupportedProfiles())
+            foreach(var vehicle in _router.Db.GetSupportedVehicles())
             {
-                Profile profile;
-                if (Profile.TryGet(profileName, out profile))
+                foreach(var profile in vehicle.GetProfiles())
                 {
                     var metric = "custom";
                     switch(profile.Metric)
@@ -100,7 +99,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Route> Calculate(string profileName, Coordinate[] coordinates)
         {
-            var profile = Profile.Get(profileName);
+            var profile = Profile.GetRegistered(profileName);
 
             var points = new RouterPoint[coordinates.Length];
             for(var i = 0; i < coordinates.Length; i++)
@@ -116,7 +115,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<HeatmapResult> CalculateHeatmap(string profileName, Coordinate coordinate, int max)
         {
-            var profile = Profile.Get(profileName);
+            var profile = Profile.GetRegistered(profileName);
 
             var point = _router.Resolve(profile, coordinate, 200);
 
@@ -128,7 +127,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<List<Polygon>> CalculateIsochrones(string profileName, Coordinate coordinate, float[] limits)
         {
-            var profile = Profile.Get(profileName);
+            var profile = Profile.GetRegistered(profileName);
 
             var point = _router.Resolve(profile, coordinate, 200);
 
@@ -140,7 +139,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profileName, Coordinate coordinate, int max)
         {
-            var profile = Profile.Get(profileName);
+            var profile = Profile.GetRegistered(profileName);
 
             lock (_router)
             {
