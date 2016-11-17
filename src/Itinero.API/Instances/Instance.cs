@@ -75,7 +75,7 @@ namespace Itinero.API.Instances
                     metaProfiles.Add(new ProfileMeta()
                     {
                         Metric = metric,
-                        Name = profile.Name
+                        Name = profile.FullName
                     });
                 }
             }
