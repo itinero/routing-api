@@ -1,0 +1,12 @@
+﻿@Master['masterpage']
+
+@Section['Content']
+
+    <h3>Loaded instances</h3>
+	<ul>
+	@Each.Instances
+	<li><a href="./@Current">@Current</a>
+	@EndEach
+	</ul>
+	
+@EndSection

@@ -1,0 +1,93 @@
+﻿@Master['masterpage']
+
+@Section['Content']
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="Content/leaflet/leaflet.css" type="text/css" />
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+
+    <div id="map"></div>
+
+    <script src="Content/leaflet/leaflet-src.js"></script>
+    <script src="Content/jquery/jquery-1.11.1.min.js"></script>
+    <script src="Content/itinero.JSONP.js"></script>
+    <script src="Content/itinero.api.js"></script>
+    <script>
+	    var loc = [];
+        var routeLayer = undefined;
+		var markers = [];
+
+        var map = L.map('map').setView([51.2633, 4.7853], 15);
+		var layers = {
+			Imagery: L.tileLayer('http://{s}.tiles.mapbox.com/v3/eurostation.j7a8abf6/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+			}),
+			Streets: L.tileLayer('http://{s}.tiles.mapbox.com/v3/eurostation.i0nj4pc8/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+			}),
+			"Thunderforest Cycling": L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+			}),
+			"Thunderforest Transit": L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+			})
+		};
+		map.addLayer(layers.Imagery);
+
+		L.control.layers(layers, { }, {
+                position: 'topleft',
+                autoZIndex: true
+		}).addTo(map);
+		
+        map.on('click', function (e) {
+            var latlng = e.latlng;
+
+            markers.push(L.marker(latlng).addTo(map));
+
+            loc.push({
+                lat: latlng.lat,
+                lon: latlng.lng
+            });
+			while(loc.length > 2) {
+				loc.splice(0, 1);
+				map.removeLayer(markers[0]);
+				markers.splice(0, 1);
+			}
+
+            if (loc.length > 1) {
+                var locations = loc.slice(0);
+
+                itinero.api.routing('@Model.SiteBase/@Model.Name',
+                    {
+                        vehicle: 'car',
+                        locations: locations,
+                        sort: true
+                    },
+		            function (route) {
+		                if (routeLayer) {
+		                    map.removeLayer(routeLayer);
+		                }
+		                routeLayer = L.geoJson(route);
+		                routeLayer.addTo(map);
+		            });
+            }
+        });
+
+    </script>
+@EndSection
