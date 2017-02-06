@@ -75,7 +75,7 @@
 
                 itinero.api.routing('@Model.SiteBase/@Model.Name',
                     {
-                        vehicle: 'car',
+                        profile: 'car',
                         locations: locations,
                         sort: true
                     },

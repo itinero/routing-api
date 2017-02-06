@@ -91,7 +91,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public bool Supports(string profile)
         {
-            return _router.Db.Supports(profile);
+            return _router.Db.SupportProfile(profile);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Route> Calculate(string profileName, Coordinate[] coordinates)
         {
-            var profile = Profile.GetRegistered(profileName);
+            var profile = _router.Db.GetSupportedProfile(profileName);
 
             var points = new RouterPoint[coordinates.Length];
             for(var i = 0; i < coordinates.Length; i++)
@@ -115,7 +115,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<HeatmapResult> CalculateHeatmap(string profileName, Coordinate coordinate, int max)
         {
-            var profile = Profile.GetRegistered(profileName);
+            var profile = _router.Db.GetSupportedProfile(profileName);
 
             var point = _router.Resolve(profile, coordinate, 200);
 
@@ -127,7 +127,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<List<Polygon>> CalculateIsochrones(string profileName, Coordinate coordinate, float[] limits)
         {
-            var profile = Profile.GetRegistered(profileName);
+            var profile = _router.Db.GetSupportedProfile(profileName);
 
             var point = _router.Resolve(profile, coordinate, 200);
 
@@ -139,7 +139,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profileName, Coordinate coordinate, int max)
         {
-            var profile = Profile.GetRegistered(profileName);
+            var profile = _router.Db.GetSupportedProfile(profileName);
 
             lock (_router)
             {

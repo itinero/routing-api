@@ -55,7 +55,7 @@ itinero.api = {
         var requestString = '/routing?callback=%jsonp';
 
         // add vehicle parameter.
-        requestString += '&vehicle=' + options.vehicle;
+        requestString += '&profile=' + options.profile;
 
         // add locations.
         for (var i = 0; i < options.locations.length; i++) {
