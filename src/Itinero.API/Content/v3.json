@@ -1,0 +1,34 @@
+{
+  "tiles": [
+    "http://localhost:5000/belgium/tiles/{z}/{x}/{y}.mvt"
+  ],
+  "name": "Routing Tiles",
+  "format": "pbf",
+  "basename": "v3.mbtiles",
+  "id": "openmaptiles",
+  "attribution": "<a href=\"http://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"http://www.openstreetmap.org/about/\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+  "center": [ -12.2168, 28.6135, 4 ],
+  "description": "A tileset showcasing all layers in OpenMapTiles. http://openmaptiles.org",
+  "maxzoom": 14,
+  "minzoom": 0,
+  "vector_layers": [
+    {
+      "maxzoom": 14,
+      "fields": {
+        "brunnel": "String",
+        "ramp": "Number",
+        "class": "String",
+        "service": "String",
+        "oneway": "Number"
+      },
+      "minzoom": 0,
+      "id": "transportation",
+      "description": ""
+    }
+  ],
+  "bounds": [ -180, -85.0511, 180, 85.0511 ],
+  "maskLevel": "8",
+  "version": "3.4",
+  "planettime": "1485129600000",
+  "tilejson": "2.0.0"
+}

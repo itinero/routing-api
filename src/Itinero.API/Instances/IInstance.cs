@@ -23,6 +23,7 @@
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.API.Models;
 using Itinero.LocalGeo;
+using Itinero.VectorTiles;
 using System;
 using System.Collections.Generic;
 
@@ -59,8 +60,21 @@ namespace Itinero.API.Instances
         Result<List<Polygon>> CalculateIsochrones(string profile, Coordinate coordinate, float[] limits);
 
         /// <summary>
+        /// Gets a vector tile.
+        /// </summary>
+        Result<Segment[]> GetVectorTile(ulong tile);
+
+        /// <summary>
         /// Calculates a tree.
         /// </summary>
         Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profile, Coordinate coordinate, int max);
+
+        /// <summary>
+        /// Gets the routerdb.
+        /// </summary>
+        RouterDb RouterDb
+        {
+            get;
+        }
     }
 }

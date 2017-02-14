@@ -29,6 +29,7 @@ using System.Linq;
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.Algorithms.Networks.Analytics.Isochrones;
 using Itinero.Algorithms.Networks.Analytics.Trees;
+using Itinero.VectorTiles;
 
 namespace Itinero.API.Instances
 {
@@ -45,6 +46,17 @@ namespace Itinero.API.Instances
         public Instance(Router router)
         {
             _router = router;
+        }
+
+        /// <summary>
+        /// Gets the routerdb.
+        /// </summary>
+        public RouterDb RouterDb
+        {
+            get
+            {
+                return _router.Db;
+            }
         }
 
         /// <summary>
@@ -147,6 +159,16 @@ namespace Itinero.API.Instances
 
                 return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.CalculateTree(profile, point, max));
             }
+        }
+
+        /// <summary>
+        /// Gets a vector tile.
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <returns></returns>
+        public Result<Segment[]> GetVectorTile(ulong tile)
+        {
+            return new Result<Segment[]>(_router.Db.ExtractTile(tile));
         }
     }
 }
