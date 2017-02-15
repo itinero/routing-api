@@ -23,6 +23,7 @@
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.API.Models;
 using Itinero.LocalGeo;
+using System;
 using System.Collections.Generic;
 
 namespace Itinero.API.Instances
@@ -61,5 +62,11 @@ namespace Itinero.API.Instances
         /// Calculates a tree.
         /// </summary>
         Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profile, Coordinate coordinate, int max);
+        
+        /// <summary>
+        /// Calculates a route from source to target.
+        /// </summary>
+        Result<Route> TryEarliestArrival(DateTime departureTime, string sourceProfile, Coordinate sourceLocation,
+            string targetProfile, Coordinate targetLocation, Dictionary<string, object> parameters);
     }
 }

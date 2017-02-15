@@ -29,6 +29,7 @@ using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.Algorithms.Networks.Analytics.Isochrones;
 using Itinero.Algorithms.Networks.Analytics.Trees;
 using Itinero.Transit;
+using System;
 
 namespace Itinero.API.Instances
 {
@@ -38,13 +39,20 @@ namespace Itinero.API.Instances
     public class Instance : IInstance
     {
         private readonly MultimodalRouter _router;
+        private readonly Dictionary<string, int> _defaultSeconds;
 
         /// <summary>
         /// Creates a new routing instances.
         /// </summary>
-        public Instance(MultimodalRouter router)
+        public Instance(MultimodalRouter router, int carTime = 15 * 60,
+            int pedestrianTime = 10 * 60, int bicycleTime = 5 * 60)
         {
             _router = router;
+
+            _defaultSeconds = new Dictionary<string, int>();
+            _defaultSeconds.Add("car", carTime);
+            _defaultSeconds.Add("pedestrian", pedestrianTime);
+            _defaultSeconds.Add("bicycle", bicycleTime);
         }
 
         /// <summary>
@@ -147,6 +155,66 @@ namespace Itinero.API.Instances
 
                 return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.Router.CalculateTree(profile, point, max));
             }
+        }
+
+        /// <summary>
+        /// Tries to calculate an earliest arrival route.
+        /// </summary>
+        public Result<Route> TryEarliestArrival(DateTime departureTime, string sourceProfileName, Coordinate sourceLocation, 
+            string targetProfileName, Coordinate targetLocation, Dictionary<string, object> parameters)
+        {
+            var sourceProfile = _router.Router.Db.GetSupportedProfile(sourceProfileName);
+            var targetProfile = _router.Router.Db.GetSupportedProfile(targetProfileName);
+
+            var sourcePoint = _router.Router.TryResolve(sourceProfile, sourceLocation, 1000);
+            if (sourcePoint.IsError)
+            {
+                return sourcePoint.ConvertError<Route>();
+            }
+            var targetPoint = _router.Router.TryResolve(targetProfile, targetLocation, 1000);
+            if (targetPoint.IsError)
+            {
+                return targetPoint.ConvertError<Route>();
+            }
+
+            int maxSecondsSource = 0;
+            if (parameters.ContainsKey("sourceTime") &&
+                parameters["sourceTime"] is int &&
+                (int)parameters["sourceTime"] > 0)
+            { // override the default source time.
+                maxSecondsSource = (int)parameters["sourceTime"];
+            }
+            else
+            { // get the default source time.
+                if (!_defaultSeconds.TryGetValue(sourceProfile.Name, out maxSecondsSource))
+                {
+                    maxSecondsSource = 30 * 60;
+                }
+            }
+
+            int maxSecondsTarget = 0;
+            if (parameters.ContainsKey("targetTime") &&
+                parameters["targetTime"] is int &&
+                (int)parameters["targetTime"] > 0)
+            { // override the default target time.
+                maxSecondsTarget = (int)parameters["targetTime"];
+            }
+            else
+            { // get the default target time.
+                if (!_defaultSeconds.TryGetValue(targetProfile.Name, out maxSecondsTarget))
+                {
+                    maxSecondsTarget = 30 * 60;
+                }
+            }
+
+            return _router.TryEarliestArrival(departureTime,
+                sourcePoint.Value, sourceProfile,
+                    targetPoint.Value, targetProfile,
+                        new EarliestArrivalSettings()
+                        {
+                            MaxSecondsSource = maxSecondsSource,
+                            MaxSecondsTarget = maxSecondsTarget
+                        });
         }
     }
 }
