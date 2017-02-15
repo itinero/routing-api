@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 
-// Copyright (c) 2016 Ben Abelshausen
+// Copyright (c) 2017 Ben Abelshausen
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,13 @@ using Itinero.LocalGeo;
 using Itinero.Profiles;
 using System.Collections.Generic;
 using Itinero.API.Models;
-using System;
 using System.Linq;
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.Algorithms.Networks.Analytics.Isochrones;
 using Itinero.Algorithms.Networks.Analytics.Trees;
 using Itinero.VectorTiles;
+using Itinero.Transit;
+using System;
 
 namespace Itinero.API.Instances
 {
@@ -38,14 +39,21 @@ namespace Itinero.API.Instances
     /// </summary>
     public class Instance : IInstance
     {
-        private readonly Router _router;
+        private readonly MultimodalRouter _router;
+        private readonly Dictionary<string, int> _defaultSeconds;
 
         /// <summary>
         /// Creates a new routing instances.
         /// </summary>
-        public Instance(Router router)
+        public Instance(MultimodalRouter router, int carTime = 15 * 60,
+            int pedestrianTime = 10 * 60, int bicycleTime = 5 * 60)
         {
             _router = router;
+
+            _defaultSeconds = new Dictionary<string, int>();
+            _defaultSeconds.Add("car", carTime);
+            _defaultSeconds.Add("pedestrian", pedestrianTime);
+            _defaultSeconds.Add("bicycle", bicycleTime);
         }
 
         /// <summary>
@@ -55,7 +63,7 @@ namespace Itinero.API.Instances
         {
             get
             {
-                return _router.Db;
+                return _router.Router.Db;
             }
         }
 
@@ -66,11 +74,11 @@ namespace Itinero.API.Instances
         public InstanceMeta GetMeta()
         {
             var meta = new InstanceMeta();
-            meta.Id = _router.Db.Guid.ToString();
-            meta.Meta = _router.Db.Meta;
+            meta.Id = _router.Router.Db.Guid.ToString();
+            meta.Meta = _router.Router.Db.Meta;
             
             var metaProfiles = new List<ProfileMeta>();
-            foreach(var vehicle in _router.Db.GetSupportedVehicles())
+            foreach(var vehicle in _router.Router.Db.GetSupportedVehicles())
             {
                 foreach(var profile in vehicle.GetProfiles())
                 {
@@ -93,7 +101,7 @@ namespace Itinero.API.Instances
             }
             meta.Profiles = metaProfiles.ToArray();
 
-            meta.Contracted = _router.Db.GetContractedProfiles().ToArray();
+            meta.Contracted = _router.Router.Db.GetContractedProfiles().ToArray();
 
             return meta;
         }
@@ -103,7 +111,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public bool Supports(string profile)
         {
-            return _router.Db.SupportProfile(profile);
+            return _router.Router.Db.SupportProfile(profile);
         }
 
         /// <summary>
@@ -111,15 +119,15 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Route> Calculate(string profileName, Coordinate[] coordinates)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
             var points = new RouterPoint[coordinates.Length];
             for(var i = 0; i < coordinates.Length; i++)
             {
-                points = _router.Resolve(profile, coordinates, 200);
+                points = _router.Router.Resolve(profile, coordinates, 200);
             }
 
-            return _router.TryCalculate(profile, points);
+            return _router.Router.TryCalculate(profile, points);
         }
 
         /// <summary>
@@ -127,11 +135,11 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<HeatmapResult> CalculateHeatmap(string profileName, Coordinate coordinate, int max)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
-            var point = _router.Resolve(profile, coordinate, 200);
+            var point = _router.Router.Resolve(profile, coordinate, 200);
 
-            return new Result<HeatmapResult>(_router.CalculateHeatmap(profile, point, max));
+            return new Result<HeatmapResult>(_router.Router.CalculateHeatmap(profile, point, max));
         }
 
         /// <summary>
@@ -139,11 +147,11 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<List<Polygon>> CalculateIsochrones(string profileName, Coordinate coordinate, float[] limits)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
-            var point = _router.Resolve(profile, coordinate, 200);
+            var point = _router.Router.Resolve(profile, coordinate, 200);
 
-            return new Result<List<Polygon>>(_router.CalculateIsochrones(profile, point, limits.ToList()));
+            return new Result<List<Polygon>>(_router.Router.CalculateIsochrones(profile, point, limits.ToList()));
         }
 
         /// <summary>
@@ -151,14 +159,74 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profileName, Coordinate coordinate, int max)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
             lock (_router)
             {
-                var point = _router.Resolve(profile, coordinate, 200);
+                var point = _router.Router.Resolve(profile, coordinate, 200);
 
-                return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.CalculateTree(profile, point, max));
+                return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.Router.CalculateTree(profile, point, max));
             }
+        }
+
+        /// <summary>
+        /// Tries to calculate an earliest arrival route.
+        /// </summary>
+        public Result<Route> TryEarliestArrival(DateTime departureTime, string sourceProfileName, Coordinate sourceLocation, 
+            string targetProfileName, Coordinate targetLocation, Dictionary<string, object> parameters)
+        {
+            var sourceProfile = _router.Router.Db.GetSupportedProfile(sourceProfileName);
+            var targetProfile = _router.Router.Db.GetSupportedProfile(targetProfileName);
+
+            var sourcePoint = _router.Router.TryResolve(sourceProfile, sourceLocation, 1000);
+            if (sourcePoint.IsError)
+            {
+                return sourcePoint.ConvertError<Route>();
+            }
+            var targetPoint = _router.Router.TryResolve(targetProfile, targetLocation, 1000);
+            if (targetPoint.IsError)
+            {
+                return targetPoint.ConvertError<Route>();
+            }
+
+            int maxSecondsSource = 0;
+            if (parameters.ContainsKey("sourceTime") &&
+                parameters["sourceTime"] is int &&
+                (int)parameters["sourceTime"] > 0)
+            { // override the default source time.
+                maxSecondsSource = (int)parameters["sourceTime"];
+            }
+            else
+            { // get the default source time.
+                if (!_defaultSeconds.TryGetValue(sourceProfile.Name, out maxSecondsSource))
+                {
+                    maxSecondsSource = 30 * 60;
+                }
+            }
+
+            int maxSecondsTarget = 0;
+            if (parameters.ContainsKey("targetTime") &&
+                parameters["targetTime"] is int &&
+                (int)parameters["targetTime"] > 0)
+            { // override the default target time.
+                maxSecondsTarget = (int)parameters["targetTime"];
+            }
+            else
+            { // get the default target time.
+                if (!_defaultSeconds.TryGetValue(targetProfile.Name, out maxSecondsTarget))
+                {
+                    maxSecondsTarget = 30 * 60;
+                }
+            }
+
+            return _router.TryEarliestArrival(departureTime,
+                sourcePoint.Value, sourceProfile,
+                    targetPoint.Value, targetProfile,
+                        new EarliestArrivalSettings()
+                        {
+                            MaxSecondsSource = maxSecondsSource,
+                            MaxSecondsTarget = maxSecondsTarget
+                        });
         }
 
         /// <summary>
@@ -168,7 +236,7 @@ namespace Itinero.API.Instances
         /// <returns></returns>
         public Result<Segment[]> GetVectorTile(ulong tile)
         {
-            return new Result<Segment[]>(_router.Db.ExtractTile(tile));
+            return new Result<Segment[]>(_router.Router.Db.ExtractTile(tile));
         }
     }
 }

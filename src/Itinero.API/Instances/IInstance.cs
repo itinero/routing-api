@@ -76,5 +76,11 @@ namespace Itinero.API.Instances
         {
             get;
         }
+        
+        /// <summary>
+        /// Calculates a route from source to target.
+        /// </summary>
+        Result<Route> TryEarliestArrival(DateTime departureTime, string sourceProfile, Coordinate sourceLocation,
+            string targetProfile, Coordinate targetLocation, Dictionary<string, object> parameters);
     }
 }

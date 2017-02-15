@@ -116,7 +116,7 @@ namespace Itinero.API.Modules
             var stream = new MemoryStream();
             lock (instance.RouterDb)
             {
-                segments.Value.Write(tile, "transportation", instance.RouterDb, 1024, stream, (a) =>
+                segments.Value.Write(tile, "transportation", instance.RouterDb, 4096, stream, (a) =>
                 {
                     var result = new AttributeCollection();
                     string highway;

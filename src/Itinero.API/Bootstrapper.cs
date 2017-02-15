@@ -2,6 +2,8 @@
 using Itinero.API.Instances;
 using Itinero.Logging;
 using Itinero.Osm.Vehicles;
+using Itinero.Transit;
+using Itinero.Transit.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,8 +39,9 @@ namespace Itinero.API
                 }
 
                 // load all relevant files.
-                var routingFiles = dataDirectory.GetFiles("*.routerdb");
-                if (routingFiles.Length == 0)
+                var routingFiles = dataDirectory.GetFiles("*.routerdb").Concat(
+                    dataDirectory.GetFiles("*.multimodaldb"));
+                if (routingFiles.Count() == 0)
                 {
                     throw new DirectoryNotFoundException(
                         string.Format("No .routerdb files found in {0}", dataDirectory.FullName));
@@ -78,20 +81,36 @@ namespace Itinero.API
         {
             try
             {
-                RouterDb routerDb;
-                
                 if (!file.Exists)
                 {
                     return false;
                 }
 
-                using (var stream = File.OpenRead(file.FullName))
+                if (file.Name.EndsWith("routerdb"))
                 {
-                    routerDb = RouterDb.Deserialize(stream);
+                    RouterDb routerDb;
+                    using (var stream = File.OpenRead(file.FullName))
+                    {
+                        routerDb = RouterDb.Deserialize(stream);
+                    }
+                    var multimodalDb = new MultimodalDb(routerDb, new TransitDb());
+                    var multimodalRouter = new MultimodalRouter(multimodalDb,
+                        Itinero.Osm.Vehicles.Vehicle.Pedestrian.Fastest());
+                    var instance = new Instances.Instance(multimodalRouter);
+                    InstanceManager.Register(file.Name.GetNameUntilFirstDot(), instance);
                 }
-                var instance = new Instances.Instance(new Router(routerDb));
-
-                InstanceManager.Register(file.Name.GetNameUntilFirstDot(), instance);
+                else if (file.Name.EndsWith("multimodaldb"))
+                {
+                    MultimodalDb routerDb;
+                    using (var stream = File.OpenRead(file.FullName))
+                    {
+                        routerDb = MultimodalDb.Deserialize(stream);
+                    }
+                    var multimodalRouter = new MultimodalRouter(routerDb,
+                        Itinero.Osm.Vehicles.Vehicle.Pedestrian.Fastest());
+                    var instance = new Instances.Instance(multimodalRouter);
+                    InstanceManager.Register(file.Name.GetNameUntilFirstDot(), instance);
+                }
                 return true;
             }
             catch (Exception ex)
