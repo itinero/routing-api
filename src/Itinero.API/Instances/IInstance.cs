@@ -23,7 +23,6 @@
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.API.Models;
 using Itinero.LocalGeo;
-using System;
 using System.Collections.Generic;
 
 namespace Itinero.API.Instances

@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 
-// Copyright (c) 2016 Ben Abelshausen
+// Copyright (c) 2017 Ben Abelshausen
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,11 @@ using Itinero.LocalGeo;
 using Itinero.Profiles;
 using System.Collections.Generic;
 using Itinero.API.Models;
-using System;
 using System.Linq;
 using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.Algorithms.Networks.Analytics.Isochrones;
 using Itinero.Algorithms.Networks.Analytics.Trees;
+using Itinero.Transit;
 
 namespace Itinero.API.Instances
 {
@@ -37,12 +37,12 @@ namespace Itinero.API.Instances
     /// </summary>
     public class Instance : IInstance
     {
-        private readonly Router _router;
+        private readonly MultimodalRouter _router;
 
         /// <summary>
         /// Creates a new routing instances.
         /// </summary>
-        public Instance(Router router)
+        public Instance(MultimodalRouter router)
         {
             _router = router;
         }
@@ -54,11 +54,11 @@ namespace Itinero.API.Instances
         public InstanceMeta GetMeta()
         {
             var meta = new InstanceMeta();
-            meta.Id = _router.Db.Guid.ToString();
-            meta.Meta = _router.Db.Meta;
+            meta.Id = _router.Router.Db.Guid.ToString();
+            meta.Meta = _router.Router.Db.Meta;
             
             var metaProfiles = new List<ProfileMeta>();
-            foreach(var vehicle in _router.Db.GetSupportedVehicles())
+            foreach(var vehicle in _router.Router.Db.GetSupportedVehicles())
             {
                 foreach(var profile in vehicle.GetProfiles())
                 {
@@ -81,7 +81,7 @@ namespace Itinero.API.Instances
             }
             meta.Profiles = metaProfiles.ToArray();
 
-            meta.Contracted = _router.Db.GetContractedProfiles().ToArray();
+            meta.Contracted = _router.Router.Db.GetContractedProfiles().ToArray();
 
             return meta;
         }
@@ -91,7 +91,7 @@ namespace Itinero.API.Instances
         /// </summary>
         public bool Supports(string profile)
         {
-            return _router.Db.SupportProfile(profile);
+            return _router.Router.Db.SupportProfile(profile);
         }
 
         /// <summary>
@@ -99,15 +99,15 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Route> Calculate(string profileName, Coordinate[] coordinates)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
             var points = new RouterPoint[coordinates.Length];
             for(var i = 0; i < coordinates.Length; i++)
             {
-                points = _router.Resolve(profile, coordinates, 200);
+                points = _router.Router.Resolve(profile, coordinates, 200);
             }
 
-            return _router.TryCalculate(profile, points);
+            return _router.Router.TryCalculate(profile, points);
         }
 
         /// <summary>
@@ -115,11 +115,11 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<HeatmapResult> CalculateHeatmap(string profileName, Coordinate coordinate, int max)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
-            var point = _router.Resolve(profile, coordinate, 200);
+            var point = _router.Router.Resolve(profile, coordinate, 200);
 
-            return new Result<HeatmapResult>(_router.CalculateHeatmap(profile, point, max));
+            return new Result<HeatmapResult>(_router.Router.CalculateHeatmap(profile, point, max));
         }
 
         /// <summary>
@@ -127,11 +127,11 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<List<Polygon>> CalculateIsochrones(string profileName, Coordinate coordinate, float[] limits)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
-            var point = _router.Resolve(profile, coordinate, 200);
+            var point = _router.Router.Resolve(profile, coordinate, 200);
 
-            return new Result<List<Polygon>>(_router.CalculateIsochrones(profile, point, limits.ToList()));
+            return new Result<List<Polygon>>(_router.Router.CalculateIsochrones(profile, point, limits.ToList()));
         }
 
         /// <summary>
@@ -139,13 +139,13 @@ namespace Itinero.API.Instances
         /// </summary>
         public Result<Algorithms.Networks.Analytics.Trees.Models.Tree> CalculateTree(string profileName, Coordinate coordinate, int max)
         {
-            var profile = _router.Db.GetSupportedProfile(profileName);
+            var profile = _router.Router.Db.GetSupportedProfile(profileName);
 
             lock (_router)
             {
-                var point = _router.Resolve(profile, coordinate, 200);
+                var point = _router.Router.Resolve(profile, coordinate, 200);
 
-                return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.CalculateTree(profile, point, max));
+                return new Result<Algorithms.Networks.Analytics.Trees.Models.Tree>(_router.Router.CalculateTree(profile, point, max));
             }
         }
     }
