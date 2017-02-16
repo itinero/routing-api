@@ -41,6 +41,7 @@ namespace Itinero.API.Instances
     {
         private readonly MultimodalRouter _router;
         private readonly Dictionary<string, int> _defaultSeconds;
+        private readonly HashSet<ushort>[] _profilesPerZoom;
 
         /// <summary>
         /// Creates a new routing instances.
@@ -54,6 +55,70 @@ namespace Itinero.API.Instances
             _defaultSeconds.Add("car", carTime);
             _defaultSeconds.Add("pedestrian", pedestrianTime);
             _defaultSeconds.Add("bicycle", bicycleTime);
+
+            // TODO: this is now hardcoded, should be configurable, perhaps have a look at lua again.
+            _profilesPerZoom = new HashSet<ushort>[20];
+            for (ushort p = 0; p < _router.Router.Db.EdgeProfiles.Count; p++)
+            {
+                var profile = _router.Router.Db.EdgeProfiles.Get(p);
+                if (profile == null)
+                {
+                    continue;
+                }
+                var highway = string.Empty;
+                profile.TryGetValue("highway", out highway);
+                for (var z = 0; z < _profilesPerZoom.Length; z++)
+                {
+                    var profiles = _profilesPerZoom[z];
+                    if (profiles == null)
+                    {
+                        _profilesPerZoom[z] = new HashSet<ushort>();
+                        profiles = _profilesPerZoom[z];
+                    }
+                    if (z == 7 || z == 8)
+                    { // osm_highway_linestring_gen4
+                        if (highway == "motorway" || highway == "motorway_link" ||
+                            highway == "trunk" || highway == "trunk_trunk")
+                        {
+                            profiles.Add(p);
+                        }
+                    }
+                    else if (z == 9)
+                    { // osm_highway_linestring_gen3
+                        if (highway == "motorway" || highway == "motorway_link" ||
+                            highway == "trunk" || highway == "trunk_trunk" ||
+                            highway == "primary" || highway == "primary_trunk")
+                        {
+                            profiles.Add(p);
+                        }
+                    }
+                    else if (z == 10)
+                    { // osm_highway_linestring_gen2
+                        if (highway == "motorway" || highway == "motorway_link" ||
+                            highway == "trunk" || highway == "trunk_trunk" ||
+                            highway == "primary" || highway == "primary_trunk" ||
+                            highway == "secondary" || highway == "secondary_trunk")
+                        {
+                            profiles.Add(p);
+                        }
+                    }
+                    else if (z == 11)
+                    { // osm_highway_linestring_gen1
+                        if (highway == "motorway" || highway == "motorway_link" ||
+                            highway == "trunk" || highway == "trunk_trunk" ||
+                            highway == "primary" || highway == "primary_trunk" ||
+                            highway == "secondary" || highway == "secondary_trunk" ||
+                            highway == "tertiary" || highway == "tertiary_trunk")
+                        {
+                            profiles.Add(p);
+                        }
+                    }
+                    else if(z >= 12)
+                    {
+                        profiles.Add(p);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -232,11 +297,25 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Gets a vector tile.
         /// </summary>
-        /// <param name="tile"></param>
+        /// <param name="tileId"></param>
         /// <returns></returns>
-        public Result<Segment[]> GetVectorTile(ulong tile)
+        public Result<Segment[]> GetVectorTile(ulong tileId)
         {
-            return new Result<Segment[]>(_router.Router.Db.ExtractTile(tile));
+            var tile = new VectorTiles.Tiles.Tile(tileId);
+            var z = tile.Zoom;
+            return new Result<Segment[]>(_router.Router.Db.ExtractTile(tileId, (p, m) =>
+            {
+                if (z > _profilesPerZoom.Length)
+                {
+                    return true;
+                }
+                var profileSet = _profilesPerZoom[z];
+                if (profileSet == null)
+                {
+                    return false;
+                }
+                return profileSet.Contains(p);
+            }));
         }
     }
 }
