@@ -27,6 +27,7 @@ using Itinero.VectorTiles.GeoJson;
 using Nancy;
 using System.IO;
 using Itinero.Attributes;
+using Itinero.VectorTiles.Layers;
 
 namespace Itinero.API.Modules
 {
@@ -116,7 +117,20 @@ namespace Itinero.API.Modules
             var stream = new MemoryStream();
             lock (instance.RouterDb)
             {
-                segments.Value.Write(tile, "transportation", instance.RouterDb, 4096, stream, (a) =>
+                var vectorTile = new VectorTile()
+                {
+                    Layers = new System.Collections.Generic.List<Layer>(),
+                    TileId = tile.Id
+                };
+
+                vectorTile.Layers.Add(new SegmentLayer()
+                {
+                    Meta = instance.RouterDb.EdgeMeta,
+                    Profiles = instance.RouterDb.EdgeProfiles,
+                    Name = "transportation",
+                    Segments = segments.Value
+                });
+                vectorTile.Write(stream, (a) =>
                 {
                     var result = new AttributeCollection();
                     string highway;

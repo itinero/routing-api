@@ -24,6 +24,7 @@ using Itinero.Algorithms.Networks.Analytics.Heatmaps;
 using Itinero.API.Models;
 using Itinero.LocalGeo;
 using Itinero.VectorTiles;
+using Itinero.VectorTiles.Layers;
 using System;
 using System.Collections.Generic;
 

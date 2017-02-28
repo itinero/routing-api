@@ -31,6 +31,7 @@ using Itinero.Algorithms.Networks.Analytics.Trees;
 using Itinero.VectorTiles;
 using Itinero.Transit;
 using System;
+using Itinero.VectorTiles.Layers;
 
 namespace Itinero.API.Instances
 {
@@ -297,13 +298,11 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Gets a vector tile.
         /// </summary>
-        /// <param name="tileId"></param>
-        /// <returns></returns>
         public Result<Segment[]> GetVectorTile(ulong tileId)
         {
             var tile = new VectorTiles.Tiles.Tile(tileId);
             var z = tile.Zoom;
-            return new Result<Segment[]>(_router.Router.Db.ExtractTile(tileId, (p, m) =>
+            return new Result<Segment[]>(_router.Router.Db.ExtractSegments(tileId, (p, m) =>
             {
                 if (z > _profilesPerZoom.Length)
                 {
