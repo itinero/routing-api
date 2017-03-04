@@ -28,6 +28,7 @@ using Nancy;
 using System.IO;
 using Itinero.Attributes;
 using Itinero.VectorTiles.Layers;
+using Itinero.API.VectorTiles.Mapbox;
 
 namespace Itinero.API.Modules
 {
@@ -38,9 +39,20 @@ namespace Itinero.API.Modules
     {
         public VectorTileModule()
         {
-            Get("{instance}/tiles/{z}/{x}/{y}.geojson", _ =>
+            //Get("{instance}/tiles/{z}/{x}/{y}.geojson", _ =>
+            //{
+            //    return this.DoGetGeoJson(_);
+            //});
+            Get("{instance}/tiles/mvt.json", _ =>
             {
-                return this.DoGetGeoJson(_);
+                this.EnableCors();
+
+                string uri = this.Request.Url;
+                var length = "/tiles/mvt.json".Length;
+                uri = uri.Substring(0, uri.Length - length);
+                var json = DefinitionBuilder.Build(uri, Constants.DefaultAttribution);
+
+                return Response.AsText(json, "application/json");
             });
             Get("{instance}/tiles/{z}/{x}/{y}.mvt", _ =>
             {
@@ -48,42 +60,42 @@ namespace Itinero.API.Modules
             });
         }
 
-        private object DoGetGeoJson(dynamic _)
-        {
-            this.EnableCors();
+        //private object DoGetGeoJson(dynamic _)
+        //{
+        //    this.EnableCors();
 
-            // get instance and check if active.
-            string instanceName = _.instance;
-            IInstance instance;
-            if (!InstanceManager.TryGet(instanceName, out instance))
-            { // oeps, instance not active!
-                return null;
-            }
+        //    // get instance and check if active.
+        //    string instanceName = _.instance;
+        //    IInstance instance;
+        //    if (!InstanceManager.TryGet(instanceName, out instance))
+        //    { // oeps, instance not active!
+        //        return null;
+        //    }
             
-            // x,y,z.
-            VectorTiles.Tiles.Tile tile = null;
-            Result<Segment[]> segments = null;
-            int x = -1, y = -1;
-            ushort z = 0;
-            if (ushort.TryParse(_.z, out z) &&
-                int.TryParse(_.x, out x) &&
-                int.TryParse(_.y, out y))
-            { // ok, valid stuff!
-                tile = new VectorTiles.Tiles.Tile(x, y, z);
-                segments = instance.GetVectorTile(tile.Id);
-            }
-            else
-            {
-                return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
-            }
+        //    // x,y,z.
+        //    VectorTiles.Tiles.Tile tile = null;
+        //    VectorTile vectorTile = null;
+        //    int x = -1, y = -1;
+        //    ushort z = 0;
+        //    if (ushort.TryParse(_.z, out z) &&
+        //        int.TryParse(_.x, out x) &&
+        //        int.TryParse(_.y, out y))
+        //    { // ok, valid stuff!
+        //        tile = new VectorTiles.Tiles.Tile(x, y, z);
+        //        vectorTile = instance.GetVectorTile(tile.Id).Value;
+        //    }
+        //    else
+        //    {
+        //        return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+        //    }
 
-            var stream = new MemoryStream();
-            var streamWriter = new StreamWriter(stream);
-            segments.Value.WriteGeoJson(instance.RouterDb, streamWriter);
-            streamWriter.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
-            return Response.FromStream(stream, "application/json");
-        }
+        //    var stream = new MemoryStream();
+        //    var streamWriter = new StreamWriter(stream);
+        //    segments.Value.WriteGeoJson(instance.RouterDb, streamWriter);
+        //    streamWriter.Flush();
+        //    stream.Seek(0, SeekOrigin.Begin);
+        //    return Response.FromStream(stream, "application/json");
+        //}
         
         private object DoGetMapboxVectorTile(dynamic _)
         {
@@ -98,16 +110,16 @@ namespace Itinero.API.Modules
             }
 
             // x,y,z.
-            VectorTiles.Tiles.Tile tile = null;
-            Result<Segment[]> segments = null;
+            Itinero.VectorTiles.Tiles.Tile tile = null;
+            Result<VectorTile> vectorTile = null;
             int x = -1, y = -1;
             ushort z = 0;
             if (ushort.TryParse(_.z, out z) &&
                 int.TryParse(_.x, out x) &&
                 int.TryParse(_.y, out y))
             { // ok, valid stuff!
-                tile = new VectorTiles.Tiles.Tile(x, y, z);
-                segments = instance.GetVectorTile(tile.Id);
+                tile = new Itinero.VectorTiles.Tiles.Tile(x, y, z);
+                vectorTile = instance.GetVectorTile(tile.Id);
             }
             else
             {
@@ -117,20 +129,7 @@ namespace Itinero.API.Modules
             var stream = new MemoryStream();
             lock (instance.RouterDb)
             {
-                var vectorTile = new VectorTile()
-                {
-                    Layers = new System.Collections.Generic.List<Layer>(),
-                    TileId = tile.Id
-                };
-
-                vectorTile.Layers.Add(new SegmentLayer()
-                {
-                    Meta = instance.RouterDb.EdgeMeta,
-                    Profiles = instance.RouterDb.EdgeProfiles,
-                    Name = "transportation",
-                    Segments = segments.Value
-                });
-                vectorTile.Write(stream, (a) =>
+                vectorTile.Value.Write(stream, (a) =>
                 {
                     var result = new AttributeCollection();
                     string highway;

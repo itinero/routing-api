@@ -298,23 +298,44 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Gets a vector tile.
         /// </summary>
-        public Result<Segment[]> GetVectorTile(ulong tileId)
+        public Result<VectorTile> GetVectorTile(ulong tileId)
         {
-            var tile = new VectorTiles.Tiles.Tile(tileId);
-            var z = tile.Zoom;
-            return new Result<Segment[]>(_router.Router.Db.ExtractSegments(tileId, (p, m) =>
+            try
             {
-                if (z > _profilesPerZoom.Length)
+                var tile = new Itinero.VectorTiles.Tiles.Tile(tileId);
+                var z = tile.Zoom;
+
+                var config = new VectorTileConfig()
                 {
-                    return true;
-                }
-                var profileSet = _profilesPerZoom[z];
-                if (profileSet == null)
-                {
-                    return false;
-                }
-                return profileSet.Contains(p);
-            }));
+                    SegmentLayerConfig = new SegmentLayerConfig()
+                    {
+                        Name = "transportation",
+                        IncludeProfileFunc = (p, m) =>
+                        {
+                            if (z > _profilesPerZoom.Length)
+                            {
+                                return true;
+                            }
+                            var profileSet = _profilesPerZoom[z];
+                            if (profileSet == null)
+                            {
+                                return false;
+                            }
+                            return profileSet.Contains(p);
+                        }
+                    },
+                    StopLayerConfig = new StopLayerConfig()
+                    {
+                        Name = "stops"
+                    }
+                };
+
+                return new Result<VectorTile>(_router.Db.ExtractTile(tileId, config));
+            }
+            catch(Exception ex)
+            {
+                return new Result<VectorTile>(ex.Message);
+            }
         }
     }
 }

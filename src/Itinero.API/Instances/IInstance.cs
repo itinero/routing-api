@@ -63,7 +63,7 @@ namespace Itinero.API.Instances
         /// <summary>
         /// Gets a vector tile.
         /// </summary>
-        Result<Segment[]> GetVectorTile(ulong tile);
+        Result<VectorTile> GetVectorTile(ulong tile);
 
         /// <summary>
         /// Calculates a tree.
