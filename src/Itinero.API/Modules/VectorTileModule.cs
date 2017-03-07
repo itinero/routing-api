@@ -129,8 +129,13 @@ namespace Itinero.API.Modules
             var stream = new MemoryStream();
             lock (instance.RouterDb)
             {
-                vectorTile.Value.Write(stream, (a) =>
+                vectorTile.Value.Write(stream, (a, l) =>
                 {
+                    if (l.Name != "transportation")
+                    {
+                        return a;
+                    }
+
                     var result = new AttributeCollection();
                     string highway;
                     if (a.TryGetValue("highway", out highway))

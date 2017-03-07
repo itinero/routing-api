@@ -24,6 +24,19 @@
       "minzoom": 0,
       "id": "transportation",
       "description": ""
+    },
+    {
+      "maxzoom": 14,
+      "fields": {
+        "name_en": "String",
+        "rank": "Number",
+        "name": "String",
+        "subclass": "String",
+        "class": "String"
+      },
+      "minzoom": 0,
+      "id": "stops",
+      "description": ""
     }
   ],
   "bounds": [ -180, -85.0511, 180, 85.0511 ],

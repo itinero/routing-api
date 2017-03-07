@@ -15,8 +15,8 @@
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.0",
     "Itinero": "0.40.5-rc1",
     "Itinero.Transit": "0.3.2-alpha",
-    "Itinero.VectorTiles": "0.0.10-alpha",
-    "Itinero.VectorTiles.Mapbox": "0.0.10-alpha"
+    "Itinero.VectorTiles": "0.0.12-alpha",
+    "Itinero.VectorTiles.Mapbox": "0.0.12-alpha"
   },
 
   "tools": {
