@@ -44,3 +44,4 @@ packages/*
 *.routerdb
 *.multimodaldb
 src/Itinero.API/data/*
+src/Itinero.API/logs/*

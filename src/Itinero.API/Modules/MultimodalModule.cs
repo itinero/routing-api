@@ -25,6 +25,7 @@ using Itinero.LocalGeo;
 using Itinero.Logging;
 using Itinero.Profiles;
 using Nancy;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -139,16 +140,12 @@ namespace Itinero.API.Modules
                 var route = instance.TryEarliestArrival(dt, profiles[0], coordinates[0],
                     profiles[profiles.Count - 1], coordinates[coordinates.Length - 1],
                         parameters);
-                if (route == null ||
-                    route.IsError)
-                { // route could not be calculated.
-                    return Negotiate.WithStatusCode(HttpStatusCode.NoContent).WithModel(
-                        string.Format("Route could not be calculated: {0}", route.ErrorMessage));
-                }
                 return route.Value;
             }
-            catch (Exception)
+            catch (Exception ex)
             { // an unhandled exception!
+                Log.Fatal(ex, "Fatal error in multimodal request.");
+
                 return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
             }
         }

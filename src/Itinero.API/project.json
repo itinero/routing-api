@@ -16,7 +16,9 @@
     "Itinero": "0.40.5-rc1",
     "Itinero.Transit": "0.3.2-alpha",
     "Itinero.VectorTiles": "0.0.12-alpha",
-    "Itinero.VectorTiles.Mapbox": "0.0.12-alpha"
+    "Itinero.VectorTiles.Mapbox": "0.0.12-alpha",
+    "Serilog": "2.4.0",
+    "Serilog.Sinks.RollingFile": "3.3.0"
   },
 
   "tools": {

@@ -22,6 +22,7 @@
 
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Serilog;
 
 namespace Itinero.API
 {
@@ -29,6 +30,17 @@ namespace Itinero.API
     {
         public static void Main(string[] args)
         {
+            // enable logging and use the console as output.
+            Itinero.Logging.Logger.LogAction = (o, level, message, parameters) =>
+            {
+                Log.Information(string.Format("[{0}] {1} - {2}", o, level, message));
+            };
+
+            // attach logger.
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.RollingFile("logs\\log-{Date}.txt")
+                .CreateLogger();
+
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
