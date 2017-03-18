@@ -44,6 +44,14 @@ namespace Itinero.API.Instances
         bool Supports(string profile);
 
         /// <summary>
+        /// Gets the routerdb.
+        /// </summary>
+        RouterDb RouterDb
+        {
+            get;
+        }
+
+        /// <summary>
         /// Calculates a route along the given coordinates.
         /// </summary>
         Result<Route> Calculate(string profile, Coordinate[] coordinates);

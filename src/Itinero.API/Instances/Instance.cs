@@ -56,6 +56,17 @@ namespace Itinero.API.Instances
         }
 
         /// <summary>
+        /// Gets the routerdb.
+        /// </summary>
+        public RouterDb RouterDb
+        {
+            get
+            {
+                return _router.Router.Db;
+            }
+        }
+
+        /// <summary>
         /// Gets meta-data about this instance.
         /// </summary>
         /// <returns></returns>
@@ -112,7 +123,19 @@ namespace Itinero.API.Instances
             var points = new RouterPoint[coordinates.Length];
             for(var i = 0; i < coordinates.Length; i++)
             {
-                points = _router.Router.Resolve(profile, coordinates, 200);
+                var result = _router.Router.TryResolve(profile, coordinates[i], 200);
+                if (result.IsError)
+                {
+                    result = _router.Router.TryResolve(profile, coordinates[i], 2000);
+                }
+
+                points[i] = result.Value;
+            }
+
+            if (!_router.Router.Db.HasContractedFor(profile))
+            {
+                Logging.Logger.Log("Instance", Logging.TraceEventType.Warning, 
+                    "RouterDb is not optimized for profile {0}, it doesn't contain a contracted graph for this profile.", profileName);
             }
 
             return _router.Router.TryCalculate(profile, points);
