@@ -37,6 +37,8 @@ namespace Itinero.API
                     throw new DirectoryNotFoundException(
                         string.Format("Configured data directory doesn't exist: {0}", dataDirectory.FullName));
                 }
+                Logger.Log("Bootstrapper", TraceEventType.Information,
+                    "Loading all routerdb's from path: {0}", dataDirectory.FullName);
 
                 // load all relevant files.
                 var routingFiles = dataDirectory.GetFiles("*.routerdb").Concat(
@@ -111,6 +113,10 @@ namespace Itinero.API
                     var instance = new Instances.Instance(multimodalRouter);
                     InstanceManager.Register(file.Name.GetNameUntilFirstDot(), instance);
                 }
+
+                Logger.Log("Bootstrapper", TraceEventType.Information,
+                    "Loaded instance {1} from: {0}", file.FullName, file.Name.GetNameUntilFirstDot());
+
                 return true;
             }
             catch (Exception ex)

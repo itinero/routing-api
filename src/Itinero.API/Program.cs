@@ -22,6 +22,7 @@
 
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System;
 
 namespace Itinero.API
 {
@@ -29,6 +30,11 @@ namespace Itinero.API
     {
         public static void Main(string[] args)
         {
+            Itinero.Logging.Logger.LogAction = (o, level, message, parameters) =>
+            {
+                Console.WriteLine(string.Format("[{0}] {1} - {2}", o, level, message));
+            };
+
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
