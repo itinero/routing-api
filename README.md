@@ -1,6 +1,6 @@
 #  Itinero API
 
-This project is an implementation of a basic routing API based on Itinero. It loads RouterDb files from a configured folder and exposes one routing endpoint per file.
+This project is an implementation of a basic routing API based on Itinero. It loads RouterDb files from a configured folder and exposes one routing instance per file.
 
 ### Goal
 
@@ -12,7 +12,7 @@ Basically you need build the project and place a RouterDb file into the configur
 
 1. Install [.NET core](https://www.microsoft.com/net/core) for your platform.
 1. Run the build script, build.sh or build.bat on windows.
-1. Then [download a RouterDb](http://files.itinero.tech/data/itinero/routerdbs/planet/europe/) file or create one using the Intero data processing tool.
+1. Then [download a RouterDb](http://files.itinero.tech/data/itinero/routerdbs/planet/europe/) file or create one using the [Itinero data processing tool](https://github.com/itinero/idp).
 1. Place the RouterDb file into the configured data folder, by default this is ./src/Itinero.API/data. Configuration file is [here](https://github.com/itinero/routing-api/blob/develop/src/Itinero.API/appsettings.json).
 1. Run the run script, run.sh or run.bat on windows.
 
