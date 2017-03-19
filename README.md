@@ -1,6 +1,6 @@
 #  Itinero API
 
-This project is an implementation of a basic routing API based on Itinero. It loads RouterDb files from a configured folder and exposes one routing endpoint per file.
+This project is an implementation of a basic routing API based on Itinero. It loads RouterDb files from a configured folder and exposes one routing instance per file.
 
 ### Goal
 
