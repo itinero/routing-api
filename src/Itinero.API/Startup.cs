@@ -27,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
 using Microsoft.Extensions.Configuration;
+using System.Threading;
 
 namespace Itinero.API
 {

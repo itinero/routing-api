@@ -21,96 +21,135 @@ namespace Itinero.API
     public static class Bootstrapper
     {
         private static List<IFilesMonitor> _fileMonitors = new List<IFilesMonitor>();
+        private static object _sync = new object();
+        private static HashSet<string> _detectedInstances = new HashSet<string>();
+        private static Timer _reloadTimer;
 
         /// <summary>
         /// Initializes all routing instance from the configuration in the configuration file.
         /// </summary>
         public static void BootFromConfiguration(string path)
         {
-            try
+            lock (_sync)
             {
-                // register vehicle profiles.
-                Vehicle.RegisterVehicles();
-
-                // load all .routerdb files.
-                var dataDirectory = new DirectoryInfo(path);
-                if (!dataDirectory.Exists)
+                try
                 {
-                    throw new DirectoryNotFoundException(
-                        string.Format("Configured data directory doesn't exist: {0}", dataDirectory.FullName));
-                }
-                Logger.Log("Bootstrapper", TraceEventType.Information,
-                    "Loading all routerdb's from path: {0}", dataDirectory.FullName);
+                    // register vehicle profiles.
+                    Vehicle.RegisterVehicles();
 
-                // load all relevant files.
-                var routingFiles = dataDirectory.GetFiles("*.routerdb").Concat(
-                    dataDirectory.GetFiles("*.multimodaldb"));
-                if (routingFiles.Count() == 0)
-                {
-                    throw new DirectoryNotFoundException(
-                        string.Format("No .routerdb files found in {0}", dataDirectory.FullName));
-                }
-
-                // load each routerdb on other threads.
-                foreach (var file in routingFiles)
-                {
-                    var thread = new Thread((state) =>
+                    // load all .routerdb files.
+                    var dataDirectory = new DirectoryInfo(path);
+                    if (!dataDirectory.Exists)
                     {
-                        var localFile = state as FileInfo;
+                        throw new DirectoryNotFoundException(
+                            string.Format("Configured data directory doesn't exist: {0}", dataDirectory.FullName));
+                    }
+                    Logger.Log("Bootstrapper", TraceEventType.Information,
+                        "Loading all routerdb's from path: {0}", dataDirectory.FullName);
 
-                        if (Bootstrapper.LoadInstance(localFile))
+                    // load all relevant files.
+                    var routingFiles = dataDirectory.GetFiles("*.routerdb").Concat(
+                        dataDirectory.GetFiles("*.multimodaldb"));
+                    if (routingFiles.Count() == 0)
+                    {
+                        throw new DirectoryNotFoundException(
+                            string.Format("No .routerdb files found in {0}", dataDirectory.FullName));
+                    }
+
+                    // load each routerdb on other threads.
+                    foreach (var file in routingFiles)
+                    {
+                        var instanceName = file.Name.GetNameUntilFirstDot();
+                        if (_detectedInstances.Contains(instanceName))
                         {
-                            var monitor = new FilesMonitor<FileInfo>((f) =>
-                            {
-                                return Bootstrapper.LoadInstance(f);
-                            }, localFile);
-                            monitor.Start();
-                            monitor.AddFile(file.FullName);
-                            _fileMonitors.Add(monitor);
+                            continue;
                         }
-                    });
-                    thread.Start(file);
-                }
+                        _detectedInstances.Add(instanceName);
 
-                // check if there are folder with OSM-XML or OSM-PBF file.
-                var subDirs = dataDirectory.EnumerateDirectories();
-                foreach(var subDir in subDirs)
-                {
-                    var osmFiles = subDir.EnumerateFiles("*.osm").Concat(
-                        subDir.EnumerateFiles("*.osm.pbf")).ToArray();
-                    if (osmFiles.Length > 0)
-                    {
                         var thread = new Thread((state) =>
                         {
-                            var localDirectory = state as DirectoryInfo;
+                            var localFile = state as FileInfo;
 
-                            if (Bootstrapper.LoadInstanceFromFolder(localDirectory))
+                            if (Bootstrapper.LoadInstance(localFile))
                             {
-                                var monitor = new FilesMonitor<DirectoryInfo>((f) =>
+                                var monitor = new FilesMonitor<FileInfo>((f) =>
                                 {
-                                    return Bootstrapper.LoadInstanceFromFolder(f);
-                                }, localDirectory);
+                                    return Bootstrapper.LoadInstance(f);
+                                }, localFile);
                                 monitor.Start();
-                                // add osm and osm-pbf files.
-                                foreach(var osmFile in osmFiles)
-                                {
-                                    monitor.AddFile(osmFile.FullName);
-                                }
-                                foreach(var luaFile in subDir.EnumerateFiles("*.lua"))
-                                {
-                                    monitor.AddFile(luaFile.FullName);
-                                }
+                                monitor.AddFile(file.FullName);
                                 _fileMonitors.Add(monitor);
                             }
+                            else
+                            {
+                                _detectedInstances.Remove(localFile.Name.GetNameUntilFirstDot());
+                            }
                         });
-                        thread.Start(subDir);
+                        thread.Start(file);
+                    }
+
+                    // check if there are folder with OSM-XML or OSM-PBF file.
+                    var subDirs = dataDirectory.EnumerateDirectories();
+                    foreach (var subDir in subDirs)
+                    {
+                        var osmFiles = subDir.EnumerateFiles("*.osm").Concat(
+                            subDir.EnumerateFiles("*.osm.pbf")).ToArray();
+                        if (osmFiles.Length > 0)
+                        {
+                            var instanceName = subDir.Name;
+                            if (_detectedInstances.Contains(instanceName))
+                            {
+                                continue;
+                            }
+                            _detectedInstances.Add(instanceName);
+
+                            var thread = new Thread((state) =>
+                            {
+                                var localDirectory = state as DirectoryInfo;
+
+                                if (Bootstrapper.LoadInstanceFromFolder(localDirectory))
+                                {
+                                    var monitor = new FilesMonitor<DirectoryInfo>((f) =>
+                                    {
+                                        return Bootstrapper.LoadInstanceFromFolder(f);
+                                    }, localDirectory);
+                                    monitor.Start();
+                                    // add osm and osm-pbf files.
+                                    foreach (var osmFile in osmFiles)
+                                    {
+                                        monitor.AddFile(osmFile.FullName);
+                                    }
+                                    foreach (var luaFile in subDir.EnumerateFiles("*.lua"))
+                                    {
+                                        monitor.AddFile(luaFile.FullName);
+                                    }
+                                    _fileMonitors.Add(monitor);
+                                }
+                                else
+                                {
+                                    _detectedInstances.Remove(localDirectory.Name);
+                                }
+                            });
+                            thread.Start(subDir);
+                        }
+                    }
+
+                    // try and reload every minute or so.
+                    if (_reloadTimer == null)
+                    {
+                        var period = 10000;
+                        _reloadTimer = new Timer((state) =>
+                        {
+                            BootFromConfiguration(state as string);
+                        }, path, period, period);
+                        _reloadTimer.Change(period, period);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Bootstrapper", TraceEventType.Critical,
-                    "Failed to start service: {0}", ex.ToInvariantString());
+                catch (Exception ex)
+                {
+                    Logger.Log("Bootstrapper", TraceEventType.Critical,
+                        "Failed to start service: {0}", ex.ToInvariantString());
+                }
             }
         }
 
@@ -209,7 +248,7 @@ namespace Itinero.API
                     Logger.Log("Bootstrapper", TraceEventType.Information,
                         "Loading instance {1} from: {0}, no vehicle profiles found or they could not be loaded.", folder.FullName, 
                         folder.Name);
-                    return true;
+                    return false;
                 }
 
                 var osmFile = folder.EnumerateFiles("*.osm").Concat(
