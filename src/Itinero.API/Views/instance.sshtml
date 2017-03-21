@@ -25,7 +25,7 @@
         var routeLayer = undefined;
 		var markers = [];
 
-        var map = L.map('map').setView([51.2633, 4.7853], 15);
+        var map = L.map('map').setView([@Model.CenterLat, @Model.CenterLon], 10);
 		var layers = {
 			Imagery: L.tileLayer('http://{s}.tiles.mapbox.com/v3/eurostation.j7a8abf6/{z}/{x}/{y}.png', {
 				maxZoom: 18,
@@ -48,7 +48,7 @@
 					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 			})
 		};
-		map.addLayer(layers.Imagery);
+		map.addLayer(layers.Streets);
 
 		L.control.layers(layers, { }, {
                 position: 'topleft',

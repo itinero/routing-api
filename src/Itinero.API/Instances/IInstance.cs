@@ -44,7 +44,7 @@ namespace Itinero.API.Instances
         /// Returns true if the given profile is supported.
         /// </summary>
         bool Supports(string profile);
-
+        
         /// <summary>
         /// Calculates a route along the given coordinates.
         /// </summary>

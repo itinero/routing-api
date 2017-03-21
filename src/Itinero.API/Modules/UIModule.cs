@@ -26,11 +26,15 @@ namespace Itinero.API.Modules
                     return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
                 }
 
+                var center = instance.RouterDb.EstimateCenter();
+
                 var siteBase = this.Request.Url.SiteBase;
 
                 dynamic model = new {
                     Name = instanceName,
-                    SiteBase = siteBase
+                    SiteBase = siteBase,
+                    CenterLat = center.Latitude.ToInvariantString(),
+                    CenterLon = center.Longitude.ToInvariantString()
                 };
 
                 return View["instance", model];

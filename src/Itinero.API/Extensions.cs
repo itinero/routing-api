@@ -1,6 +1,6 @@
 ﻿// The MIT License (MIT)
 
-// Copyright (c) 2016 Ben Abelshausen
+// Copyright (c) 2017 Ben Abelshausen
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,36 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Serilog;
+using Itinero.LocalGeo;
 
 namespace Itinero.API
 {
-    public class Program
+    /// <summary>
+    /// Contains some extension methods.
+    /// </summary>
+    public static class Extensions
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Estimates the center location of the given routerdb.
+        /// </summary>
+        public static Coordinate EstimateCenter(this RouterDb db)
         {
-            // enable logging and use the console as output.
-            Itinero.Logging.Logger.LogAction = (o, level, message, parameters) =>
+            var latitudeTotal = 0d;
+            var longitudeTotal = 0d;
+            var count = 0;
+            uint stepSize = 25;
+            for(uint v = 0; v < db.Network.VertexCount; v += stepSize)
             {
-                Log.Information(string.Format("[{0}] {1} - {2}", o, level, message));
-            };
+                var coordinate = db.Network.GetVertex(v);
 
-            // attach logger.
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile("logs\\log-{Date}.txt")
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-				
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+                count++;
+                latitudeTotal += coordinate.Latitude;
+                longitudeTotal += coordinate.Longitude;
+            }
 
-            host.Run();
+            return new Coordinate((float)(latitudeTotal / count),
+                (float)(longitudeTotal / count));
         }
     }
 }
