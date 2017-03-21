@@ -1,9 +1,11 @@
 ﻿using Itinero.API.FileMonitoring;
 using Itinero.API.Instances;
+using Itinero.IO.Osm;
 using Itinero.Logging;
 using Itinero.Osm.Vehicles;
 using Itinero.Transit;
 using Itinero.Transit.Data;
+using OsmSharp.Streams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,10 +65,46 @@ namespace Itinero.API
                                 return Bootstrapper.LoadInstance(f);
                             }, localFile);
                             monitor.Start();
+                            monitor.AddFile(file.FullName);
                             _fileMonitors.Add(monitor);
                         }
                     });
                     thread.Start(file);
+                }
+
+                // check if there are folder with OSM-XML or OSM-PBF file.
+                var subDirs = dataDirectory.EnumerateDirectories();
+                foreach(var subDir in subDirs)
+                {
+                    var osmFiles = subDir.EnumerateFiles("*.osm").Concat(
+                        subDir.EnumerateFiles("*.osm.pbf")).ToArray();
+                    if (osmFiles.Length > 0)
+                    {
+                        var thread = new Thread((state) =>
+                        {
+                            var localDirectory = state as DirectoryInfo;
+
+                            if (Bootstrapper.LoadInstanceFromFolder(localDirectory))
+                            {
+                                var monitor = new FilesMonitor<DirectoryInfo>((f) =>
+                                {
+                                    return Bootstrapper.LoadInstanceFromFolder(f);
+                                }, localDirectory);
+                                monitor.Start();
+                                // add osm and osm-pbf files.
+                                foreach(var osmFile in osmFiles)
+                                {
+                                    monitor.AddFile(osmFile.FullName);
+                                }
+                                foreach(var luaFile in subDir.EnumerateFiles("*.lua"))
+                                {
+                                    monitor.AddFile(luaFile.FullName);
+                                }
+                                _fileMonitors.Add(monitor);
+                            }
+                        });
+                        thread.Start(subDir);
+                    }
                 }
             }
             catch (Exception ex)
@@ -87,6 +125,9 @@ namespace Itinero.API
                 {
                     return false;
                 }
+
+                Logger.Log("Bootstrapper", TraceEventType.Information,
+                    "Loading instance {1} from: {0}", file.FullName, file.Name.GetNameUntilFirstDot());
 
                 if (file.Name.EndsWith("routerdb"))
                 {
@@ -123,6 +164,86 @@ namespace Itinero.API
             {
                 Logger.Log("Bootstrapper", TraceEventType.Critical, "Failed to load file {0}: {1}", file,
                     ex.ToInvariantString());
+            }
+            return false;
+        }
+        
+        /// <summary>
+        /// Loads an instance from a folder.
+        /// </summary>
+        /// <returns></returns>
+        public static bool LoadInstanceFromFolder(DirectoryInfo folder)
+        {
+            try
+            {
+                if (!folder.Exists)
+                {
+                    return false;
+                }
+
+                Logger.Log("Bootstrapper", TraceEventType.Information,
+                    "Loading instance {1} from: {0}", folder.FullName, folder.Name);
+
+                var profiles = new List<Itinero.Profiles.Vehicle>();
+                foreach (var luaFile in folder.EnumerateFiles("*.lua"))
+                {
+                    try
+                    {
+                        using (var stream = luaFile.OpenRead())
+                        {
+                            profiles.Add(Itinero.Profiles.DynamicVehicle.LoadFromStream(stream));
+                        }
+
+                        Logger.Log("Bootstrapper", TraceEventType.Information,
+                            "Loaded profile {0}.", luaFile.FullName);
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Log("Bootstrapper", TraceEventType.Error,
+                            "Failed loading profile {0}:{1}", luaFile.FullName, ex.ToInvariantString());
+                    }
+                }
+
+                if (profiles.Count == 0)
+                {
+                    Logger.Log("Bootstrapper", TraceEventType.Information,
+                        "Loading instance {1} from: {0}, no vehicle profiles found or they could not be loaded.", folder.FullName, 
+                        folder.Name);
+                    return true;
+                }
+
+                var osmFile = folder.EnumerateFiles("*.osm").Concat(
+                        folder.EnumerateFiles("*.osm.pbf")).First();
+                var routerDb = new RouterDb();
+                using (var osmFileStream = osmFile.OpenRead())
+                {
+                    OsmStreamSource source;
+                    if (osmFile.FullName.EndsWith(".osm"))
+                    {
+                        source = new XmlOsmStreamSource(osmFileStream);
+                    }
+                    else
+                    {
+                        source = new PBFOsmStreamSource(osmFileStream);
+                    }
+
+                    routerDb.LoadOsmData(source, profiles.ToArray());
+                }
+                var multimodalDb = new MultimodalDb(routerDb, new TransitDb());
+                var multimodalRouter = new MultimodalRouter(multimodalDb,
+                    Itinero.Osm.Vehicles.Vehicle.Pedestrian.Fastest());
+                var instance = new Instances.Instance(multimodalRouter);
+                InstanceManager.Register(folder.Name, instance);
+
+                Logger.Log("Bootstrapper", TraceEventType.Information,
+                    "Loaded instance {1} from: {0}", folder.FullName, folder.Name);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Bootstrapper", TraceEventType.Critical,
+                    "Failed to load instance {1} from: {0}, {2}", folder.FullName, folder.Name, ex.ToInvariantString());
             }
             return false;
         }
