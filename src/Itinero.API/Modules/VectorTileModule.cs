@@ -188,6 +188,16 @@ namespace Itinero.API.Modules
                             result.AddOrReplace("class", className);
                         }
                     }
+
+                    foreach (var tag in a)
+                    {
+                        if (tag.Key == "highway")
+                        {
+                            continue;
+                        }
+
+                        result.AddOrReplace(tag.Key, tag.Value);
+                    }
                     return result;
                 });
             }
