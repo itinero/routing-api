@@ -29,6 +29,7 @@ using System.IO;
 using Itinero.Attributes;
 using Itinero.VectorTiles.Layers;
 using Itinero.API.VectorTiles.Mapbox;
+using System;
 
 namespace Itinero.API.Modules
 {
@@ -109,100 +110,109 @@ namespace Itinero.API.Modules
                 return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             }
 
-            // x,y,z.
-            Itinero.VectorTiles.Tiles.Tile tile = null;
-            Result<VectorTile> vectorTile = null;
-            int x = -1, y = -1;
-            ushort z = 0;
-            if (ushort.TryParse(_.z, out z) &&
-                int.TryParse(_.x, out x) &&
-                int.TryParse(_.y, out y))
-            { // ok, valid stuff!
-                tile = new Itinero.VectorTiles.Tiles.Tile(x, y, z);
-                vectorTile = instance.GetVectorTile(tile.Id);
-            }
-            else
+            try
             {
-                return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
-            }
-
-            var stream = new MemoryStream();
-            lock (instance.RouterDb)
-            {
-                vectorTile.Value.Write(stream, (a, l) =>
+                // x,y,z.
+                Itinero.VectorTiles.Tiles.Tile tile = null;
+                Result<VectorTile> vectorTile = null;
+                int x = -1, y = -1;
+                ushort z = 0;
+                if (ushort.TryParse(_.z, out z) &&
+                    int.TryParse(_.x, out x) &&
+                    int.TryParse(_.y, out y))
+                { // ok, valid stuff!
+                    tile = new Itinero.VectorTiles.Tiles.Tile(x, y, z);
+                    vectorTile = instance.GetVectorTile(tile.Id);
+                }
+                else
                 {
-                    if (l.Name != "transportation")
-                    {
-                        return a;
-                    }
+                    return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                }
 
-                    var result = new AttributeCollection();
-                    string highway;
-                    if (a.TryGetValue("highway", out highway))
+                var stream = new MemoryStream();
+                lock (instance.RouterDb)
+                {
+                    vectorTile.Value.Write(stream, (a, l) =>
                     {
-                        var className = string.Empty;
-                        switch(highway)
+                        if (l.Name != "transportation")
                         {
-                            case "motorway":
-                            case "motorway_link":
-                                className = "motorway";
-                                break;
-                            case "trunk":
-                            case "trunk_link":
-                                className = "trunk";
-                                break;
-                            case "primary":
-                            case "primary_link":
-                                className = "primary";
-                                break;
-                            case "secondary":
-                            case "secondary_link":
-                                className = "secondary";
-                                break;
-                            case "tertiary":
-                            case "tertiary_link":
-                                className = "tertiary";
-                                break;
-                            case "unclassified":
-                            case "residential":
-                            case "living_street":
-                            case "road":
-                                className = "minor";
-                                break;
-                            case "service":
-                            case "track":
-                                className = highway;
-                                break;
-                            case "pedestrian":
-                            case "path":
-                            case "footway":
-                            case "cycleway":
-                            case "steps":
-                            case "bridleway":
-                            case "corridor":
-                                className = "path";
-                                break;
-                        }
-                        if (!string.IsNullOrEmpty(className))
-                        {
-                            result.AddOrReplace("class", className);
-                        }
-                    }
-
-                    foreach (var tag in a)
-                    {
-                        if (tag.Key == "highway")
-                        {
-                            continue;
+                            return a;
                         }
 
-                        result.AddOrReplace(tag.Key, tag.Value);
-                    }
-                    return result;
-                });
+                        var result = new AttributeCollection();
+                        string highway;
+                        if (a.TryGetValue("highway", out highway))
+                        {
+                            var className = string.Empty;
+                            switch (highway)
+                            {
+                                case "motorway":
+                                case "motorway_link":
+                                    className = "motorway";
+                                    break;
+                                case "trunk":
+                                case "trunk_link":
+                                    className = "trunk";
+                                    break;
+                                case "primary":
+                                case "primary_link":
+                                    className = "primary";
+                                    break;
+                                case "secondary":
+                                case "secondary_link":
+                                    className = "secondary";
+                                    break;
+                                case "tertiary":
+                                case "tertiary_link":
+                                    className = "tertiary";
+                                    break;
+                                case "unclassified":
+                                case "residential":
+                                case "living_street":
+                                case "road":
+                                    className = "minor";
+                                    break;
+                                case "service":
+                                case "track":
+                                    className = highway;
+                                    break;
+                                case "pedestrian":
+                                case "path":
+                                case "footway":
+                                case "cycleway":
+                                case "steps":
+                                case "bridleway":
+                                case "corridor":
+                                    className = "path";
+                                    break;
+                            }
+                            if (!string.IsNullOrEmpty(className))
+                            {
+                                result.AddOrReplace("class", className);
+                            }
+                        }
+
+                        foreach (var tag in a)
+                        {
+                            if (tag.Key == "highway")
+                            {
+                                continue;
+                            }
+
+                            result.AddOrReplace(tag.Key, tag.Value);
+                        }
+                        return result;
+                    });
+                }
+                stream.Seek(0, SeekOrigin.Begin);
+                return Response.FromStream(stream, "application/x-protobuf");
             }
-            stream.Seek(0, SeekOrigin.Begin);
-            return Response.FromStream(stream, "application/x-protobuf");
+            catch(Exception ex)
+            {
+                Itinero.Logging.Logger.Log("VectorTileModule", Logging.TraceEventType.Error,
+                    "Unhandled exception occured during vector tile generation: {0}", ex.ToString());
+            }
+            return Negotiate.WithStatusCode(HttpStatusCode.InternalServerError);
         }
     }
 }
