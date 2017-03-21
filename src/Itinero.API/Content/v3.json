@@ -1,6 +1,6 @@
 {
   "tiles": [
-    "http://localhost:5000/belgium/tiles/{z}/{x}/{y}.mvt"
+    "http://localhost:5000/gent/tiles/{z}/{x}/{y}.mvt"
   ],
   "name": "Routing Tiles",
   "format": "pbf",
