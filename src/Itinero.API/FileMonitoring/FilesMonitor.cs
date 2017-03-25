@@ -22,7 +22,7 @@ namespace Itinero.API.FileMonitoring
         /// <summary>
         /// Creates a new instance monitor.
         /// </summary>
-        public FilesMonitor(Func<T, bool> trigger, T param, int intervalInMillis = 60 * 1000)
+        public FilesMonitor(Func<T, bool> trigger, T param, int intervalInMillis = 5 * 1000)
         {
             _filesToMonitor = new List<FileMonitor>();
             _hasChanged = false;
