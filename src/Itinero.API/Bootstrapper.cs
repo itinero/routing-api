@@ -76,8 +76,8 @@ namespace Itinero.API
                                 {
                                     return Bootstrapper.LoadInstance(f);
                                 }, localFile);
-                                monitor.Start();
                                 monitor.AddFile(file.FullName);
+                                monitor.Start();
                                 _fileMonitors.Add(monitor);
                             }
                             else
@@ -113,7 +113,6 @@ namespace Itinero.API
                                     {
                                         return Bootstrapper.LoadInstanceFromFolder(f);
                                     }, localDirectory);
-                                    monitor.Start();
                                     // add osm and osm-pbf files.
                                     foreach (var osmFile in osmFiles)
                                     {
@@ -123,6 +122,7 @@ namespace Itinero.API
                                     {
                                         monitor.AddFile(luaFile.FullName);
                                     }
+                                    monitor.Start();
                                     _fileMonitors.Add(monitor);
                                 }
                                 else
