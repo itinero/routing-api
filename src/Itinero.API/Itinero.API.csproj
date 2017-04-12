@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Itinero.VectorTiles" Version="0.0.13-alpha" />
-    <PackageReference Include="Itinero.VectorTiles.Mapbox" Version="0.0.13-alpha" />
+    <PackageReference Include="Itinero.VectorTiles" Version="0.0.14-alpha" />
+    <PackageReference Include="Itinero.VectorTiles.Mapbox" Version="0.0.14-alpha" />
     <PackageReference Include="Itinero.IO.Osm" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.0.2" />
