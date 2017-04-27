@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="1.0.0" />
-    <PackageReference Include="Itinero" Version="1.0.0-rc3" />
+    <PackageReference Include="Itinero" Version="1.0.4" />
     <PackageReference Include="Itinero.Transit" Version="0.3.4-alpha" />
   </ItemGroup>
 
