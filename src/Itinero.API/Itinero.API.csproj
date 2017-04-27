@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Itinero.VectorTiles" Version="0.0.14-alpha" />
     <PackageReference Include="Itinero.VectorTiles.Mapbox" Version="0.0.14-alpha" />
-    <PackageReference Include="Itinero.IO.Osm" Version="1.0.3" />
+    <PackageReference Include="Itinero.IO.Osm" Version="1.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.0.3" />
@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="1.0.0" />
-    <PackageReference Include="Itinero" Version="1.0.3" />
+    <PackageReference Include="Itinero" Version="1.0.4" />
     <PackageReference Include="Itinero.Transit" Version="0.3.4-alpha" />
     <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
