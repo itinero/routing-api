@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <RuntimeIdentifiers>win8-x64;win10-x64;osx.10.11-x64;ubuntu.16.04-x64</RuntimeIdentifiers>
     <AssemblyName>Itinero.API</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Itinero.API</PackageId>
@@ -23,7 +23,7 @@
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <None Update="Views\*.sshtml;Content\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
