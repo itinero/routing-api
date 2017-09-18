@@ -73,7 +73,7 @@
             if (loc.length > 1) {
                 var locations = loc.slice(0);
 
-                itinero.api.routing('/@Model.Name',
+                itinero.api.routing('./@Model.Name',
                     {
                         profile: 'car',
                         locations: locations,
