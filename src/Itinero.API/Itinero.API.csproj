@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Itinero.IO.Osm" Version="1.4.0-pre18" />
+    <PackageReference Include="Itinero.IO.Osm" Version="1.6.0-pre016" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.0.3" />
@@ -18,8 +18,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Owin" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
-    <PackageReference Include="Itinero" Version="1.4.0-pre18" />
-    <PackageReference Include="Itinero.Transit" Version="0.4.0-alpha" />
+    <PackageReference Include="Itinero" Version="1.6.0-pre016" />
+    <PackageReference Include="Itinero.Transit" Version="0.4.2-alpha" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
   </ItemGroup>
 
